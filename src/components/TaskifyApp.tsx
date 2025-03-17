@@ -10,11 +10,14 @@ import { useProjects } from '@/hooks/useProjects';
 import TaskifySidebar from './TaskifySidebar';
 import { SidebarInset } from './ui/sidebar';
 import AuthModal from './auth/AuthModal';
+import FloatingActionButton from './FloatingActionButton';
+import TaskCreationSheet from './TaskCreationSheet';
 
 const TaskifyApp = () => {
   const [activeTab, setActiveTab] = useState('tasks');
   const [darkMode, setDarkMode] = useState(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   const { user, loading: authLoading } = useAuth();
   
   const {
@@ -63,6 +66,27 @@ const TaskifyApp = () => {
   const filteredTasks = activeProjectId
     ? tasks.filter(task => task.project_id === activeProjectId)
     : tasks;
+    
+  const handleOpenTaskSheet = () => {
+    console.log("Opening task creation sheet from FAB");
+    setIsTaskSheetOpen(true);
+  };
+  
+  const handleTaskSubmit = (task: {
+    title: string;
+    description: string;
+    priority: string;
+    dueDate: Date | null;
+  }) => {
+    console.log('Task submitted from FAB', task);
+    addTask(task);
+    setIsTaskSheetOpen(false);
+  };
+  
+  const handleSheetOpenChange = (open: boolean) => {
+    console.log('Sheet state changing to:', open);
+    setIsTaskSheetOpen(open);
+  };
 
   return (
     <>
@@ -86,7 +110,7 @@ const TaskifyApp = () => {
               isLoggedIn={isLoggedIn}
               onOpenAuth={() => setIsAuthModalOpen(true)}
               onAddTask={addTask}
-              showLoginButton={false} // Don't show login button in header
+              showLoginButton={false}
             />
           </div>
 
@@ -114,12 +138,21 @@ const TaskifyApp = () => {
               />
             </div>
           </div>
+          
+          {/* Floating Action Button */}
+          <FloatingActionButton onClick={handleOpenTaskSheet} />
         </div>
       </SidebarInset>
       
       <AuthModal 
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
+      />
+      
+      <TaskCreationSheet 
+        isOpen={isTaskSheetOpen}
+        onClose={handleSheetOpenChange}
+        onSubmit={handleTaskSubmit}
       />
     </>
   );
