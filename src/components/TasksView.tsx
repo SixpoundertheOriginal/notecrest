@@ -31,10 +31,7 @@ const TasksView = ({
   onAddTask,
 }: TasksViewProps) => {
   return (
-    <div className={cn(
-      "rounded-lg glass-morphism overflow-hidden",
-      darkMode ? 'bg-[#1A1F2C]/70' : 'bg-white/70'
-    )}>
+    <div className="glass-morphism rounded-xl overflow-hidden">
       <div className="p-4 flex flex-wrap gap-2">
         <TaskSearchBar darkMode={darkMode} />
         <TaskFilters darkMode={darkMode} />

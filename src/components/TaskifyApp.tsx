@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { TaskData } from '@/types/task';
 import { cn } from '@/lib/utils';
@@ -120,7 +121,7 @@ const TaskifyApp = () => {
   };
 
   return (
-    <div className={`flex flex-col min-h-screen ${darkMode ? 'dark bg-[#1A1F2C]' : 'bg-gray-50'}`}>
+    <div className="flex flex-col min-h-screen dark">
       <TaskAppHeader darkMode={darkMode} toggleTheme={toggleTheme} />
 
       <main className="flex-grow p-4 md:p-6">
@@ -129,7 +130,7 @@ const TaskifyApp = () => {
             <h2 className="text-3xl font-light mb-2">
               Welcome to <span className="font-bold text-gradient">Taskify</span>
             </h2>
-            <p className={cn("text-sm", darkMode ? 'text-gray-400' : 'text-gray-500')}>
+            <p className="text-sm text-gray-400">
               Manage your tasks and notes efficiently
             </p>
           </div>

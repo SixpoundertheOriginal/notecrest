@@ -10,16 +10,13 @@ interface TaskAppTabsProps {
 
 const TaskAppTabs = ({ activeTab, setActiveTab, darkMode }: TaskAppTabsProps) => {
   return (
-    <div className={cn(
-      "flex mb-6 rounded-lg overflow-hidden glass-morphism",
-      darkMode ? 'bg-[#1A1F2C]/70' : 'bg-white/70'
-    )}>
+    <div className="glass-morphism flex mb-6 rounded-lg overflow-hidden">
       <button 
         onClick={() => setActiveTab('tasks')} 
         className={cn(
           "flex-1 py-3 px-4 flex items-center justify-center transition-all duration-300",
           activeTab === 'tasks' 
-            ? (darkMode ? 'bg-[#2D3343] text-blue-400' : 'bg-white text-primary') 
+            ? 'bg-white/10 text-blue-400' 
             : ''
         )}
       >
@@ -30,7 +27,7 @@ const TaskAppTabs = ({ activeTab, setActiveTab, darkMode }: TaskAppTabsProps) =>
         className={cn(
           "flex-1 py-3 px-4 flex items-center justify-center transition-all duration-300",
           activeTab === 'notes' 
-            ? (darkMode ? 'bg-[#2D3343] text-blue-400' : 'bg-white text-primary') 
+            ? 'bg-white/10 text-blue-400' 
             : ''
         )}
       >

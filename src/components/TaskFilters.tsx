@@ -10,21 +10,11 @@ interface TaskFiltersProps {
 const TaskFilters = ({ darkMode }: TaskFiltersProps) => {
   return (
     <div className="flex space-x-2">
-      <button className={cn(
-        "px-3 py-2 rounded-lg flex items-center text-sm",
-        darkMode 
-          ? 'bg-[#2D3343] hover:bg-[#353D52] border border-[#353D52]' 
-          : 'bg-gray-100/70 hover:bg-gray-200/70 border border-gray-200'
-      )}>
+      <button className="glass-button px-3 py-2 rounded-lg flex items-center text-sm">
         <ListFilter size={14} className="mr-1" />
         <span>List</span>
       </button>
-      <button className={cn(
-        "px-3 py-2 rounded-lg flex items-center text-sm",
-        darkMode 
-          ? 'bg-[#2D3343] hover:bg-[#353D52] border border-[#353D52]' 
-          : 'bg-gray-100/70 hover:bg-gray-200/70 border border-gray-200'
-      )}>
+      <button className="glass-button px-3 py-2 rounded-lg flex items-center text-sm">
         By Priority
       </button>
     </div>

@@ -8,10 +8,7 @@ interface NotesViewProps {
 
 const NotesView = ({ darkMode }: NotesViewProps) => {
   return (
-    <div className={cn(
-      "p-6 rounded-lg glass-morphism flex flex-col justify-center items-center",
-      darkMode ? 'bg-[#1A1F2C]/70' : 'bg-white/70'
-    )}>
+    <div className="glass-morphism p-6 rounded-xl flex flex-col justify-center items-center">
       <h3 className="text-lg font-display mb-2 text-gradient">Notes</h3>
       <p className="text-sm font-sans text-gray-400">Notes content would appear here</p>
     </div>
