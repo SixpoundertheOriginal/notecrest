@@ -13,7 +13,7 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import TaskQuickOptions from './task-creation/TaskQuickOptions';
 import TaskExpandedOptions from './task-creation/TaskExpandedOptions';
-import { useTaskInputNLP } from './task-creation/TaskInputNLP';
+import { parseTaskText } from '@/lib/nlp-parser';
 
 interface TaskCreationSheetProps {
   isOpen: boolean;
@@ -40,10 +40,8 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
   const titleInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  // Explicitly log the props and state for debugging
-  useEffect(() => {
-    console.log(`TaskCreationSheet: Props isOpen=${isOpen}, internalOpen=${internalOpen}`);
-  }, [isOpen, internalOpen]);
+  // NLP processing timeout reference
+  const nlpTimeout = useRef<NodeJS.Timeout>();
 
   // Synchronize the external and internal state
   useEffect(() => {
@@ -69,8 +67,19 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
     }
   }, [internalOpen]);
 
-  // Use the NLP hook
-  const { handleTitleInput } = useTaskInputNLP(setTitle, setDueDate, setPriority);
+  // Handle title input with NLP processing
+  const handleTitleInput = (value: string) => {
+    setTitle(value);
+    
+    // Run NLP parsing after user stops typing
+    clearTimeout(nlpTimeout.current);
+    nlpTimeout.current = setTimeout(() => {
+      const parsedInput = parseTaskText(value);
+      if (parsedInput.dueDate) setDueDate(parsedInput.dueDate);
+      if (parsedInput.priority) setPriority(parsedInput.priority);
+      if (parsedInput.title !== value) setTitle(parsedInput.title);
+    }, 800);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,19 +128,19 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
         <SheetHeader>
           <SheetTitle>New Task</SheetTitle>
           <SheetDescription>
-            Create a new task with title, priority, and due date.
+            Create a new task with title, priority, and due date. Try adding "tomorrow" or "urgent" to your task name for automatic detection.
           </SheetDescription>
         </SheetHeader>
         
         <form onSubmit={handleSubmit} className="pt-2">
           <div className="space-y-4 py-2">
-            {/* Title input - always visible */}
+            {/* Title input - always visible with NLP capabilities */}
             <div>
               <Input
                 ref={titleInputRef}
                 value={title}
                 onChange={(e) => handleTitleInput(e.target.value)}
-                placeholder="What do you need to do?"
+                placeholder="What do you need to do? (Try 'Call John tomorrow' or 'Urgent: finish report')"
                 className="text-base py-6"
                 required
                 autoComplete="off"

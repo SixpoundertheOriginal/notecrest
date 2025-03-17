@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
 import TaskFilters from './TaskFilters';
 import TaskCard from './TaskCard';
-import SmartTaskInput from './SmartTaskInput';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Loader2 } from 'lucide-react';
 
@@ -47,12 +46,6 @@ const TasksView = ({
       <div className="p-3 space-y-2">
         <TaskFilters darkMode={darkMode} />
         
-        {/* Smart NLP Task Input */}
-        <SmartTaskInput 
-          onCreateTask={onAddTask}
-          darkMode={darkMode}
-        />
-        
         {!isLoggedIn && (
           <div className="text-center text-xs text-amber-400/80 opacity-80">
             Tasks stored locally. Login to save.
@@ -94,7 +87,7 @@ const TasksView = ({
             <div className="flex flex-col items-center justify-center h-32 text-center">
               <p className="text-muted-foreground text-sm">No active tasks</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Enter text above to create a task
+                Use the + button to create a task
               </p>
             </div>
           )}
