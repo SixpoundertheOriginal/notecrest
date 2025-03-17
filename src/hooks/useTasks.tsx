@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { TaskData, NewTaskData } from '@/types/task';
 import { supabase } from '@/integrations/supabase/client';
@@ -142,7 +143,8 @@ export const useTasks = (user: any) => {
     
     if (user) {
       try {
-        const newTask: NewTaskData = {
+        // Create a properly typed task object that matches Supabase's expectations
+        const newTaskData = {
           title: taskData.title,
           completed: false,
           priority: taskData.priority,
@@ -154,7 +156,7 @@ export const useTasks = (user: any) => {
         
         const { data, error } = await supabase
           .from('tasks')
-          .insert(newTask)
+          .insert(newTaskData)
           .select();
 
         if (error) {
@@ -295,4 +297,3 @@ export const useTasks = (user: any) => {
     clearCompletedTasks
   };
 };
-

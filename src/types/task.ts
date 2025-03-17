@@ -18,6 +18,6 @@ export interface NewTaskData {
   priority: string;
   status: string;
   date: string;
-  user_id?: string;
+  user_id: string; // Changed from optional to required
   project_id?: string | null;
 }
