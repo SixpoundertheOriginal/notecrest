@@ -1,110 +1,236 @@
 
-import React, { useState } from 'react';
-import { TaskData } from '@/types/task';
+import React, { useState, useEffect } from 'react';
+import { TaskData, NewTaskData } from '@/types/task';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
 import TaskAppTabs from './TaskAppTabs';
 import TasksView from './TasksView';
 import NotesView from './NotesView';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import AuthModal from './auth/AuthModal';
+import UserMenu from './auth/UserMenu';
+import { Button } from './ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { LogIn } from 'lucide-react';
 
 const TaskifyApp = () => {
   const [activeTab, setActiveTab] = useState('tasks');
   const [darkMode, setDarkMode] = useState(true);
   const { toast } = useToast();
-  const [tasks, setTasks] = useState<TaskData[]>([
-    { 
-      id: 1, 
-      title: 'Complete project proposal', 
-      completed: false, 
-      priority: 'High', 
-      status: 'In Progress',
-      date: 'Mar 8',
-      expanded: false,
-      createdAt: new Date(Date.now() - 1000 * 60 * 42) // 42 minutes ago
-    },
-    { 
-      id: 2, 
-      title: 'Review and respond to emails', 
-      completed: false, 
-      priority: 'Medium', 
-      status: 'Todo',
-      date: 'Mar 6',
-      expanded: false,
-      createdAt: new Date(Date.now() - 1000 * 60 * 120) // 2 hours ago
-    },
-    { 
-      id: 3, 
-      title: 'Buy groceries', 
-      completed: false, 
-      priority: 'Low', 
-      status: 'Todo',
-      date: 'Mar 9',
-      expanded: false,
-      createdAt: new Date(Date.now() - 1000 * 60 * 180) // 3 hours ago
-    },
-    { 
-      id: 4, 
-      title: 'Schedule doctor appointment', 
-      completed: true, 
-      priority: 'Medium', 
-      status: 'Completed',
-      date: 'Mar 5',
-      expanded: false,
-      createdAt: new Date(Date.now() - 1000 * 60 * 240) // 4 hours ago
+  const { user, loading: authLoading } = useAuth();
+
+  const [tasks, setTasks] = useState<TaskData[]>([]);
+  const [draggedTaskId, setDraggedTaskId] = useState<number | string | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isLoadingTasks, setIsLoadingTasks] = useState(false);
+
+  // Fetch user's tasks from Supabase
+  useEffect(() => {
+    const fetchTasks = async () => {
+      if (!user) {
+        // If not authenticated, use demo tasks
+        setTasks([
+          { 
+            id: 1, 
+            title: 'Complete project proposal (Demo)', 
+            completed: false, 
+            priority: 'High', 
+            status: 'In Progress',
+            date: 'Mar 8',
+            expanded: false,
+            createdAt: new Date(Date.now() - 1000 * 60 * 42) // 42 minutes ago
+          },
+          { 
+            id: 2, 
+            title: 'Review and respond to emails (Demo)', 
+            completed: false, 
+            priority: 'Medium', 
+            status: 'Todo',
+            date: 'Mar 6',
+            expanded: false,
+            createdAt: new Date(Date.now() - 1000 * 60 * 120) // 2 hours ago
+          },
+        ]);
+        return;
+      }
+
+      setIsLoadingTasks(true);
+      try {
+        const { data, error } = await supabase
+          .from('tasks')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
+          const formattedTasks = data.map(task => ({
+            id: task.id,
+            title: task.title,
+            completed: task.completed,
+            priority: task.priority as 'High' | 'Medium' | 'Low',
+            status: task.status as 'Todo' | 'In Progress' | 'Completed',
+            date: task.date,
+            expanded: false,
+            createdAt: new Date(task.created_at),
+            user_id: task.user_id
+          }));
+          setTasks(formattedTasks);
+        }
+      } catch (error: any) {
+        toast({
+          title: "Error fetching tasks",
+          description: error.message,
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoadingTasks(false);
+      }
+    };
+
+    if (!authLoading) {
+      fetchTasks();
     }
-  ]);
-  const [draggedTaskId, setDraggedTaskId] = useState<number | null>(null);
+  }, [user, authLoading, toast]);
 
   const toggleTheme = () => setDarkMode(!darkMode);
 
-  const toggleTaskCompletion = (id: number) => {
-    setTasks(tasks.map(task => 
+  const toggleTaskCompletion = async (id: number | string) => {
+    // Find the task to toggle
+    const taskToUpdate = tasks.find(task => task.id === id);
+    if (!taskToUpdate) return;
+
+    // Update local state optimistically
+    const newStatus = !taskToUpdate.completed ? 'Completed' : taskToUpdate.status === 'Completed' ? 'Todo' : taskToUpdate.status;
+    const updatedTasks = tasks.map(task => 
       task.id === id 
         ? { 
             ...task, 
             completed: !task.completed,
-            status: !task.completed ? 'Completed' : task.status === 'Completed' ? 'Todo' : task.status
+            status: newStatus
           } 
         : task
-    ));
+    );
+    setTasks(updatedTasks);
+
+    // Update in Supabase if user is logged in
+    if (user && typeof id === 'string') {
+      try {
+        const { error } = await supabase
+          .from('tasks')
+          .update({ 
+            completed: !taskToUpdate.completed,
+            status: newStatus
+          })
+          .eq('id', id);
+
+        if (error) {
+          throw error;
+        }
+      } catch (error: any) {
+        // Revert the optimistic update
+        setTasks(tasks);
+        toast({
+          title: "Error updating task",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    }
   };
 
-  const toggleTaskExpansion = (id: number) => {
+  const toggleTaskExpansion = (id: number | string) => {
     setTasks(tasks.map(task => 
       task.id === id ? { ...task, expanded: !task.expanded } : { ...task, expanded: false }
     ));
   };
 
-  const addTask = (taskData: {
+  const addTask = async (taskData: {
     title: string;
     description: string;
     priority: string;
     dueDate: Date | null;
   }) => {
-    const newId = Math.max(0, ...tasks.map(task => task.id)) + 1;
     const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     
-    const newTask: TaskData = {
-      id: newId,
-      title: taskData.title, // Use the actual title from form
-      completed: false,
-      priority: taskData.priority as 'High' | 'Medium' | 'Low',
-      status: 'Todo',
-      date: currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      expanded: false,
-      createdAt: currentDate // Add timestamp
-    };
-    
-    setTasks([newTask, ...tasks]);
-    
-    toast({
-      title: "New task created",
-      description: "Your task has been added to the list.",
-    });
+    if (user) {
+      // Add to Supabase if user is logged in
+      try {
+        const newTask: NewTaskData = {
+          title: taskData.title,
+          completed: false,
+          priority: taskData.priority as 'High' | 'Medium' | 'Low',
+          status: 'Todo',
+          date: formattedDate,
+          user_id: user.id
+        };
+        
+        const { data, error } = await supabase
+          .from('tasks')
+          .insert(newTask)
+          .select()
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        if (data) {
+          const formattedTask: TaskData = {
+            id: data.id,
+            title: data.title,
+            completed: data.completed,
+            priority: data.priority as 'High' | 'Medium' | 'Low',
+            status: data.status as 'Todo' | 'In Progress' | 'Completed',
+            date: data.date,
+            expanded: false,
+            createdAt: new Date(data.created_at),
+            user_id: data.user_id
+          };
+          
+          setTasks([formattedTask, ...tasks]);
+          
+          toast({
+            title: "Task created",
+            description: "Your task has been added to the list.",
+          });
+        }
+      } catch (error: any) {
+        toast({
+          title: "Error creating task",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } else {
+      // Add to local state if not logged in
+      const newId = Math.max(0, ...tasks.map(task => typeof task.id === 'number' ? task.id : 0)) + 1;
+      
+      const newTask: TaskData = {
+        id: newId,
+        title: taskData.title,
+        completed: false,
+        priority: taskData.priority as 'High' | 'Medium' | 'Low',
+        status: 'Todo',
+        date: formattedDate,
+        expanded: false,
+        createdAt: currentDate
+      };
+      
+      setTasks([newTask, ...tasks]);
+      
+      toast({
+        title: "Task created (Demo Mode)",
+        description: "Sign in to save your tasks permanently.",
+      });
+    }
   };
 
-  const handleDragStart = (e: React.DragEvent, id: number) => {
+  const handleDragStart = (e: React.DragEvent, id: number | string) => {
     setDraggedTaskId(id);
     const element = e.currentTarget;
     element.classList.add('scale-105');
@@ -115,7 +241,7 @@ const TaskifyApp = () => {
     e.preventDefault();
   };
 
-  const handleDrop = (e: React.DragEvent, targetId: number) => {
+  const handleDrop = async (e: React.DragEvent, targetId: number | string) => {
     e.preventDefault();
     
     if (draggedTaskId === null || draggedTaskId === targetId) return;
@@ -129,11 +255,32 @@ const TaskifyApp = () => {
     
     setTasks(tasksCopy);
     setDraggedTaskId(null);
+    
+    // In a real app, you might want to sync the order to the backend
+    // This would require adding an 'order' field to the tasks table
   };
 
   return (
     <div className="flex flex-col min-h-screen dark">
-      <TaskAppHeader darkMode={darkMode} toggleTheme={toggleTheme} />
+      <TaskAppHeader 
+        darkMode={darkMode} 
+        toggleTheme={toggleTheme} 
+        rightContent={
+          user ? (
+            <UserMenu userEmail={user.email || ''} />
+          ) : (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setIsAuthModalOpen(true)}
+              className="flex items-center gap-2"
+            >
+              <LogIn size={16} />
+              Login
+            </Button>
+          )
+        }
+      />
 
       <main className="flex-grow p-4 md:p-6">
         <div className="max-w-5xl mx-auto">
@@ -142,7 +289,10 @@ const TaskifyApp = () => {
               Welcome to <span className="font-bold text-gradient">Taskify</span>
             </h2>
             <p className="text-sm text-gray-400">
-              Manage your tasks and notes efficiently
+              {user 
+                ? `Manage your tasks, ${user.email?.split('@')[0]}`
+                : "Log in to save your tasks across devices"
+              }
             </p>
           </div>
 
@@ -152,6 +302,7 @@ const TaskifyApp = () => {
             <TasksView 
               darkMode={darkMode}
               tasks={tasks}
+              isLoading={isLoadingTasks}
               draggedTaskId={draggedTaskId}
               onDragStart={handleDragStart}
               onDragOver={handleDragOver}
@@ -159,6 +310,7 @@ const TaskifyApp = () => {
               onToggleCompletion={toggleTaskCompletion}
               onToggleExpansion={toggleTaskExpansion}
               onAddTask={addTask}
+              isLoggedIn={!!user}
             />
           )}
 
@@ -167,6 +319,11 @@ const TaskifyApp = () => {
           )}
         </div>
       </main>
+      
+      <AuthModal 
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
     </div>
   );
 };

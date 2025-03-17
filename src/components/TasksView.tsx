@@ -8,28 +8,31 @@ import AddTaskButton from './AddTaskButton';
 import TaskCard from './TaskCard';
 import TaskCreationSheet from './TaskCreationSheet';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
 interface TasksViewProps {
   darkMode: boolean;
   tasks: TaskData[];
-  draggedTaskId: number | null;
-  onDragStart: (e: React.DragEvent, id: number) => void;
+  isLoading?: boolean;
+  draggedTaskId: number | string | null;
+  onDragStart: (e: React.DragEvent, id: number | string) => void;
   onDragOver: (e: React.DragEvent) => void;
-  onDrop: (e: React.DragEvent, id: number) => void;
-  onToggleCompletion: (id: number) => void;
-  onToggleExpansion: (id: number) => void;
+  onDrop: (e: React.DragEvent, id: number | string) => void;
+  onToggleCompletion: (id: number | string) => void;
+  onToggleExpansion: (id: number | string) => void;
   onAddTask: (task: {
     title: string;
     description: string;
     priority: string;
     dueDate: Date | null;
   }) => void;
+  isLoggedIn?: boolean;
 }
 
 const TasksView = ({
   darkMode,
   tasks,
+  isLoading = false,
   draggedTaskId,
   onDragStart,
   onDragOver,
@@ -37,9 +40,9 @@ const TasksView = ({
   onToggleCompletion,
   onToggleExpansion,
   onAddTask,
+  isLoggedIn = false,
 }: TasksViewProps) => {
   const isMobile = useIsMobile();
-  const { toast } = useToast();
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   
   const handleTaskSubmit = (task: {
@@ -48,13 +51,8 @@ const TasksView = ({
     priority: string;
     dueDate: Date | null;
   }) => {
-    console.log('New task created:', task);
     onAddTask(task); // Pass the actual task data to parent
     setIsTaskSheetOpen(false);
-    toast({
-      title: "Success",
-      description: "Task created successfully",
-    });
   };
 
   return (
@@ -72,22 +70,40 @@ const TasksView = ({
           darkMode={darkMode} 
           onClick={() => setIsTaskSheetOpen(true)} 
         />
+        {!isLoggedIn && (
+          <div className="mt-2 text-center text-xs text-amber-500">
+            Note: Tasks are stored locally. Login to save your tasks.
+          </div>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:gap-4 p-3 sm:p-4">
-        {tasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            task={task}
-            darkMode={darkMode}
-            draggedTaskId={draggedTaskId}
-            onDragStart={onDragStart}
-            onDragOver={onDragOver}
-            onDrop={onDrop}
-            onToggleCompletion={onToggleCompletion}
-            onToggleExpansion={onToggleExpansion}
-          />
-        ))}
+      <div className="grid grid-cols-1 gap-3 sm:gap-4 p-3 sm:p-4 min-h-[200px]">
+        {isLoading ? (
+          <div className="flex items-center justify-center h-40">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : tasks.length > 0 ? (
+          tasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              darkMode={darkMode}
+              draggedTaskId={draggedTaskId}
+              onDragStart={onDragStart}
+              onDragOver={onDragOver}
+              onDrop={onDrop}
+              onToggleCompletion={onToggleCompletion}
+              onToggleExpansion={onToggleExpansion}
+            />
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center h-40 text-center">
+            <p className="text-muted-foreground mb-2">No tasks found</p>
+            <p className="text-sm text-muted-foreground">
+              Click "Add New Task" to create your first task
+            </p>
+          </div>
+        )}
       </div>
 
       <TaskCreationSheet 
