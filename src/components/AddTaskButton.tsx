@@ -10,7 +10,7 @@ interface AddTaskButtonProps {
 const AddTaskButton = ({ darkMode }: AddTaskButtonProps) => {
   return (
     <button className={cn(
-      "w-full py-3 rounded-lg flex items-center justify-center text-sm transition-all duration-300",
+      "w-full py-3 rounded-lg flex items-center justify-center text-sm font-medium transition-all duration-300",
       darkMode 
         ? 'bg-[#2D3343] hover:bg-[#353D52] text-blue-400 border border-blue-500/20' 
         : 'bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20'
