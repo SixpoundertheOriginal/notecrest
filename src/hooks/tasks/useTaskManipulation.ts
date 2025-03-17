@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { TaskData } from '@/types/task';
+import { TaskData, SubTask } from '@/types/task';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 

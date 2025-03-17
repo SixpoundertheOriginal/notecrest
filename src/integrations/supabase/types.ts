@@ -42,6 +42,7 @@ export type Database = {
           priority: string
           project_id: string | null
           status: string
+          subtasks: Json | null
           title: string
           user_id: string
         }
@@ -53,6 +54,7 @@ export type Database = {
           priority: string
           project_id?: string | null
           status: string
+          subtasks?: Json | null
           title: string
           user_id: string
         }
@@ -64,6 +66,7 @@ export type Database = {
           priority?: string
           project_id?: string | null
           status?: string
+          subtasks?: Json | null
           title?: string
           user_id?: string
         }
