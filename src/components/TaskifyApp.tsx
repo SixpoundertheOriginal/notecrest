@@ -9,7 +9,7 @@ import NotesView from './NotesView';
 
 const TaskifyApp = () => {
   const [activeTab, setActiveTab] = useState('tasks');
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(true); // Set default to true for dark mode
   const [tasks, setTasks] = useState<TaskData[]>([
     { 
       id: 1, 
@@ -98,7 +98,7 @@ const TaskifyApp = () => {
   };
 
   return (
-    <div className={`flex flex-col min-h-screen ${darkMode ? 'dark bg-gray-950' : 'bg-gray-50'}`}>
+    <div className={`flex flex-col min-h-screen ${darkMode ? 'dark bg-[#1A1F2C]' : 'bg-gray-50'}`}>
       <TaskAppHeader darkMode={darkMode} toggleTheme={toggleTheme} />
 
       <main className="flex-grow p-4 md:p-6">

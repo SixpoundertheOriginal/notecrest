@@ -10,9 +10,9 @@ interface AddTaskButtonProps {
 const AddTaskButton = ({ darkMode }: AddTaskButtonProps) => {
   return (
     <button className={cn(
-      "w-full py-3 rounded-xl flex items-center justify-center text-sm transition-all duration-300",
+      "w-full py-3 rounded-lg flex items-center justify-center text-sm transition-all duration-300",
       darkMode 
-        ? 'bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20' 
+        ? 'bg-[#2D3343] hover:bg-[#353D52] text-blue-400 border border-blue-500/20' 
         : 'bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20'
     )}>
       <PlusCircle size={16} className="mr-2" />

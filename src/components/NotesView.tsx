@@ -9,10 +9,10 @@ interface NotesViewProps {
 const NotesView = ({ darkMode }: NotesViewProps) => {
   return (
     <div className={cn(
-      "p-6 rounded-2xl glass-morphism flex justify-center items-center",
-      darkMode ? 'bg-gray-900/30' : 'bg-white/70'
+      "p-6 rounded-lg glass-morphism flex justify-center items-center",
+      darkMode ? 'bg-[#1A1F2C]/70' : 'bg-white/70'
     )}>
-      <p className="text-sm">Notes content would appear here</p>
+      <p className="text-sm text-gray-400">Notes content would appear here</p>
     </div>
   );
 };
