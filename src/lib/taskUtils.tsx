@@ -79,4 +79,3 @@ export const getPriorityColor = (priority: string): PriorityColor => {
     };
   }
 };
-

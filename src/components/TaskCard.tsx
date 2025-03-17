@@ -37,10 +37,10 @@ const TaskCard = ({
       onDrop={(e) => onDrop(e, task.id)}
       onClick={() => onToggleExpansion(task.id)}
       className={cn(
-        "task-card relative rounded-xl p-4 shadow-sm cursor-pointer transition-all duration-300",
+        "task-card relative rounded-xl p-4 shadow-sm cursor-pointer transition-all duration-300 glass-card",
         darkMode 
-          ? 'bg-gray-800/40 border border-gray-700/50 hover:bg-gray-700/50' 
-          : 'bg-white/80 border border-gray-200 hover:bg-white',
+          ? 'hover:bg-gray-800/50' 
+          : 'hover:bg-white',
         draggedTaskId === task.id ? 'opacity-50 scale-95' : 'opacity-100'
       )}
     >
@@ -60,7 +60,7 @@ const TaskCard = ({
             className="mt-1 flex-shrink-0"
           >
             {task.completed ? (
-              <CheckCircle size={18} className="text-green-500" />
+              <CheckCircle size={18} className="text-emerald-500" />
             ) : (
               <Square size={18} className={darkMode ? 'text-gray-600' : 'text-gray-300'} />
             )}
@@ -81,14 +81,14 @@ const TaskCard = ({
               </span>
               <span className={cn(
                 "text-xs px-2 py-0.5 rounded-full flex items-center",
-                darkMode ? 'bg-gray-800/70' : 'bg-gray-200/80'
+                darkMode ? 'bg-gray-800/70' : 'bg-gray-200/50'
               )}>
                 {getStatusIcon(task.status)}
                 {task.status}
               </span>
               <span className={cn(
                 "text-xs px-2 py-0.5 rounded-full flex items-center",
-                darkMode ? 'bg-gray-800/70' : 'bg-gray-200/80'
+                darkMode ? 'bg-gray-800/70' : 'bg-gray-200/50'
               )}>
                 <Calendar size={10} className="mr-1" />
                 {task.date}

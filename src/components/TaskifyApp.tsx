@@ -1,11 +1,9 @@
-
 import React, { useState } from 'react';
 import { Calendar, CheckCircle, ChevronDown, Clock, ListFilter, Moon, PlusCircle, Search, Square, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
 import { getPriorityColor, getStatusIcon } from '@/lib/taskUtils';
 import TaskCard from './TaskCard';
-import TaskDetails from './TaskDetails';
 
 const TaskifyApp = () => {
   const [activeTab, setActiveTab] = useState('tasks');
@@ -98,21 +96,20 @@ const TaskifyApp = () => {
   };
 
   return (
-    <div className={`flex flex-col min-h-screen ${darkMode ? 'bg-black text-white' : 'bg-gray-50 text-gray-900'}`}>
-      {/* Header */}
+    <div className={`flex flex-col min-h-screen ${darkMode ? 'dark bg-gray-950' : 'bg-gray-50'}`}>
       <header className={cn(
-        "p-4 backdrop-blur-md sticky top-0 z-10",
-        darkMode ? 'bg-black/40' : 'bg-white/60'
+        "p-4 backdrop-blur-xl sticky top-0 z-30",
+        darkMode ? 'bg-gray-950/80 border-b border-gray-800' : 'bg-white/80 border-b border-gray-200'
       )}>
-        <div className="flex justify-between items-center max-w-4xl mx-auto">
-          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-violet-500 bg-clip-text text-transparent">
-            Taskify
-          </h1>
+        <div className="flex justify-between items-center max-w-5xl mx-auto">
+          <h1 className="text-xl font-bold text-gradient">Taskify</h1>
           <button 
             onClick={toggleTheme} 
             className={cn(
               "p-2 rounded-full transition-all duration-300",
-              darkMode ? 'bg-gray-800 hover:bg-gray-700' : 'bg-gray-200 hover:bg-gray-300'
+              darkMode 
+                ? 'bg-gray-800 hover:bg-gray-700 text-gray-300' 
+                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
             )}
           >
             {darkMode ? <Sun size={18} /> : <Moon size={18} />}
@@ -120,30 +117,27 @@ const TaskifyApp = () => {
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="flex-grow p-6">
-        <div className="max-w-4xl mx-auto">
-          {/* Welcome section */}
+      <main className="flex-grow p-4 md:p-6">
+        <div className="max-w-5xl mx-auto">
           <div className="mb-8 text-center">
             <h2 className="text-3xl font-light mb-2">
-              Welcome to <span className="font-bold bg-gradient-to-r from-blue-400 to-violet-500 bg-clip-text text-transparent">Taskify</span>
+              Welcome to <span className="font-bold text-gradient">Taskify</span>
             </h2>
             <p className={cn("text-sm", darkMode ? 'text-gray-400' : 'text-gray-500')}>
-              Manage your tasks and notes in one place
+              Manage your tasks and notes efficiently
             </p>
           </div>
 
-          {/* Tabs */}
           <div className={cn(
-            "flex mb-6 rounded-2xl overflow-hidden backdrop-blur-sm border",
-            darkMode ? 'bg-gray-900/30 border-gray-800' : 'bg-white/50 border-gray-200'
+            "flex mb-6 rounded-2xl overflow-hidden glass-morphism",
+            darkMode ? 'bg-gray-900/30' : 'bg-white/70'
           )}>
             <button 
               onClick={() => setActiveTab('tasks')} 
               className={cn(
                 "flex-1 py-3 px-4 flex items-center justify-center transition-all duration-300",
                 activeTab === 'tasks' 
-                  ? (darkMode ? 'bg-gray-800/50 text-blue-400' : 'bg-white text-blue-500') 
+                  ? (darkMode ? 'bg-gray-800/50 text-primary' : 'bg-white text-primary') 
                   : ''
               )}
             >
@@ -154,7 +148,7 @@ const TaskifyApp = () => {
               className={cn(
                 "flex-1 py-3 px-4 flex items-center justify-center transition-all duration-300",
                 activeTab === 'notes' 
-                  ? (darkMode ? 'bg-gray-800/50 text-blue-400' : 'bg-white text-blue-500') 
+                  ? (darkMode ? 'bg-gray-800/50 text-primary' : 'bg-white text-primary') 
                   : ''
               )}
             >
@@ -162,17 +156,15 @@ const TaskifyApp = () => {
             </button>
           </div>
 
-          {/* Content based on active tab */}
           {activeTab === 'tasks' && (
             <div className={cn(
-              "rounded-2xl backdrop-blur-sm",
-              darkMode ? 'bg-gray-900/30 border border-gray-800' : 'bg-white/70 border border-gray-200'
+              "rounded-2xl glass-morphism overflow-hidden",
+              darkMode ? 'bg-gray-900/30' : 'bg-white/70'
             )}>
-              {/* Search and filters */}
               <div className="p-4 flex flex-wrap gap-2">
                 <div className={cn(
-                  "flex-grow flex items-center rounded-xl px-3 border",
-                  darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-100/70 border-gray-200'
+                  "flex-grow flex items-center rounded-xl px-3",
+                  darkMode ? 'bg-gray-800/50 border border-gray-700' : 'bg-gray-100/70 border border-gray-200'
                 )}>
                   <Search size={16} className={darkMode ? 'text-gray-400' : 'text-gray-500'} />
                   <input 
@@ -206,20 +198,18 @@ const TaskifyApp = () => {
                 </div>
               </div>
 
-              {/* Add task button */}
               <div className="px-4 pb-4">
                 <button className={cn(
-                  "w-full py-3 rounded-xl flex items-center justify-center text-sm transition-all duration-300 border",
+                  "w-full py-3 rounded-xl flex items-center justify-center text-sm transition-all duration-300",
                   darkMode 
-                    ? 'border-gray-700 bg-gradient-to-r from-blue-500/20 to-violet-500/20 hover:from-blue-500/30 hover:to-violet-500/30 text-blue-400' 
-                    : 'border-blue-200 bg-gradient-to-r from-blue-50 to-violet-50 hover:from-blue-100 hover:to-violet-100 text-blue-500'
+                    ? 'bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20' 
+                    : 'bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20'
                 )}>
                   <PlusCircle size={16} className="mr-2" />
                   Add New Task
                 </button>
               </div>
 
-              {/* Tasks list */}
               <div className="grid grid-cols-1 gap-4 p-4">
                 {tasks.map((task) => (
                   <TaskCard
@@ -240,8 +230,8 @@ const TaskifyApp = () => {
 
           {activeTab === 'notes' && (
             <div className={cn(
-              "p-6 rounded-2xl backdrop-blur-sm flex justify-center items-center",
-              darkMode ? 'bg-gray-900/30 border border-gray-800' : 'bg-white/70 border border-gray-200'
+              "p-6 rounded-2xl glass-morphism flex justify-center items-center",
+              darkMode ? 'bg-gray-900/30' : 'bg-white/70'
             )}>
               <p className="text-sm">Notes content would appear here</p>
             </div>
