@@ -1,8 +1,8 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
 import TaskFilters from './TaskFilters';
-import AddTaskButton from './AddTaskButton';
 import TaskCard from './TaskCard';
 import TaskCreationSheet from './TaskCreationSheet';
 import SmartTaskInput from './SmartTaskInput';
@@ -50,6 +50,10 @@ const TasksView = ({
     priority: string;
     dueDate: Date | null;
   }) => {
+    if (!task.title) {
+      setIsTaskSheetOpen(true);
+      return;
+    }
     onAddTask(task);
     setIsTaskSheetOpen(false);
   };
@@ -65,14 +69,10 @@ const TasksView = ({
 
       <div className="px-3 sm:px-4 pb-3 sm:pb-4">
         <SmartTaskInput 
-          onCreateTask={onAddTask}
+          onCreateTask={handleTaskSubmit}
           darkMode={darkMode}
         />
         
-        <AddTaskButton 
-          darkMode={darkMode} 
-          onClick={() => setIsTaskSheetOpen(true)} 
-        />
         {!isLoggedIn && (
           <div className="mt-2 text-center text-xs text-amber-500">
             Note: Tasks are stored locally. Login to save your tasks.
@@ -103,7 +103,7 @@ const TasksView = ({
           <div className="flex flex-col items-center justify-center h-40 text-center">
             <p className="text-muted-foreground mb-2">No active tasks found</p>
             <p className="text-sm text-muted-foreground">
-              Click "Add New Task" to create your first task
+              Use the text field above to create your first task
             </p>
           </div>
         )}
@@ -112,7 +112,10 @@ const TasksView = ({
       <TaskCreationSheet 
         isOpen={isTaskSheetOpen}
         onClose={() => setIsTaskSheetOpen(false)}
-        onSubmit={handleTaskSubmit}
+        onSubmit={(task) => {
+          onAddTask(task);
+          setIsTaskSheetOpen(false);
+        }}
       />
     </div>
   );
