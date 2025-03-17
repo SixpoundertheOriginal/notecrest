@@ -1,9 +1,15 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
 import { getStatusIcon } from '@/lib/taskUtils';
+
+interface SubTask {
+  id: string;
+  title: string;
+  completed: boolean;
+}
 
 interface TaskDetailsProps {
   task: TaskData;
@@ -11,6 +17,33 @@ interface TaskDetailsProps {
 }
 
 const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
+  const [subtasks, setSubtasks] = useState<SubTask[]>([]);
+  const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
+
+  const handleAddSubtask = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newSubtaskTitle.trim()) return;
+    
+    const newSubtask: SubTask = {
+      id: `subtask-${Date.now()}`,
+      title: newSubtaskTitle,
+      completed: false
+    };
+    
+    setSubtasks([...subtasks, newSubtask]);
+    setNewSubtaskTitle('');
+  };
+
+  const toggleSubtaskCompletion = (id: string) => {
+    setSubtasks(subtasks.map(subtask => 
+      subtask.id === id ? { ...subtask, completed: !subtask.completed } : subtask
+    ));
+  };
+
+  const deleteSubtask = (id: string) => {
+    setSubtasks(subtasks.filter(subtask => subtask.id !== id));
+  };
+
   return (
     <div 
       className={cn(
@@ -155,24 +188,65 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
             <label className={cn("block text-xs", darkMode ? 'text-gray-300' : 'text-gray-600')}>
               Subtasks
             </label>
-            <button className={cn(
-              darkMode ? 'text-blue-400' : 'text-blue-500',
-              "min-h-[44px] min-w-[44px] flex items-center justify-center"
-            )}>
+            <button 
+              onClick={handleAddSubtask}
+              className={cn(
+                darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-500 hover:text-blue-600',
+                "min-h-[44px] min-w-[44px] flex items-center justify-center"
+              )}
+            >
               + Add
             </button>
           </div>
+
+          {/* Display existing subtasks */}
+          {subtasks.length > 0 && (
+            <div className={cn(
+              "p-2 rounded-lg mb-2",
+              darkMode ? 'bg-gray-800/30' : 'bg-gray-100/50'
+            )}>
+              {subtasks.map(subtask => (
+                <div key={subtask.id} className="flex items-center justify-between mb-2 last:mb-0">
+                  <div className="flex items-center flex-1">
+                    <input 
+                      type="checkbox" 
+                      checked={subtask.completed}
+                      onChange={() => toggleSubtaskCompletion(subtask.id)}
+                      className="mr-2 h-4 w-4 rounded border-gray-300"
+                    />
+                    <span className={cn(
+                      "text-xs", 
+                      subtask.completed && "line-through opacity-70"
+                    )}>
+                      {subtask.title}
+                    </span>
+                  </div>
+                  <button 
+                    onClick={() => deleteSubtask(subtask.id)}
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
           
-          <input 
-            type="text" 
-            placeholder="Add a subtask..."
-            className={cn(
-              "w-full px-3 py-2 rounded-lg text-xs transition-all duration-200 min-h-[44px]",
-              darkMode 
-                ? 'bg-gray-800/50 border border-gray-700 focus:border-primary text-white placeholder-gray-600' 
-                : 'bg-white border border-gray-300 focus:border-primary placeholder-gray-400'
-            )}
-          />
+          {/* Subtask input form */}
+          <form onSubmit={handleAddSubtask}>
+            <input 
+              type="text" 
+              value={newSubtaskTitle}
+              onChange={(e) => setNewSubtaskTitle(e.target.value)}
+              placeholder="Add a subtask..."
+              className={cn(
+                "w-full px-3 py-2 rounded-lg text-xs transition-all duration-200 min-h-[44px]",
+                darkMode 
+                  ? 'bg-gray-800/50 border border-gray-700 focus:border-primary text-white placeholder-gray-600' 
+                  : 'bg-white border border-gray-300 focus:border-primary placeholder-gray-400'
+              )}
+            />
+          </form>
         </div>
 
         <div className="flex justify-end space-x-2 pt-2 border-t border-dashed">

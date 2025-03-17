@@ -1,4 +1,10 @@
 
+export interface SubTask {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
 export interface TaskData {
   id: number | string;
   title: string;
@@ -10,7 +16,8 @@ export interface TaskData {
   createdAt: Date;
   user_id?: string;
   project_id?: string | null;
-  description?: string; // Add description field
+  description?: string;
+  subtasks?: SubTask[];
 }
 
 export interface NewTaskData {
@@ -19,7 +26,8 @@ export interface NewTaskData {
   priority: string;
   status: string;
   date: string;
-  user_id: string; // Changed from optional to required
+  user_id: string;
   project_id?: string | null;
-  description?: string; // Add description field
+  description?: string;
+  subtasks?: SubTask[];
 }
