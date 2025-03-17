@@ -6,6 +6,7 @@ import TaskSearchBar from './TaskSearchBar';
 import TaskFilters from './TaskFilters';
 import AddTaskButton from './AddTaskButton';
 import TaskCard from './TaskCard';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface TasksViewProps {
   darkMode: boolean;
@@ -30,18 +31,23 @@ const TasksView = ({
   onToggleExpansion,
   onAddTask,
 }: TasksViewProps) => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="glass-morphism rounded-xl overflow-hidden">
-      <div className="p-4 flex flex-wrap gap-2">
+      <div className={cn(
+        "p-3 sm:p-4 flex", 
+        isMobile ? "flex-col space-y-2" : "flex-wrap gap-2"
+      )}>
         <TaskSearchBar darkMode={darkMode} />
         <TaskFilters darkMode={darkMode} />
       </div>
 
-      <div className="px-4 pb-4">
+      <div className="px-3 sm:px-4 pb-3 sm:pb-4">
         <AddTaskButton darkMode={darkMode} onClick={onAddTask} />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 p-4">
+      <div className="grid grid-cols-1 gap-3 sm:gap-4 p-3 sm:p-4">
         {tasks.map((task) => (
           <TaskCard
             key={task.id}

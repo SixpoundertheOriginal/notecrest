@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
 import { getPriorityColor, getStatusIcon } from '@/lib/taskUtils';
 import TaskDetails from './TaskDetails';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface TaskCardProps {
   task: TaskData;
@@ -28,6 +29,7 @@ const TaskCard = ({
   onToggleExpansion,
 }: TaskCardProps) => {
   const priorityColors = getPriorityColor(task.priority);
+  const isMobile = useIsMobile();
 
   return (
     <div 
@@ -37,7 +39,7 @@ const TaskCard = ({
       onDrop={(e) => onDrop(e, task.id)}
       onClick={() => onToggleExpansion(task.id)}
       className={cn(
-        "task-card relative rounded-xl p-4 shadow-sm cursor-pointer transition-all duration-300 glass-card",
+        "task-card relative rounded-xl p-3 sm:p-4 shadow-sm cursor-pointer transition-all duration-300 glass-card",
         darkMode 
           ? 'hover:bg-gray-800/50' 
           : 'hover:bg-white',
@@ -51,7 +53,7 @@ const TaskCard = ({
       )}
       
       <div className="flex justify-between items-start">
-        <div className="flex items-start space-x-3">
+        <div className="flex items-start space-x-2 sm:space-x-3">
           <button 
             onClick={(e) => {
               e.stopPropagation();
@@ -60,9 +62,9 @@ const TaskCard = ({
             className="mt-1 flex-shrink-0"
           >
             {task.completed ? (
-              <CheckCircle size={18} className="text-emerald-500" />
+              <CheckCircle size={isMobile ? 16 : 18} className="text-emerald-500" />
             ) : (
-              <Square size={18} className={darkMode ? 'text-gray-600' : 'text-gray-300'} />
+              <Square size={isMobile ? 16 : 18} className={darkMode ? 'text-gray-600' : 'text-gray-300'} />
             )}
           </button>
           
@@ -74,7 +76,7 @@ const TaskCard = ({
               {task.title}
             </h3>
             
-            <div className="flex flex-wrap mt-2 gap-2">
+            <div className="flex flex-wrap mt-1.5 sm:mt-2 gap-1.5 sm:gap-2">
               <span className={`text-xs px-2 py-0.5 rounded-full bg-gradient-to-r ${priorityColors.bg} text-white flex items-center`}>
                 {priorityColors.icon}
                 {task.priority}
@@ -97,16 +99,16 @@ const TaskCard = ({
           </div>
         </div>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 sm:space-x-2">
           <span className={cn(
-            "text-xs",
+            "text-xs hidden sm:inline",
             darkMode ? 'text-gray-500' : 'text-gray-400'
           )}>
             <Clock size={10} className="inline mr-1" />
             42 min ago
           </span>
           <ChevronDown 
-            size={16} 
+            size={isMobile ? 14 : 16} 
             className={cn(
               "transform transition-transform duration-300",
               task.expanded ? 'rotate-180' : ''
