@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
@@ -86,7 +87,10 @@ const TasksView = ({
       </div>
 
       <div className="border-t border-white/5">
-        <div className="grid grid-cols-1 gap-2 p-3 min-h-[180px] max-h-[60vh] overflow-y-auto">
+        <div className={cn(
+          "grid grid-cols-1 gap-2 p-3 min-h-[180px] overflow-y-auto",
+          isMobile ? "max-h-[calc(100vh-280px)]" : "max-h-[60vh]"
+        )}>
           {isLoading ? (
             <div className="flex items-center justify-center h-32">
               <Loader2 className="h-5 w-5 animate-spin text-primary/70" />

@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { parseTaskText, formatDate, formatTime } from '@/lib/nlp-parser';
 import { cn } from '@/lib/utils';
+import { useIsMobileValue } from '@/hooks/use-mobile';
 
 interface SmartTaskInputProps {
   onCreateTask: (task: {
@@ -27,6 +28,7 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
   
   const inputRef = useRef<HTMLInputElement>(null);
   const processingTimeout = useRef<NodeJS.Timeout>();
+  const isMobile = useIsMobileValue();
   
   // Focus input on component mount
   useEffect(() => {
@@ -99,28 +101,30 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
             type="text"
             value={inputValue}
             onChange={handleInputChange}
-            placeholder="Add task... (e.g., 'Call John tomorrow', 'High priority: finish report')"
+            placeholder={isMobile ? "Add task..." : "Add task... (e.g., 'Call John tomorrow', 'High priority: finish report')"}
             className="py-5 pl-3 pr-20 text-sm rounded-lg shadow-sm bg-background/50 border-input/50"
             autoComplete="off"
           />
           
-          {/* Subtle indicators for parsed information */}
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-            {parsedInfo.dueDate && (
+          <div className={cn(
+            "absolute right-2 top-1/2 -translate-y-1/2 flex items-center",
+            isMobile ? "gap-0.5" : "gap-1"
+          )}>
+            {parsedInfo.dueDate && !isMobile && (
               <span className="inline-flex items-center bg-primary/10 text-primary px-1.5 py-0.5 rounded text-xs">
                 <Calendar size={10} className="mr-1" />
                 {formatDate(parsedInfo.dueDate)}
               </span>
             )}
             
-            {parsedInfo.reminderTime && (
+            {parsedInfo.reminderTime && !isMobile && (
               <span className="inline-flex items-center bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded text-xs">
                 <Clock size={10} className="mr-1" />
                 {formatTime(parsedInfo.reminderTime)}
               </span>
             )}
             
-            {parsedInfo.priority && (
+            {parsedInfo.priority && !isMobile && (
               <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs ${
                 parsedInfo.priority === 'High' ? 'bg-red-500/10 text-red-400' : 
                 parsedInfo.priority === 'Medium' ? 'bg-yellow-500/10 text-yellow-400' : 
@@ -134,7 +138,10 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
             <Button 
               type="submit" 
               size="sm"
-              className="h-7 px-2 text-xs ml-1 bg-primary/80 hover:bg-primary"
+              className={cn(
+                "h-7 text-xs ml-1 bg-primary/80 hover:bg-primary",
+                isMobile ? "px-3 min-w-[60px]" : "px-2"
+              )}
               aria-label="Add task"
             >
               {inputValue.trim() ? "Add" : "Details"}
