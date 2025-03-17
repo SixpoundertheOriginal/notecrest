@@ -35,8 +35,7 @@ export const useProjects = (user: any) => {
         const { data, error } = await supabase
           .from('projects')
           .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
+          .eq('user_id', user.id);
 
         if (error) {
           throw error;
@@ -106,15 +105,14 @@ export const useProjects = (user: any) => {
           color: projectData.color,
           user_id: user.id,
         })
-        .select()
-        .single();
+        .select();
 
       if (error) {
         throw error;
       }
 
       if (data) {
-        const newProject = { ...data, task_count: 0 };
+        const newProject = { ...data[0], task_count: 0 };
         setProjects([...projects, newProject]);
         
         toast({

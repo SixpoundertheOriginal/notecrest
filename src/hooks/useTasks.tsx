@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { TaskData, NewTaskData } from '@/types/task';
 import { supabase } from '@/integrations/supabase/client';
@@ -156,25 +155,24 @@ export const useTasks = (user: any) => {
         const { data, error } = await supabase
           .from('tasks')
           .insert(newTask)
-          .select()
-          .single();
+          .select();
 
         if (error) {
           throw error;
         }
 
-        if (data) {
+        if (data && data.length > 0) {
           const formattedTask: TaskData = {
-            id: data.id,
-            title: data.title,
-            completed: data.completed,
-            priority: data.priority as 'High' | 'Medium' | 'Low',
-            status: data.status as 'Todo' | 'In Progress' | 'Completed',
-            date: data.date,
+            id: data[0].id,
+            title: data[0].title,
+            completed: data[0].completed,
+            priority: data[0].priority as 'High' | 'Medium' | 'Low',
+            status: data[0].status as 'Todo' | 'In Progress' | 'Completed',
+            date: data[0].date,
             expanded: false,
-            createdAt: new Date(data.created_at),
-            user_id: data.user_id,
-            project_id: data.project_id || null
+            createdAt: new Date(data[0].created_at),
+            user_id: data[0].user_id,
+            project_id: data[0].project_id || null
           };
           
           setTasks([formattedTask, ...tasks]);
@@ -297,3 +295,4 @@ export const useTasks = (user: any) => {
     clearCompletedTasks
   };
 };
+

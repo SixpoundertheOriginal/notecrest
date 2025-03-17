@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      projects: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          color: string
+          created_at?: string
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           completed: boolean
@@ -16,6 +40,7 @@ export type Database = {
           date: string
           id: string
           priority: string
+          project_id: string | null
           status: string
           title: string
           user_id: string
@@ -26,6 +51,7 @@ export type Database = {
           date: string
           id?: string
           priority: string
+          project_id?: string | null
           status: string
           title: string
           user_id: string
@@ -36,11 +62,20 @@ export type Database = {
           date?: string
           id?: string
           priority?: string
+          project_id?: string | null
           status?: string
           title?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tasks_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
