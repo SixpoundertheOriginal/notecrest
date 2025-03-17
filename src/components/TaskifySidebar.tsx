@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
@@ -213,27 +214,34 @@ const SearchDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <div className="w-full cursor-pointer">
-          <Search size={18} />
+        <div className="w-full flex items-center gap-3 p-2 rounded-md hover:bg-accent transition-colors cursor-pointer">
+          <Search size={18} className="text-blue-400" />
           <span>Search</span>
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Search Tasks</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Search Tasks</DialogTitle>
         </DialogHeader>
         <div className="flex items-center space-x-2 py-4">
-          <div className="grid flex-1 gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search for tasks..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleKeyDown}
+              className="pl-10"
               autoFocus
             />
           </div>
-          <Button type="button" onClick={handleSearch}>
-            <Search className="h-4 w-4" />
+          <Button 
+            type="button" 
+            onClick={handleSearch}
+            className="bg-blue-500 hover:bg-blue-600"
+          >
+            <Search className="h-4 w-4 mr-2" />
+            Search
           </Button>
         </div>
         
@@ -243,7 +251,7 @@ const SearchDialog = () => {
               {searchResults.map((task) => (
                 <div 
                   key={task.id} 
-                  className="rounded-md border p-3 hover:bg-accent cursor-pointer"
+                  className="rounded-md border p-3 hover:bg-accent cursor-pointer transition-colors"
                   onClick={() => {
                     console.log("Selected task:", task);
                     setIsOpen(false);
@@ -396,7 +404,7 @@ const TaskifySidebar = ({
               {navItems.map((item, index) => (
                 <SidebarMenuItem key={item.label}>
                   {item.component ? (
-                    <SidebarMenuButton>
+                    <SidebarMenuButton className="px-2 py-2">
                       {item.component}
                     </SidebarMenuButton>
                   ) : (
@@ -497,8 +505,8 @@ const TaskifySidebar = ({
       
       <SidebarFooter className="border-t border-white/5">
         <div className="p-2">
-          <Button variant="ghost" className="w-full justify-start px-2 text-muted-foreground">
-            <Search size={16} className="mr-2" />
+          <Button variant="ghost" className="w-full justify-start px-2 bg-blue-500/10 hover:bg-blue-500/20 transition-colors">
+            <Search size={16} className="mr-2 text-blue-400" />
             <span className="text-xs">Quick search...</span>
             <span className="ml-auto opacity-60 text-xs">⌘K</span>
           </Button>
