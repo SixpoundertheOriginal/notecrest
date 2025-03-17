@@ -11,8 +11,8 @@ interface WelcomeHeaderProps {
 
 const WelcomeHeader = ({ username, isLoggedIn, onOpenAuth }: WelcomeHeaderProps) => {
   return (
-    <div className="mb-8 text-center">
-      <h2 className="text-3xl font-light mb-2">
+    <div className="mb-8 text-center pt-4 md:pt-0">
+      <h2 className="text-2xl md:text-3xl font-light mb-2">
         Welcome to <span className="font-bold text-gradient">Taskify</span>
       </h2>
       <p className="text-sm text-white mb-4">

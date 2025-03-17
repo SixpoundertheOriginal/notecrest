@@ -106,9 +106,10 @@ const TaskifySidebar = ({
       variant="ghost"
       size="icon"
       onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-      className="md:hidden fixed top-4 left-4 z-50 bg-background/50 backdrop-blur-sm"
+      className="md:hidden fixed z-50 top-3.5 left-3.5 bg-background/50 backdrop-blur-sm"
+      aria-label="Toggle mobile menu"
     >
-      {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+      {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
     </Button>
   );
 

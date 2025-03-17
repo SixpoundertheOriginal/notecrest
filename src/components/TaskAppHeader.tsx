@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MoonIcon, SunIcon, Search, LogIn } from 'lucide-react';
+import { MoonIcon, SunIcon, LogIn } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import AuthSection from './app/AuthSection';
 import { useAuth } from '@/hooks/useAuth';
@@ -18,7 +18,9 @@ const TaskAppHeader = ({ darkMode, toggleTheme, pageTitle, isLoggedIn, onOpenAut
   
   return (
     <header className="px-4 py-3 flex items-center justify-between border-b border-white/5">
-      <h1 className="text-lg font-medium">{pageTitle}</h1>
+      <div className="flex items-center">
+        <h1 className="text-lg font-medium ml-2 md:ml-0">{pageTitle}</h1>
+      </div>
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"

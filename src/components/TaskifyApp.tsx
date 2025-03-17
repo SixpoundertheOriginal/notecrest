@@ -77,36 +77,40 @@ const TaskifyApp = () => {
         onAddTask={addTask}
       />
       <SidebarInset>
-        <TaskAppHeader 
-          darkMode={darkMode} 
-          toggleTheme={toggleTheme} 
-          pageTitle={getPageTitle()}
-          isLoggedIn={isLoggedIn}
-          onOpenAuth={() => setIsAuthModalOpen(true)}
-        />
-
-        <div className="flex-grow p-4 md:p-6">
-          <div className="max-w-5xl mx-auto">
-            <WelcomeHeader 
-              username={username} 
-              isLoggedIn={isLoggedIn} 
+        <div className="flex flex-col min-h-screen">
+          <div className="pt-10 md:pt-0">
+            <TaskAppHeader 
+              darkMode={darkMode} 
+              toggleTheme={toggleTheme} 
+              pageTitle={getPageTitle()}
+              isLoggedIn={isLoggedIn}
               onOpenAuth={() => setIsAuthModalOpen(true)}
             />
-            <TaskContent
-              activeTab={activeTab}
-              darkMode={darkMode}
-              tasks={filteredTasks}
-              isLoadingTasks={isLoadingTasks}
-              draggedTaskId={draggedTaskId}
-              isLoggedIn={isLoggedIn}
-              onDragStart={handleDragStart}
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
-              onToggleCompletion={toggleTaskCompletion}
-              onToggleExpansion={toggleTaskExpansion}
-              onAddTask={addTask}
-              onClearCompletedTasks={clearCompletedTasks}
-            />
+          </div>
+
+          <div className="flex-grow p-4 md:p-6">
+            <div className="max-w-5xl mx-auto">
+              <WelcomeHeader 
+                username={username} 
+                isLoggedIn={isLoggedIn} 
+                onOpenAuth={() => setIsAuthModalOpen(true)}
+              />
+              <TaskContent
+                activeTab={activeTab}
+                darkMode={darkMode}
+                tasks={filteredTasks}
+                isLoadingTasks={isLoadingTasks}
+                draggedTaskId={draggedTaskId}
+                isLoggedIn={isLoggedIn}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                onToggleCompletion={toggleTaskCompletion}
+                onToggleExpansion={toggleTaskExpansion}
+                onAddTask={addTask}
+                onClearCompletedTasks={clearCompletedTasks}
+              />
+            </div>
           </div>
         </div>
       </SidebarInset>
