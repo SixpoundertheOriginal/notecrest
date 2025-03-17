@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   PlusCircle, Search, Inbox, CalendarCheck, 
   CalendarDays, CheckSquare, Hash, User, 
-  Plus, Trash2, Settings, MoreHorizontal 
+  Plus, Trash2, Settings, MoreHorizontal, Menu, X 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -21,6 +20,8 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarSeparator,
+  SidebarTrigger,
+  useSidebar
 } from "@/components/ui/sidebar";
 import { Button } from './ui/button';
 import AuthSection from './app/AuthSection';
@@ -41,6 +42,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 
 interface SidebarNavItemProps {
   icon: React.ElementType;
@@ -196,9 +199,10 @@ const TaskifySidebar = ({
   createProject
 }: TaskifySidebarProps) => {
   const { user } = useAuth();
+  const { isMobile } = useIsMobile();
   const username = user?.email ? user.email.split('@')[0] : 'User';
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
-  // Navigation items setup
   const navItems = [
     { 
       icon: PlusCircle, 
@@ -255,10 +259,24 @@ const TaskifySidebar = ({
   const handleProjectClick = (projectId: string) => {
     setActiveProjectId(projectId);
     setActiveTab('tasks'); // Reset to tasks view when clicking on a project
+    if (isMobile) {
+      setMobileMenuOpen(false);
+    }
   };
 
-  return (
-    <Sidebar className="border-r border-white/5">
+  const MobileMenuToggle = () => (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+      className="md:hidden fixed top-4 left-4 z-50 bg-background/50 backdrop-blur-sm"
+    >
+      {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+    </Button>
+  );
+
+  const SidebarContents = () => (
+    <>
       <SidebarHeader className="px-3 py-2">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -277,7 +295,18 @@ const TaskifySidebar = ({
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item, index) => (
-                <SidebarNavItem key={item.label} {...item} />
+                <SidebarNavItem 
+                  key={item.label} 
+                  {...item} 
+                  action={() => {
+                    if (item.action) {
+                      item.action();
+                      if (isMobile) {
+                        setMobileMenuOpen(false);
+                      }
+                    }
+                  }}
+                />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -369,7 +398,27 @@ const TaskifySidebar = ({
           </Button>
         </div>
       </SidebarFooter>
-    </Sidebar>
+    </>
+  );
+
+  return (
+    <>
+      <MobileMenuToggle />
+      
+      <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+        <SheetContent side="left" className="p-0 w-[80%] max-w-[300px] border-r border-white/5">
+          <div className="h-full bg-sidebar">
+            <SidebarContents />
+          </div>
+        </SheetContent>
+      </Sheet>
+      
+      <div className="hidden md:block">
+        <Sidebar className="border-r border-white/5">
+          <SidebarContents />
+        </Sidebar>
+      </div>
+    </>
   );
 };
 
