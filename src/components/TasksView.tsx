@@ -16,6 +16,7 @@ interface TasksViewProps {
   onDrop: (e: React.DragEvent, id: number) => void;
   onToggleCompletion: (id: number) => void;
   onToggleExpansion: (id: number) => void;
+  onAddTask: () => void;
 }
 
 const TasksView = ({
@@ -27,6 +28,7 @@ const TasksView = ({
   onDrop,
   onToggleCompletion,
   onToggleExpansion,
+  onAddTask,
 }: TasksViewProps) => {
   return (
     <div className={cn(
@@ -39,7 +41,7 @@ const TasksView = ({
       </div>
 
       <div className="px-4 pb-4">
-        <AddTaskButton darkMode={darkMode} />
+        <AddTaskButton darkMode={darkMode} onClick={onAddTask} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 p-4">

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { TaskData } from '@/types/task';
 import { cn } from '@/lib/utils';
@@ -6,10 +5,12 @@ import TaskAppHeader from './TaskAppHeader';
 import TaskAppTabs from './TaskAppTabs';
 import TasksView from './TasksView';
 import NotesView from './NotesView';
+import { useToast } from '@/components/ui/use-toast';
 
 const TaskifyApp = () => {
   const [activeTab, setActiveTab] = useState('tasks');
-  const [darkMode, setDarkMode] = useState(true); // Set default to true for dark mode
+  const [darkMode, setDarkMode] = useState(true);
+  const { toast } = useToast();
   const [tasks, setTasks] = useState<TaskData[]>([
     { 
       id: 1, 
@@ -70,6 +71,27 @@ const TaskifyApp = () => {
     ));
   };
 
+  const addTask = () => {
+    const newId = Math.max(0, ...tasks.map(task => task.id)) + 1;
+    
+    const newTask: TaskData = {
+      id: newId,
+      title: 'New task',
+      completed: false,
+      priority: 'Medium',
+      status: 'Todo',
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      expanded: false
+    };
+    
+    setTasks([newTask, ...tasks]);
+    
+    toast({
+      title: "New task created",
+      description: "Your task has been added to the list.",
+    });
+  };
+
   const handleDragStart = (e: React.DragEvent, id: number) => {
     setDraggedTaskId(id);
     const element = e.currentTarget;
@@ -124,6 +146,7 @@ const TaskifyApp = () => {
               onDrop={handleDrop}
               onToggleCompletion={toggleTaskCompletion}
               onToggleExpansion={toggleTaskExpansion}
+              onAddTask={addTask}
             />
           )}
 
