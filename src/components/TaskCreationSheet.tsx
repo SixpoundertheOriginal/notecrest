@@ -12,6 +12,7 @@ import {
   SheetTitle,
   SheetFooter,
 } from '@/components/ui/sheet';
+import { useToast } from '@/components/ui/use-toast';
 import PrioritySelector from './PrioritySelector';
 import QuickDateButtons from './QuickDateButtons';
 import DatePicker from './DatePicker';
@@ -36,6 +37,7 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
   const [isExpanded, setIsExpanded] = useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const nlpTimeout = useRef<NodeJS.Timeout>();
+  const { toast } = useToast();
 
   // Focus title input when sheet opens
   useEffect(() => {
@@ -126,6 +128,11 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
     setIsExpanded(false);
   };
 
+  const handleCancel = () => {
+    resetForm();
+    onClose(false);
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent side="bottom" className="h-auto max-h-[90vh] rounded-t-xl">
@@ -186,7 +193,7 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
           </div>
           
           <SheetFooter>
-            <Button type="button" variant="ghost" onClick={() => onClose(false)}>Cancel</Button>
+            <Button type="button" variant="ghost" onClick={handleCancel}>Cancel</Button>
             <Button type="submit" disabled={!title.trim()}>Create Task</Button>
           </SheetFooter>
         </form>
