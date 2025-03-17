@@ -86,6 +86,7 @@ const TaskifyApp = () => {
               isLoggedIn={isLoggedIn}
               onOpenAuth={() => setIsAuthModalOpen(true)}
               onAddTask={addTask}
+              showLoginButton={false} // Don't show login button in header
             />
           </div>
 

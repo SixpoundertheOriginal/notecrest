@@ -19,6 +19,7 @@ interface TaskAppHeaderProps {
     priority: string;
     dueDate: Date | null;
   }) => void;
+  showLoginButton?: boolean;
 }
 
 const TaskAppHeader = ({ 
@@ -27,7 +28,8 @@ const TaskAppHeader = ({
   pageTitle, 
   isLoggedIn, 
   onOpenAuth,
-  onAddTask
+  onAddTask,
+  showLoginButton = true
 }: TaskAppHeaderProps) => {
   const { user, loading } = useAuth();
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
@@ -74,7 +76,8 @@ const TaskAppHeader = ({
           )}
         </Button>
 
-        {onOpenAuth && !isLoggedIn && (
+        {/* Only show the login button in the header if showLoginButton is true */}
+        {showLoginButton && onOpenAuth && !isLoggedIn && (
           <Button 
             variant="outline" 
             size="sm" 
