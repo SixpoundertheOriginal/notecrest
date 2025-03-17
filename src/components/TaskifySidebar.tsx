@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
@@ -35,6 +34,7 @@ import {
   DialogTrigger,
   DialogFooter,
   DialogClose,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from './ui/input';
 import {
@@ -186,7 +186,8 @@ const ProjectDialog = ({ onCreateProject }: { onCreateProject: (data: { name: st
 const SearchDialog = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const { tasks } = useTasks(null);
+  const { user } = useAuth();
+  const { tasks } = useTasks(user);
   const [searchResults, setSearchResults] = useState<TaskData[]>([]);
   const { isMobile } = useIsMobile();
 
@@ -199,7 +200,7 @@ const SearchDialog = () => {
     const query = searchQuery.toLowerCase();
     const filtered = tasks.filter(task => 
       task.title.toLowerCase().includes(query) || 
-      (task.description && task.description?.toLowerCase().includes(query))
+      (task.description && task.description.toLowerCase().includes(query))
     );
     
     setSearchResults(filtered);
@@ -222,6 +223,9 @@ const SearchDialog = () => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">Search Tasks</DialogTitle>
+          <DialogDescription>
+            Search through your tasks by title or description
+          </DialogDescription>
         </DialogHeader>
         <div className="flex items-center space-x-2 py-4">
           <div className="relative flex-1">
