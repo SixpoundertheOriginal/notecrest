@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { TaskData } from '@/types/task';
+import { TaskData, SubTask } from '@/types/task';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -53,19 +53,49 @@ export const useTaskFetching = (user: any) => {
         }
 
         if (data) {
-          const formattedTasks = data.map(task => ({
-            id: task.id,
-            title: task.title,
-            completed: task.completed,
-            priority: task.priority as 'High' | 'Medium' | 'Low',
-            status: task.status as 'Todo' | 'In Progress' | 'Completed',
-            date: task.date,
-            expanded: false,
-            createdAt: new Date(task.created_at),
-            user_id: task.user_id,
-            project_id: task.project_id || null,
-            subtasks: task.subtasks || []
-          }));
+          const formattedTasks: TaskData[] = data.map(task => {
+            // Parse subtasks - ensure it's properly typed as SubTask[]
+            let parsedSubtasks: SubTask[] = [];
+            if (task.subtasks) {
+              // If it's already an array, map through it to ensure correct shape
+              if (Array.isArray(task.subtasks)) {
+                parsedSubtasks = task.subtasks.map((st: any) => ({
+                  id: st.id || `subtask-${Math.random().toString(36).substr(2, 9)}`,
+                  title: st.title || '',
+                  completed: Boolean(st.completed)
+                }));
+              } else if (typeof task.subtasks === 'string') {
+                // If it's a string, try to parse it
+                try {
+                  const parsed = JSON.parse(task.subtasks);
+                  if (Array.isArray(parsed)) {
+                    parsedSubtasks = parsed.map((st: any) => ({
+                      id: st.id || `subtask-${Math.random().toString(36).substr(2, 9)}`,
+                      title: st.title || '',
+                      completed: Boolean(st.completed)
+                    }));
+                  }
+                } catch (e) {
+                  console.error("Failed to parse subtasks string", e);
+                }
+              }
+            }
+
+            return {
+              id: task.id,
+              title: task.title,
+              completed: task.completed,
+              priority: task.priority as 'High' | 'Medium' | 'Low',
+              status: task.status as 'Todo' | 'In Progress' | 'Completed',
+              date: task.date,
+              expanded: false,
+              createdAt: new Date(task.created_at),
+              user_id: task.user_id,
+              project_id: task.project_id || null,
+              subtasks: parsedSubtasks
+            };
+          });
+          
           setTasks(formattedTasks);
         }
       } catch (error: any) {
