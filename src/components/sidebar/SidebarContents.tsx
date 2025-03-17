@@ -61,6 +61,16 @@ const SidebarContents = ({
     project.name.toLowerCase() === 'main'
   );
 
+  const handleTaskSubmit = (task: {
+    title: string;
+    description: string;
+    priority: string;
+    dueDate: Date | null;
+  }) => {
+    console.log('SidebarContents: Task submitted', task);
+    onAddTask(task);
+  };
+
   return (
     <>
       <SidebarHeader className="px-3 py-2">
@@ -180,14 +190,11 @@ const SidebarContents = ({
         </div>
       </SidebarFooter>
       
-      {/* Task Creation Sheet */}
+      {/* Task Creation Sheet - Now we're using the props properly */}
       <TaskCreationSheet 
         isOpen={isTaskSheetOpen}
-        onClose={() => setIsTaskSheetOpen(false)}
-        onSubmit={(task) => {
-          onAddTask(task);
-          setIsTaskSheetOpen(false);
-        }}
+        onClose={setIsTaskSheetOpen}
+        onSubmit={handleTaskSubmit}
       />
     </>
   );

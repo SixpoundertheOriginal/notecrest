@@ -42,10 +42,33 @@ const TaskifySidebar = ({
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   
   const handleOpenTaskCreation = () => {
-    setIsTaskSheetOpen(true);
+    console.log('TaskifySidebar: Request to open task creation sheet');
+    // On mobile, first close the menu then set a timeout to open the sheet
     if (isMobile) {
       setMobileMenuOpen(false);
+      // Add a small delay before opening the sheet to ensure menu is closed first
+      setTimeout(() => {
+        setIsTaskSheetOpen(true);
+      }, 50);
+    } else {
+      setIsTaskSheetOpen(true);
     }
+  };
+
+  const handleTaskSubmit = (task: {
+    title: string;
+    description: string;
+    priority: string;
+    dueDate: Date | null;
+  }) => {
+    console.log('TaskifySidebar: Task submitted', task);
+    onAddTask(task);
+    setIsTaskSheetOpen(false);
+  };
+  
+  const handleSheetClose = (open: boolean) => {
+    console.log('TaskifySidebar: Setting sheet open state to:', open);
+    setIsTaskSheetOpen(open);
   };
   
   const navItems = [
@@ -129,8 +152,8 @@ const TaskifySidebar = ({
               handleProjectClick={handleProjectClick}
               createProject={createProject}
               isTaskSheetOpen={isTaskSheetOpen}
-              setIsTaskSheetOpen={setIsTaskSheetOpen}
-              onAddTask={onAddTask}
+              setIsTaskSheetOpen={handleSheetClose}
+              onAddTask={handleTaskSubmit}
             />
           </div>
         </SheetContent>
@@ -147,8 +170,8 @@ const TaskifySidebar = ({
             handleProjectClick={handleProjectClick}
             createProject={createProject}
             isTaskSheetOpen={isTaskSheetOpen}
-            setIsTaskSheetOpen={setIsTaskSheetOpen}
-            onAddTask={onAddTask}
+            setIsTaskSheetOpen={handleSheetClose}
+            onAddTask={handleTaskSubmit}
           />
         </Sidebar>
       </div>

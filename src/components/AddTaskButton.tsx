@@ -22,7 +22,8 @@ const AddTaskButton = ({ darkMode, onAddTask, className }: AddTaskButtonProps) =
   const [isPressed, setIsPressed] = useState(false);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent event bubbling
     console.log('AddTaskButton: Opening task creation sheet');
     setIsTaskSheetOpen(true);
   };
