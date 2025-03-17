@@ -63,11 +63,18 @@ const AddTaskButton = ({ darkMode, onAddTask, className }: AddTaskButtonProps) =
         onTouchStart={() => setIsPressed(true)}
         onTouchEnd={() => setIsPressed(false)}
       >
-        {/* Add subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+        {/* Star-like gradient effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/30 via-indigo-400/20 to-purple-500/30 opacity-0 group-hover:opacity-100 transition-opacity" />
         
-        {/* Add subtle inner shadow for depth */}
-        <div className="absolute inset-0 shadow-inner shadow-blue-300/10" />
+        {/* Radial shine effect on hover */}
+        <div className="absolute inset-0 bg-radial-gradient from-white/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        
+        {/* Subtle inner glow */}
+        <div className="absolute inset-0 shadow-inner shadow-blue-300/20" />
+        
+        {/* Subtle star-like shine in corners */}
+        <div className="absolute -top-1 -right-1 w-2 h-2 bg-white/40 rounded-full opacity-0 group-hover:opacity-80 transition-opacity" />
+        <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-white/30 rounded-full opacity-0 group-hover:opacity-70 transition-opacity" />
         
         <Plus size={isMobile ? 16 : 18} className="mr-1" />
         <span className="whitespace-nowrap">{isMobile ? "New Task" : "Create Task"}</span>
