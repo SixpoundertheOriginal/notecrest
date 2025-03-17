@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
+import TaskCreationSheet from './TaskCreationSheet';
 
 interface SidebarNavItemProps {
   icon: React.ElementType;
@@ -187,6 +188,12 @@ interface TaskifySidebarProps {
   activeProjectId: string | null;
   setActiveProjectId: (id: string | null) => void;
   createProject: (data: { name: string, color: string }) => void;
+  onAddTask: (task: {
+    title: string;
+    description: string;
+    priority: string;
+    dueDate: Date | null;
+  }) => void;
 }
 
 const TaskifySidebar = ({ 
@@ -196,24 +203,27 @@ const TaskifySidebar = ({
   isLoadingProjects,
   activeProjectId,
   setActiveProjectId,
-  createProject
+  createProject,
+  onAddTask
 }: TaskifySidebarProps) => {
   const { user } = useAuth();
   const { isMobile } = useIsMobile();
   const username = user?.email ? user.email.split('@')[0] : 'User';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
+  
+  const handleOpenTaskCreation = () => {
+    setIsTaskSheetOpen(true);
+    if (isMobile) {
+      setMobileMenuOpen(false);
+    }
+  };
   
   const navItems = [
     { 
       icon: PlusCircle, 
-      label: "Add task", 
-      action: () => {
-        const taskInput = document.querySelector('input[placeholder*="Add task"]') as HTMLInputElement;
-        if (taskInput) {
-          taskInput.focus();
-        }
-        document.querySelector('form')?.dispatchEvent(new Event('submit'));
-      },
+      label: "Create Detailed Task", 
+      action: () => handleOpenTaskCreation(),
       highlight: true
     },
     { 
@@ -404,6 +414,16 @@ const TaskifySidebar = ({
           </Button>
         </div>
       </SidebarFooter>
+      
+      {/* Task Creation Sheet */}
+      <TaskCreationSheet 
+        isOpen={isTaskSheetOpen}
+        onClose={() => setIsTaskSheetOpen(false)}
+        onSubmit={(task) => {
+          onAddTask(task);
+          setIsTaskSheetOpen(false);
+        }}
+      />
     </>
   );
 
@@ -429,4 +449,3 @@ const TaskifySidebar = ({
 };
 
 export default TaskifySidebar;
-

@@ -72,6 +72,7 @@ const TaskifyApp = () => {
         activeProjectId={activeProjectId}
         setActiveProjectId={setActiveProjectId}
         createProject={createProject}
+        onAddTask={addTask}
       />
       <SidebarInset>
         <TaskAppHeader 

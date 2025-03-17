@@ -14,9 +14,10 @@ interface AddTaskButtonProps {
     priority: string;
     dueDate: Date | null;
   }) => void;
+  className?: string;
 }
 
-const AddTaskButton = ({ darkMode, onAddTask }: AddTaskButtonProps) => {
+const AddTaskButton = ({ darkMode, onAddTask, className }: AddTaskButtonProps) => {
   const isMobile = useIsMobileValue();
   const [isPressed, setIsPressed] = useState(false);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
@@ -31,7 +32,8 @@ const AddTaskButton = ({ darkMode, onAddTask }: AddTaskButtonProps) => {
         onClick={handleClick}
         className={cn(
           "w-full bg-blue-500/90 hover:bg-blue-600/90 text-white py-2.5 sm:py-3 rounded-lg transition-all duration-200 group relative overflow-hidden",
-          isPressed ? 'scale-[0.98]' : ''
+          isPressed ? 'scale-[0.98]' : '',
+          className
         )}
         onMouseDown={() => setIsPressed(true)}
         onMouseUp={() => setIsPressed(false)}

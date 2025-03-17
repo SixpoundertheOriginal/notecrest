@@ -5,7 +5,6 @@ import { TaskData } from '@/types/task';
 import TaskFilters from './TaskFilters';
 import TaskCard from './TaskCard';
 import SmartTaskInput from './SmartTaskInput';
-import AddTaskButton from './AddTaskButton';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Loader2 } from 'lucide-react';
 
@@ -52,12 +51,6 @@ const TasksView = ({
         <SmartTaskInput 
           onCreateTask={onAddTask}
           darkMode={darkMode}
-        />
-        
-        {/* Detailed Task Button */}
-        <AddTaskButton 
-          darkMode={darkMode}
-          onAddTask={onAddTask}
         />
         
         {!isLoggedIn && (
