@@ -30,3 +30,10 @@ export function useIsMobile() {
     isInitialized
   }
 }
+
+// Add a simpler version that just returns the boolean for components 
+// that don't need the initialization status
+export function useIsMobileValue() {
+  const { isMobile } = useIsMobile()
+  return isMobile
+}
