@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Calendar, Clock, Flag, Plus } from 'lucide-react';
+import { Calendar, Clock, Flag } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { parseTaskText, formatDate, formatTime } from '@/lib/nlp-parser';
@@ -65,14 +65,7 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // If input is empty, open the detailed task creation sheet
     if (!inputValue.trim()) {
-      onCreateTask({
-        title: '',
-        description: '',
-        priority: 'Medium',
-        dueDate: null
-      });
       return;
     }
     
@@ -101,7 +94,7 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
             type="text"
             value={inputValue}
             onChange={handleInputChange}
-            placeholder={isMobile ? "Add task..." : "Add task... (e.g., 'Call John tomorrow', 'High priority: finish report')"}
+            placeholder={isMobile ? "Quick add with NLP..." : "Quick add with NLP... (e.g., 'Call John tomorrow', 'High priority: finish report')"}
             className="py-5 pl-3 pr-20 text-sm rounded-lg shadow-sm bg-background/50 border-input/50"
             autoComplete="off"
           />
@@ -143,8 +136,9 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
                 isMobile ? "px-3 min-w-[60px]" : "px-2"
               )}
               aria-label="Add task"
+              disabled={!inputValue.trim()}
             >
-              {inputValue.trim() ? "Add" : "Details"}
+              Add
             </Button>
           </div>
         </div>

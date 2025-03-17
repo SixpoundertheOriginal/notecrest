@@ -4,8 +4,8 @@ import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
 import TaskFilters from './TaskFilters';
 import TaskCard from './TaskCard';
-import TaskCreationSheet from './TaskCreationSheet';
 import SmartTaskInput from './SmartTaskInput';
+import AddTaskButton from './AddTaskButton';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Loader2 } from 'lucide-react';
 
@@ -42,41 +42,22 @@ const TasksView = ({
   isLoggedIn = false,
 }: TasksViewProps) => {
   const { isMobile } = useIsMobile();
-  const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
-  const [draftTask, setDraftTask] = useState({
-    title: '',
-    description: '',
-    priority: 'Medium',
-    dueDate: null as Date | null
-  });
   
-  const handleTaskSubmit = (task: {
-    title: string;
-    description: string;
-    priority: string;
-    dueDate: Date | null;
-  }) => {
-    if (task.title) {
-      onAddTask(task);
-      return;
-    }
-    
-    setDraftTask({
-      title: '',
-      description: '',
-      priority: task.priority || 'Medium',
-      dueDate: task.dueDate || null
-    });
-    setIsTaskSheetOpen(true);
-  };
-
   return (
     <div className="glass-morphism rounded-lg overflow-hidden shadow-sm">
       <div className="p-3 space-y-2">
         <TaskFilters darkMode={darkMode} />
+        
+        {/* Smart NLP Task Input */}
         <SmartTaskInput 
-          onCreateTask={handleTaskSubmit}
+          onCreateTask={onAddTask}
           darkMode={darkMode}
+        />
+        
+        {/* Detailed Task Button */}
+        <AddTaskButton 
+          darkMode={darkMode}
+          onAddTask={onAddTask}
         />
         
         {!isLoggedIn && (
@@ -119,15 +100,6 @@ const TasksView = ({
           )}
         </div>
       </div>
-
-      <TaskCreationSheet 
-        isOpen={isTaskSheetOpen}
-        onClose={() => setIsTaskSheetOpen(false)}
-        onSubmit={(task) => {
-          onAddTask(task);
-          setIsTaskSheetOpen(false);
-        }}
-      />
     </div>
   );
 };
