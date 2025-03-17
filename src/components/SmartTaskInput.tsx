@@ -1,11 +1,9 @@
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Calendar, Clock, Flag } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { parseTaskText, formatDate, formatTime } from '@/lib/nlp-parser';
-import { cn } from '@/lib/utils';
 import { useIsMobileValue } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
+import HighlightedTaskInput from './task-input/HighlightedTaskInput';
 
 interface SmartTaskInputProps {
   onCreateTask: (task: {
@@ -17,49 +15,30 @@ interface SmartTaskInputProps {
   darkMode: boolean;
 }
 
+// Example placeholder texts to showcase NLP capabilities
+const PLACEHOLDER_EXAMPLES = [
+  "Quick add with NLP... (e.g., 'Call John tomorrow', 'High priority: finish report')",
+  "Try 'Submit project by Friday at 5pm'",
+  "Try 'Grocery shopping tomorrow morning'",
+  "Try 'Urgent: prepare presentation for Monday'"
+];
+
 const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode }) => {
   const [inputValue, setInputValue] = useState('');
-  const [parsedInfo, setParsedInfo] = useState<{
-    title: string;
-    dueDate: Date | null;
-    reminderTime: Date | null;
-    priority: string | null;
-  }>({ title: '', dueDate: null, reminderTime: null, priority: null });
-  
-  const inputRef = useRef<HTMLInputElement>(null);
-  const processingTimeout = useRef<NodeJS.Timeout>();
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const isMobile = useIsMobileValue();
   
-  // Focus input on component mount
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, []);
-
-  // Handle input change with debounced NLP processing
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setInputValue(value);
+  // Set up interval to rotate placeholder examples
+  React.useEffect(() => {
+    // Don't cycle placeholders on mobile to save space
+    if (isMobile) return;
     
-    // Clear any existing timeout to implement debouncing
-    clearTimeout(processingTimeout.current);
+    const interval = setInterval(() => {
+      setPlaceholderIndex((prev) => (prev + 1) % PLACEHOLDER_EXAMPLES.length);
+    }, 6000);
     
-    // Process after a short delay to avoid excessive processing during typing
-    processingTimeout.current = setTimeout(() => {
-      if (value.trim()) {
-        const parsedResult = parseTaskText(value);
-        setParsedInfo({
-          title: parsedResult.title,
-          dueDate: parsedResult.dueDate || null,
-          reminderTime: parsedResult.reminderTime || null,
-          priority: parsedResult.priority || null
-        });
-      } else {
-        setParsedInfo({ title: '', dueDate: null, reminderTime: null, priority: null });
-      }
-    }, 300);
-  };
+    return () => clearInterval(interval);
+  }, [isMobile]);
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -69,65 +48,47 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
       return;
     }
     
-    // Create task with extracted information
-    onCreateTask({
-      title: parsedInfo.title || inputValue,
-      description: '',
-      priority: parsedInfo.priority || 'Medium',
-      dueDate: parsedInfo.dueDate
+    // Use the current NLP parsing to extract information
+    import('@/lib/nlp-parser').then(({ parseTaskText }) => {
+      const parsedInfo = parseTaskText(inputValue);
+      
+      onCreateTask({
+        title: parsedInfo.title || inputValue,
+        description: '',
+        priority: parsedInfo.priority || 'Medium',
+        dueDate: parsedInfo.dueDate
+      });
+      
+      // Clear input after creating task
+      setInputValue('');
     });
-    
-    // Clear input after creating task
-    setInputValue('');
-    setParsedInfo({ title: '', dueDate: null, reminderTime: null, priority: null });
-    
-    // Return focus to input
-    inputRef.current?.focus();
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSubmit(e as unknown as React.FormEvent);
+    }
+  };
+
+  const currentPlaceholder = isMobile 
+    ? "Quick add with NLP..." 
+    : PLACEHOLDER_EXAMPLES[placeholderIndex];
 
   return (
     <div className="w-full mb-2">
       <form onSubmit={handleSubmit} className="w-full">
         <div className="relative">
-          <Input
-            ref={inputRef}
-            type="text"
+          <HighlightedTaskInput
             value={inputValue}
-            onChange={handleInputChange}
-            placeholder={isMobile ? "Quick add with NLP..." : "Quick add with NLP... (e.g., 'Call John tomorrow', 'High priority: finish report')"}
-            className="py-5 pl-3 pr-20 text-sm rounded-lg shadow-sm bg-background/50 border-input/50"
-            autoComplete="off"
+            onChange={setInputValue}
+            onKeyDown={handleKeyDown}
+            placeholder={currentPlaceholder}
+            darkMode={darkMode}
+            className="pr-20"
+            autoFocus
           />
           
-          <div className={cn(
-            "absolute right-2 top-1/2 -translate-y-1/2 flex items-center",
-            isMobile ? "gap-0.5" : "gap-1"
-          )}>
-            {parsedInfo.dueDate && !isMobile && (
-              <span className="inline-flex items-center bg-primary/10 text-primary px-1.5 py-0.5 rounded text-xs">
-                <Calendar size={10} className="mr-1" />
-                {formatDate(parsedInfo.dueDate)}
-              </span>
-            )}
-            
-            {parsedInfo.reminderTime && !isMobile && (
-              <span className="inline-flex items-center bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded text-xs">
-                <Clock size={10} className="mr-1" />
-                {formatTime(parsedInfo.reminderTime)}
-              </span>
-            )}
-            
-            {parsedInfo.priority && !isMobile && (
-              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs ${
-                parsedInfo.priority === 'High' ? 'bg-red-500/10 text-red-400' : 
-                parsedInfo.priority === 'Medium' ? 'bg-yellow-500/10 text-yellow-400' : 
-                'bg-green-500/10 text-green-400'
-              }`}>
-                <Flag size={10} className="mr-1" />
-                {parsedInfo.priority}
-              </span>
-            )}
-            
+          <div className="absolute right-2 top-1/2 -translate-y-1/2">
             <Button 
               type="submit" 
               size="sm"

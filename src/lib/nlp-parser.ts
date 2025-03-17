@@ -1,4 +1,3 @@
-
 // Helper types
 type TaskPriority = "Low" | "Medium" | "High"; 
 
@@ -7,6 +6,7 @@ type ParsedTaskResult = {
   dueDate?: Date;
   reminderTime?: Date;
   priority?: TaskPriority;
+  project?: string;
 };
 
 export function parseTaskText(text: string): ParsedTaskResult {
@@ -37,6 +37,14 @@ export function parseTaskText(text: string): ParsedTaskResult {
     result.priority = priorityInfo.priority;
     // Remove the priority part from the title
     result.title = result.title.replace(priorityInfo.priorityText, "").trim();
+  }
+  
+  // Extract project information (hashtag or "for project")
+  const projectInfo = extractProjectInfo(text);
+  if (projectInfo.project) {
+    result.project = projectInfo.project;
+    // Remove the project part from the title
+    result.title = result.title.replace(projectInfo.projectText, "").trim();
   }
   
   // Clean up any remaining artifacts
@@ -267,6 +275,29 @@ function extractPriorityInfo(text: string): { priority?: TaskPriority, priorityT
   if (mediumPriorityMatch) {
     result.priority = "Medium";
     result.priorityText = mediumPriorityMatch[0];
+    return result;
+  }
+  
+  return result;
+}
+
+function extractProjectInfo(text: string): { project?: string, projectText: string } {
+  // Initialize result
+  const result = { project: undefined as string | undefined, projectText: "" };
+  
+  // Look for hashtag pattern (#project)
+  const hashtagMatch = text.match(/\B#([a-zA-Z0-9_]+)\b/);
+  if (hashtagMatch) {
+    result.project = hashtagMatch[1];
+    result.projectText = hashtagMatch[0];
+    return result;
+  }
+  
+  // Look for "for project" pattern
+  const forProjectMatch = text.match(/\bfor\s+([a-zA-Z0-9_]+\s*[a-zA-Z0-9_]*)\b/i);
+  if (forProjectMatch) {
+    result.project = forProjectMatch[1];
+    result.projectText = forProjectMatch[0];
     return result;
   }
   
