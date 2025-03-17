@@ -26,7 +26,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
         <div className="flex space-x-1">
           <button
             className={cn(
-              "p-1 rounded-full",
+              "p-1 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center",
               darkMode
                 ? 'hover:bg-gray-800 text-gray-400 hover:text-gray-300'
                 : 'hover:bg-gray-100 text-gray-500 hover:text-gray-600'
@@ -36,7 +36,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
           </button>
           <button
             className={cn(
-              "p-1 rounded-full",
+              "p-1 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center",
               darkMode
                 ? 'hover:bg-gray-800 text-gray-400 hover:text-gray-300'
                 : 'hover:bg-gray-100 text-gray-500 hover:text-gray-600'
@@ -58,7 +58,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
               type="text" 
               defaultValue={task.title}
               className={cn(
-                "w-full px-3 py-2 rounded-lg text-sm transition-all duration-200",
+                "w-full px-3 py-2 rounded-lg text-sm transition-all duration-200 min-h-[44px]",
                 darkMode 
                   ? 'bg-gray-800/50 border border-gray-700 focus:border-primary text-white' 
                   : 'bg-white border border-gray-200 focus:border-primary'
@@ -74,7 +74,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
               rows={2}
               placeholder="Add a description..."
               className={cn(
-                "w-full px-3 py-2 rounded-lg text-sm transition-all duration-200",
+                "w-full px-3 py-2 rounded-lg text-sm transition-all duration-200 min-h-[44px]",
                 darkMode 
                   ? 'bg-gray-800/50 border border-gray-700 focus:border-primary text-white placeholder-gray-600' 
                   : 'bg-white border border-gray-200 focus:border-primary placeholder-gray-400'
@@ -89,7 +89,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
               Due Date
             </label>
             <div className={cn(
-              "flex items-center px-3 py-2 rounded-lg text-sm",
+              "flex items-center px-3 py-2 rounded-lg text-sm min-h-[44px]",
               darkMode 
                 ? 'bg-gray-800/50 border border-gray-700 focus-within:border-primary' 
                 : 'bg-white border border-gray-300 focus-within:border-primary'
@@ -110,7 +110,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
             <select
               defaultValue={task.priority}
               className={cn(
-                "w-full px-3 py-2 rounded-lg text-sm appearance-none transition-all duration-200",
+                "w-full px-3 py-2 rounded-lg text-sm appearance-none transition-all duration-200 min-h-[44px]",
                 darkMode 
                   ? 'bg-gray-800/50 border border-gray-700 focus:border-primary text-white' 
                   : 'bg-white border border-gray-300 focus:border-primary'
@@ -138,7 +138,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
           <select
             defaultValue={task.status}
             className={cn(
-              "w-full px-3 py-2 rounded-lg text-sm appearance-none transition-all duration-200",
+              "w-full px-3 py-2 rounded-lg text-sm appearance-none transition-all duration-200 min-h-[44px]",
               darkMode 
                 ? 'bg-gray-800/50 border border-gray-700 focus:border-primary text-white' 
                 : 'bg-white border border-gray-300 focus:border-primary'
@@ -155,7 +155,10 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
             <label className={cn("block text-xs", darkMode ? 'text-gray-400' : 'text-gray-500')}>
               Subtasks
             </label>
-            <button className={darkMode ? 'text-blue-400' : 'text-blue-500'}>
+            <button className={cn(
+              darkMode ? 'text-blue-400' : 'text-blue-500',
+              "min-h-[44px] min-w-[44px] flex items-center justify-center"
+            )}>
               + Add
             </button>
           </div>
@@ -165,11 +168,11 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
             darkMode ? 'bg-gray-800/30' : 'bg-gray-100/50'
           )}>
             <div className="flex items-center mb-2">
-              <input type="checkbox" className="mr-2" defaultChecked />
+              <input type="checkbox" className="mr-2 min-h-[44px] min-w-[44px] appearance-none" defaultChecked />
               <span className="text-xs line-through">Research competitors</span>
             </div>
             <div className="flex items-center">
-              <input type="checkbox" className="mr-2" />
+              <input type="checkbox" className="mr-2 min-h-[44px] min-w-[44px] appearance-none" />
               <span className="text-xs">Prepare presentation slides</span>
             </div>
           </div>
@@ -178,7 +181,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
             type="text" 
             placeholder="Add a subtask..."
             className={cn(
-              "w-full px-3 py-2 rounded-lg text-xs transition-all duration-200",
+              "w-full px-3 py-2 rounded-lg text-xs transition-all duration-200 min-h-[44px]",
               darkMode 
                 ? 'bg-gray-800/50 border border-gray-700 focus:border-primary text-white placeholder-gray-600' 
                 : 'bg-white border border-gray-300 focus:border-primary placeholder-gray-400'
@@ -188,7 +191,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
 
         <div className="flex justify-end space-x-2 pt-2 border-t border-dashed">
           <button className={cn(
-            "px-3 py-1.5 rounded-lg text-xs transition-colors duration-200",
+            "px-3 py-1.5 rounded-lg text-xs transition-colors duration-200 min-h-[44px] min-w-[44px]",
             darkMode
               ? 'bg-gray-800 hover:bg-gray-700 text-gray-300'
               : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
@@ -196,7 +199,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
             Cancel
           </button>
           <button className={cn(
-            "px-3 py-1.5 rounded-lg text-xs transition-colors duration-200 bg-primary/90 hover:bg-primary text-white"
+            "px-3 py-1.5 rounded-lg text-xs transition-colors duration-200 bg-primary/90 hover:bg-primary text-white min-h-[44px] min-w-[44px]"
           )}>
             Save Changes
           </button>

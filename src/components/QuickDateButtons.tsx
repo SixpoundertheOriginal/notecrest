@@ -28,6 +28,7 @@ const QuickDateButtons = ({ onSelect }: QuickDateButtonsProps) => {
           variant="outline"
           size="sm"
           onClick={() => onSelect(date)}
+          className="min-h-[44px]"
         >
           {label}
         </Button>

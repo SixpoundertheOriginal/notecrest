@@ -76,7 +76,7 @@ const TaskCard = ({
               e.stopPropagation();
               onToggleCompletion(task.id);
             }}
-            className="mt-0.5 flex-shrink-0"
+            className="mt-0.5 flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center -ml-2 -my-2"
             aria-label={task.completed ? "Mark as incomplete" : "Mark as complete"}
           >
             {task.completed ? (
@@ -121,13 +121,15 @@ const TaskCard = ({
           <span className="text-[10px] text-muted-foreground hidden sm:inline-block">
             {getRelativeTime()}
           </span>
-          <ChevronDown 
-            size={14} 
-            className={cn(
-              "transform transition-transform duration-300 text-muted-foreground",
-              task.expanded ? 'rotate-180' : ''
-            )} 
-          />
+          <div className="min-h-[44px] min-w-[44px] flex items-center justify-center -mr-2 -my-2">
+            <ChevronDown 
+              size={14} 
+              className={cn(
+                "transform transition-transform duration-300 text-muted-foreground",
+                task.expanded ? 'rotate-180' : ''
+              )} 
+            />
+          </div>
         </div>
       </div>
       

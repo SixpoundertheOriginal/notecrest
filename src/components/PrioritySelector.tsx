@@ -21,6 +21,7 @@ const PrioritySelector = ({ value, onChange }: PrioritySelectorProps) => {
           size="sm"
           onClick={() => onChange(priority)}
           className={cn(
+            "min-h-[44px] min-w-[44px]",
             value === priority && {
               'Low': 'bg-green-500 hover:bg-green-600',
               'Medium': 'bg-yellow-500 hover:bg-yellow-600',

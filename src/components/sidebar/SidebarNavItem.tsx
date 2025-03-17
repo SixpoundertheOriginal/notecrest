@@ -28,7 +28,7 @@ const SidebarNavItem = ({
           onClick={action}
           isActive={isActive}
           tooltip={label}
-          className={highlight ? "text-red-400 hover:text-red-300" : ""}
+          className={cn(highlight ? "text-red-400 hover:text-red-300" : "", "min-h-[44px]")}
         >
           <Icon size={18} />
           <span>{label}</span>
@@ -41,6 +41,7 @@ const SidebarNavItem = ({
           asChild 
           isActive={isActive}
           tooltip={label}
+          className="min-h-[44px]"
         >
           <div className="cursor-pointer">
             <Icon size={18} />
@@ -56,3 +57,6 @@ const SidebarNavItem = ({
 };
 
 export default SidebarNavItem;
+
+// Add the import for cn that was missing
+import { cn } from "@/lib/utils";

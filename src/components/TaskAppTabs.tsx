@@ -15,7 +15,7 @@ const TaskAppTabs = ({ activeTab, setActiveTab, darkMode }: TaskAppTabsProps) =>
       <button 
         onClick={() => setActiveTab('tasks')} 
         className={cn(
-          "flex-1 py-3 px-4 flex items-center justify-center gap-2 transition-all duration-300",
+          "flex-1 py-3 px-4 flex items-center justify-center gap-2 transition-all duration-300 min-h-[44px]",
           activeTab === 'tasks' 
             ? 'bg-white/10 text-blue-400' 
             : ''
@@ -27,7 +27,7 @@ const TaskAppTabs = ({ activeTab, setActiveTab, darkMode }: TaskAppTabsProps) =>
       <button 
         onClick={() => setActiveTab('completed')} 
         className={cn(
-          "flex-1 py-3 px-4 flex items-center justify-center gap-2 transition-all duration-300",
+          "flex-1 py-3 px-4 flex items-center justify-center gap-2 transition-all duration-300 min-h-[44px]",
           activeTab === 'completed' 
             ? 'bg-white/10 text-blue-400' 
             : ''
@@ -39,7 +39,7 @@ const TaskAppTabs = ({ activeTab, setActiveTab, darkMode }: TaskAppTabsProps) =>
       <button 
         onClick={() => setActiveTab('notes')} 
         className={cn(
-          "flex-1 py-3 px-4 flex items-center justify-center gap-2 transition-all duration-300",
+          "flex-1 py-3 px-4 flex items-center justify-center gap-2 transition-all duration-300 min-h-[44px]",
           activeTab === 'notes' 
             ? 'bg-white/10 text-blue-400' 
             : ''

@@ -21,7 +21,7 @@ const TaskFilters = ({ darkMode }: TaskFiltersProps) => {
             value="list"
             className={cn(
               "flex items-center gap-1 data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400",
-              "transition-all duration-200"
+              "transition-all duration-200 min-h-[44px] min-w-[44px]"
             )}
           >
             <ListFilter size={14} />
@@ -31,7 +31,7 @@ const TaskFilters = ({ darkMode }: TaskFiltersProps) => {
             value="priority"
             className={cn(
               "flex items-center gap-1 data-[state=active]:bg-purple-500/20 data-[state=active]:text-purple-400",
-              "transition-all duration-200"
+              "transition-all duration-200 min-h-[44px] min-w-[44px]"
             )}
           >
             <svg 
