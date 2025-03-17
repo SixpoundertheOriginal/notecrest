@@ -46,7 +46,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import TaskCreationSheet from './TaskCreationSheet';
 import { useTasks } from '@/hooks/useTasks';
-import { Task } from '@/types/task';
+import { TaskData } from '@/types/task';
 
 interface SidebarNavItemProps {
   icon: React.ElementType;
@@ -185,8 +185,8 @@ const ProjectDialog = ({ onCreateProject }: { onCreateProject: (data: { name: st
 const SearchDialog = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
-  const { tasks } = useTasks();
-  const [searchResults, setSearchResults] = useState<Task[]>([]);
+  const { tasks } = useTasks(null);
+  const [searchResults, setSearchResults] = useState<TaskData[]>([]);
   const { isMobile } = useIsMobile();
 
   const handleSearch = () => {
@@ -198,7 +198,7 @@ const SearchDialog = () => {
     const query = searchQuery.toLowerCase();
     const filtered = tasks.filter(task => 
       task.title.toLowerCase().includes(query) || 
-      (task.description && task.description.toLowerCase().includes(query))
+      (task.description && task.description?.toLowerCase().includes(query))
     );
     
     setSearchResults(filtered);
@@ -357,7 +357,7 @@ const TaskifySidebar = ({
 
   const handleProjectClick = (projectId: string) => {
     setActiveProjectId(projectId);
-    setActiveTab('tasks'); // Reset to tasks view when clicking on a project
+    setActiveTab('tasks');
     if (isMobile) {
       setMobileMenuOpen(false);
     }

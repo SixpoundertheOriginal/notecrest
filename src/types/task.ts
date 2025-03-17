@@ -10,6 +10,7 @@ export interface TaskData {
   createdAt: Date;
   user_id?: string;
   project_id?: string | null;
+  description?: string; // Add description field
 }
 
 export interface NewTaskData {
@@ -20,4 +21,5 @@ export interface NewTaskData {
   date: string;
   user_id: string; // Changed from optional to required
   project_id?: string | null;
+  description?: string; // Add description field
 }
