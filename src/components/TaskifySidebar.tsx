@@ -207,7 +207,13 @@ const TaskifySidebar = ({
     { 
       icon: PlusCircle, 
       label: "Add task", 
-      action: () => document.getElementById('add-task-button')?.click(),
+      action: () => {
+        const taskInput = document.querySelector('input[placeholder*="Add task"]') as HTMLInputElement;
+        if (taskInput) {
+          taskInput.focus();
+        }
+        document.querySelector('form')?.dispatchEvent(new Event('submit'));
+      },
       highlight: true
     },
     { 
@@ -423,3 +429,4 @@ const TaskifySidebar = ({
 };
 
 export default TaskifySidebar;
+

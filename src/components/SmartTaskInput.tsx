@@ -63,7 +63,16 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!inputValue.trim()) return;
+    // If input is empty, open the detailed task creation sheet
+    if (!inputValue.trim()) {
+      onCreateTask({
+        title: '',
+        description: '',
+        priority: 'Medium',
+        dueDate: null
+      });
+      return;
+    }
     
     // Create task with extracted information
     onCreateTask({
@@ -79,22 +88,6 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
     
     // Return focus to input
     inputRef.current?.focus();
-  };
-
-  // Handle the advanced task button click
-  const handleAdvancedTaskClick = () => {
-    // If there's text in the input, pre-fill the advanced form by creating a basic task
-    if (inputValue.trim()) {
-      handleSubmit(new Event('submit') as unknown as React.FormEvent);
-    }
-    
-    // Trigger the advanced task creation flow
-    onCreateTask({
-      title: '',
-      description: '',
-      priority: 'Medium',
-      dueDate: null
-    });
   };
 
   return (
@@ -141,29 +134,14 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
             <Button 
               type="submit" 
               size="sm"
-              disabled={!inputValue.trim()}
               className="h-7 px-2 text-xs ml-1 bg-primary/80 hover:bg-primary"
               aria-label="Add task"
             >
-              Add
+              {inputValue.trim() ? "Add" : "Details"}
             </Button>
           </div>
         </div>
       </form>
-      
-      {/* Subtle detailed task button */}
-      <Button 
-        onClick={handleAdvancedTaskClick}
-        variant="ghost" 
-        size="sm"
-        className={cn(
-          "w-full mt-1 py-1 text-xs text-muted-foreground transition-colors",
-          darkMode ? "hover:bg-white/5" : "hover:bg-black/5"
-        )}
-      >
-        <Plus size={12} className="mr-1.5" />
-        <span>Detailed Task</span>
-      </Button>
     </div>
   );
 };

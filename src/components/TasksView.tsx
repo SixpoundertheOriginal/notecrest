@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
@@ -41,8 +40,14 @@ const TasksView = ({
   onAddTask,
   isLoggedIn = false,
 }: TasksViewProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useIsMobile();
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
+  const [draftTask, setDraftTask] = useState({
+    title: '',
+    description: '',
+    priority: 'Medium',
+    dueDate: null as Date | null
+  });
   
   const handleTaskSubmit = (task: {
     title: string;
@@ -50,17 +55,22 @@ const TasksView = ({
     priority: string;
     dueDate: Date | null;
   }) => {
-    if (!task.title) {
-      setIsTaskSheetOpen(true);
+    if (task.title) {
+      onAddTask(task);
       return;
     }
-    onAddTask(task);
-    setIsTaskSheetOpen(false);
+    
+    setDraftTask({
+      title: '',
+      description: '',
+      priority: task.priority || 'Medium',
+      dueDate: task.dueDate || null
+    });
+    setIsTaskSheetOpen(true);
   };
 
   return (
     <div className="glass-morphism rounded-lg overflow-hidden shadow-sm">
-      {/* Compact header with filters and input */}
       <div className="p-3 space-y-2">
         <TaskFilters darkMode={darkMode} />
         <SmartTaskInput 
@@ -75,7 +85,6 @@ const TasksView = ({
         )}
       </div>
 
-      {/* Task list with subtle divider */}
       <div className="border-t border-white/5">
         <div className="grid grid-cols-1 gap-2 p-3 min-h-[180px] max-h-[60vh] overflow-y-auto">
           {isLoading ? (
