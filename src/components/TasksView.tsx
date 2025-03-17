@@ -1,12 +1,14 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
 import TaskSearchBar from './TaskSearchBar';
 import TaskFilters from './TaskFilters';
 import AddTaskButton from './AddTaskButton';
 import TaskCard from './TaskCard';
+import TaskCreationSheet from './TaskCreationSheet';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useToast } from '@/hooks/use-toast';
 
 interface TasksViewProps {
   darkMode: boolean;
@@ -32,7 +34,23 @@ const TasksView = ({
   onAddTask,
 }: TasksViewProps) => {
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+  const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   
+  const handleTaskSubmit = (task: {
+    title: string;
+    description: string;
+    priority: string;
+    dueDate: Date | null;
+  }) => {
+    console.log('New task created:', task);
+    onAddTask();
+    toast({
+      title: "Success",
+      description: "Task created successfully",
+    });
+  };
+
   return (
     <div className="glass-morphism rounded-xl overflow-hidden">
       <div className={cn(
@@ -44,7 +62,10 @@ const TasksView = ({
       </div>
 
       <div className="px-3 sm:px-4 pb-3 sm:pb-4">
-        <AddTaskButton darkMode={darkMode} onClick={onAddTask} />
+        <AddTaskButton 
+          darkMode={darkMode} 
+          onClick={() => setIsTaskSheetOpen(true)} 
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:gap-4 p-3 sm:p-4">
@@ -62,6 +83,12 @@ const TasksView = ({
           />
         ))}
       </div>
+
+      <TaskCreationSheet 
+        isOpen={isTaskSheetOpen}
+        onClose={() => setIsTaskSheetOpen(false)}
+        onSubmit={handleTaskSubmit}
+      />
     </div>
   );
 };
