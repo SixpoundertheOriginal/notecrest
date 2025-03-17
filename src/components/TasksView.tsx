@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
-import TaskSearchBar from './TaskSearchBar';
 import TaskFilters from './TaskFilters';
 import AddTaskButton from './AddTaskButton';
 import TaskCard from './TaskCard';
@@ -61,7 +60,6 @@ const TasksView = ({
         "p-3 sm:p-4 flex", 
         isMobile ? "flex-col space-y-2" : "flex-wrap gap-2"
       )}>
-        <TaskSearchBar darkMode={darkMode} />
         <TaskFilters darkMode={darkMode} />
       </div>
 
