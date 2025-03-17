@@ -23,7 +23,24 @@ const AddTaskButton = ({ darkMode, onAddTask, className }: AddTaskButtonProps) =
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   
   const handleClick = () => {
+    console.log('AddTaskButton: Opening task creation sheet');
     setIsTaskSheetOpen(true);
+  };
+  
+  const handleTaskSubmit = (task: {
+    title: string;
+    description: string;
+    priority: string;
+    dueDate: Date | null;
+  }) => {
+    console.log('AddTaskButton: Task submitted', task);
+    onAddTask(task);
+    setIsTaskSheetOpen(false);
+  };
+  
+  const handleSheetClose = (open: boolean) => {
+    console.log('AddTaskButton: Sheet closed, open state:', open);
+    setIsTaskSheetOpen(open);
   };
   
   return (
@@ -53,11 +70,8 @@ const AddTaskButton = ({ darkMode, onAddTask, className }: AddTaskButtonProps) =
 
       <TaskCreationSheet 
         isOpen={isTaskSheetOpen}
-        onClose={() => setIsTaskSheetOpen(false)}
-        onSubmit={(task) => {
-          onAddTask(task);
-          setIsTaskSheetOpen(false);
-        }}
+        onClose={handleSheetClose}
+        onSubmit={handleTaskSubmit}
       />
     </>
   );

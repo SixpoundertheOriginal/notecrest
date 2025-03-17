@@ -8,6 +8,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetFooter,
+  SheetDescription,
 } from '@/components/ui/sheet';
 import { useToast } from '@/components/ui/use-toast';
 import TaskQuickOptions from './task-creation/TaskQuickOptions';
@@ -72,10 +73,11 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
       <SheetContent side="bottom" className="h-auto max-h-[90vh] rounded-t-xl">
         <SheetHeader>
           <SheetTitle>New Task</SheetTitle>
+          <SheetDescription>Create a new task with details.</SheetDescription>
         </SheetHeader>
         
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4 py-4">
+        <form onSubmit={handleSubmit} className="pt-2">
+          <div className="space-y-4 py-2">
             {/* Title input - always visible */}
             <div>
               <Input
@@ -110,7 +112,7 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
             )}
           </div>
           
-          <SheetFooter>
+          <SheetFooter className="mt-4">
             <Button type="button" variant="ghost" onClick={handleCancel}>Cancel</Button>
             <Button type="submit" disabled={!title.trim()}>Create Task</Button>
           </SheetFooter>
