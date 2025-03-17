@@ -58,24 +58,31 @@ const CompletedTasksView = ({
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-2 p-3 min-h-[150px] max-h-[60vh] overflow-y-auto">
+      <div className="grid grid-cols-1 gap-3 p-4 min-h-[150px] max-h-[60vh] overflow-y-auto">
         {isLoading ? (
           <div className="flex items-center justify-center h-32">
             <Loader2 className="h-5 w-5 animate-spin text-primary/70" />
           </div>
         ) : completedTasks.length > 0 ? (
-          completedTasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              darkMode={darkMode}
-              draggedTaskId={draggedTaskId}
-              onDragStart={onDragStart}
-              onDragOver={onDragOver}
-              onDrop={onDrop}
-              onToggleCompletion={onToggleCompletion}
-              onToggleExpansion={onToggleExpansion}
-            />
+          completedTasks.map((task, index) => (
+            <React.Fragment key={task.id}>
+              <TaskCard
+                task={task}
+                darkMode={darkMode}
+                draggedTaskId={draggedTaskId}
+                onDragStart={onDragStart}
+                onDragOver={onDragOver}
+                onDrop={onDrop}
+                onToggleCompletion={onToggleCompletion}
+                onToggleExpansion={onToggleExpansion}
+              />
+              {index < completedTasks.length - 1 && (
+                <div className={cn(
+                  "h-px w-full",
+                  darkMode ? "bg-white/5" : "bg-black/5"
+                )} />
+              )}
+            </React.Fragment>
           ))
         ) : (
           <div className="flex flex-col items-center justify-center h-32 text-center">

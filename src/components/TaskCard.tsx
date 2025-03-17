@@ -59,7 +59,7 @@ const TaskCard = ({
       onDrop={(e) => onDrop(e, task.id)}
       onClick={() => onToggleExpansion(task.id)}
       className={cn(
-        "task-card relative rounded-md p-2 shadow-sm cursor-pointer transition-all duration-200 bg-background/30 border-l-2",
+        "task-card relative rounded-md p-3 shadow-sm cursor-pointer transition-all duration-200 bg-background/30 border-l-2",
         darkMode 
           ? 'hover:bg-gray-800/30' 
           : 'hover:bg-white/80',

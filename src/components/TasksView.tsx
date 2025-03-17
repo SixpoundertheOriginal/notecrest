@@ -62,7 +62,7 @@ const TasksView = ({
 
       <div className="border-t border-white/5">
         <div className={cn(
-          "grid grid-cols-1 gap-2 p-3 min-h-[180px] overflow-y-auto",
+          "grid grid-cols-1 gap-3 p-4 min-h-[180px] overflow-y-auto",
           isMobile ? "max-h-[calc(100vh-280px)]" : "max-h-[60vh]"
         )}>
           {isLoading ? (
@@ -70,18 +70,25 @@ const TasksView = ({
               <Loader2 className="h-5 w-5 animate-spin text-primary/70" />
             </div>
           ) : tasks.length > 0 ? (
-            tasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                darkMode={darkMode}
-                draggedTaskId={draggedTaskId}
-                onDragStart={onDragStart}
-                onDragOver={onDragOver}
-                onDrop={onDrop}
-                onToggleCompletion={onToggleCompletion}
-                onToggleExpansion={onToggleExpansion}
-              />
+            tasks.map((task, index) => (
+              <React.Fragment key={task.id}>
+                <TaskCard
+                  task={task}
+                  darkMode={darkMode}
+                  draggedTaskId={draggedTaskId}
+                  onDragStart={onDragStart}
+                  onDragOver={onDragOver}
+                  onDrop={onDrop}
+                  onToggleCompletion={onToggleCompletion}
+                  onToggleExpansion={onToggleExpansion}
+                />
+                {index < tasks.length - 1 && (
+                  <div className={cn(
+                    "h-px w-full",
+                    darkMode ? "bg-white/5" : "bg-black/5"
+                  )} />
+                )}
+              </React.Fragment>
             ))
           ) : (
             <div className="flex flex-col items-center justify-center h-32 text-center">
