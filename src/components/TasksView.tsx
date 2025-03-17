@@ -45,6 +45,7 @@ const TasksView = ({
   }) => {
     console.log('New task created:', task);
     onAddTask();
+    setIsTaskSheetOpen(false);
     toast({
       title: "Success",
       description: "Task created successfully",
