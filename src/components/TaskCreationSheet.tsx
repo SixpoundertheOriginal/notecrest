@@ -45,7 +45,10 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
   // Focus title input when sheet opens
   useEffect(() => {
     if (isOpen && titleInputRef.current) {
-      setTimeout(() => titleInputRef.current.focus(), 300);
+      // Reduced timeout for faster focus
+      setTimeout(() => {
+        titleInputRef.current?.focus();
+      }, 100);
     }
   }, [isOpen]);
 
@@ -143,9 +146,11 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
                 ref={titleInputRef}
                 value={title}
                 onChange={(e) => handleTitleInput(e.target.value)}
-                placeholder="Task title (try 'Call mom tomorrow' or 'Urgent meeting')"
-                className="text-base"
+                placeholder="What do you need to do?"
+                className="text-base py-6"
                 required
+                autoComplete="off"
+                autoFocus
               />
             </div>
             
