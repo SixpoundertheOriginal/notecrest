@@ -33,8 +33,17 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
   const [priority, setPriority] = useState('Medium');
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [sheetOpenState, setSheetOpenState] = useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  // Synchronize the external open state with internal state
+  useEffect(() => {
+    console.log('TaskCreationSheet: External isOpen changed to:', isOpen);
+    if (isOpen !== sheetOpenState) {
+      setSheetOpenState(isOpen);
+    }
+  }, [isOpen]);
 
   // Focus title input when sheet opens
   useEffect(() => {
@@ -51,6 +60,7 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('TaskCreationSheet: Form submitted');
     onSubmit({ title, description, priority, dueDate });
     resetForm();
   };
@@ -64,12 +74,23 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
   };
 
   const handleCancel = () => {
+    console.log('TaskCreationSheet: Canceling form');
     resetForm();
     onClose(false);
   };
+  
+  const handleOpenChange = (open: boolean) => {
+    console.log('TaskCreationSheet: Sheet open state changing to:', open);
+    setSheetOpenState(open);
+    onClose(open);
+    
+    if (!open) {
+      resetForm();
+    }
+  };
 
   return (
-    <Sheet open={isOpen} onOpenChange={onClose}>
+    <Sheet open={sheetOpenState} onOpenChange={handleOpenChange}>
       <SheetContent side="bottom" className="h-auto max-h-[90vh] rounded-t-xl">
         <SheetHeader>
           <SheetTitle>New Task</SheetTitle>

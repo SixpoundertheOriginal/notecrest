@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { PlusCircle, CalendarCheck, CalendarDays, CheckSquare, Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { useAuth } from '@/hooks/useAuth';
@@ -41,21 +41,24 @@ const TaskifySidebar = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   
-  const handleOpenTaskCreation = () => {
+  // Use useCallback to ensure stable reference for this function
+  const handleOpenTaskCreation = useCallback(() => {
     console.log('TaskifySidebar: Request to open task creation sheet');
+    
     // On mobile, first close the menu then set a timeout to open the sheet
     if (isMobile) {
       setMobileMenuOpen(false);
-      // Add a small delay before opening the sheet to ensure menu is closed first
+      // Add a longer delay before opening the sheet to ensure menu is closed first
       setTimeout(() => {
+        console.log('TaskifySidebar: Opening sheet after mobile menu close');
         setIsTaskSheetOpen(true);
-      }, 50);
+      }, 150); // Increased from 50ms to 150ms for more reliable timing
     } else {
       setIsTaskSheetOpen(true);
     }
-  };
+  }, [isMobile]);
 
-  const handleTaskSubmit = (task: {
+  const handleTaskSubmit = useCallback((task: {
     title: string;
     description: string;
     priority: string;
@@ -64,12 +67,12 @@ const TaskifySidebar = ({
     console.log('TaskifySidebar: Task submitted', task);
     onAddTask(task);
     setIsTaskSheetOpen(false);
-  };
+  }, [onAddTask]);
   
-  const handleSheetClose = (open: boolean) => {
+  const handleSheetClose = useCallback((open: boolean) => {
     console.log('TaskifySidebar: Setting sheet open state to:', open);
     setIsTaskSheetOpen(open);
-  };
+  }, []);
   
   const navItems = [
     { 
