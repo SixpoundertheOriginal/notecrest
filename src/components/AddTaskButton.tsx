@@ -22,16 +22,12 @@ const AddTaskButton = ({ darkMode, onAddTask, className }: AddTaskButtonProps) =
   const [isPressed, setIsPressed] = useState(false);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   
-  // Simplified click handler focused only on preventing default behavior
-  // and ensuring the sheet opens
   const handleClick = (e: React.MouseEvent) => {
     // Critical: prevent default behavior completely
     e.preventDefault();
     e.stopPropagation();
     
     console.log('AddTaskButton: Click detected, setting sheet to open');
-    
-    // Force sheet to open with a fresh state update
     setIsTaskSheetOpen(true);
   };
   
@@ -56,8 +52,9 @@ const AddTaskButton = ({ darkMode, onAddTask, className }: AddTaskButtonProps) =
       <Button 
         onClick={handleClick}
         className={cn(
-          "w-full bg-blue-500/90 hover:bg-blue-600/90 text-white py-2.5 sm:py-3 rounded-lg transition-all duration-200 group relative overflow-hidden",
+          "bg-blue-500/90 hover:bg-blue-600/90 text-white rounded-lg transition-all duration-200 group relative overflow-hidden",
           isPressed ? 'scale-[0.98]' : '',
+          isMobile ? "px-2.5 py-1.5 text-sm" : "px-3 py-2",
           className
         )}
         onMouseDown={() => setIsPressed(true)}
@@ -72,8 +69,8 @@ const AddTaskButton = ({ darkMode, onAddTask, className }: AddTaskButtonProps) =
         {/* Add subtle inner shadow for depth */}
         <div className="absolute inset-0 shadow-inner shadow-blue-300/10" />
         
-        <Plus size={isMobile ? 16 : 18} className="mr-2" />
-        <span>Create Detailed Task</span>
+        <Plus size={isMobile ? 16 : 18} className="mr-1" />
+        <span className="whitespace-nowrap">{isMobile ? "New Task" : "Create Task"}</span>
       </Button>
 
       <TaskCreationSheet 

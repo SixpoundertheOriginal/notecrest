@@ -85,6 +85,7 @@ const TaskifyApp = () => {
               pageTitle={getPageTitle()}
               isLoggedIn={isLoggedIn}
               onOpenAuth={() => setIsAuthModalOpen(true)}
+              onAddTask={addTask}
             />
           </div>
 

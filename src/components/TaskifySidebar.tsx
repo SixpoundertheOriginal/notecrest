@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback } from 'react';
-import { PlusCircle, CalendarCheck, CalendarDays, CheckSquare, Menu, X } from 'lucide-react';
+import { CalendarCheck, CalendarDays, CheckSquare, Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { Sidebar } from "@/components/ui/sidebar";
@@ -41,7 +41,6 @@ const TaskifySidebar = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   
-  // Use useCallback to ensure stable reference for this function
   const handleOpenTaskCreation = useCallback(() => {
     console.log('TaskifySidebar: Request to open task creation sheet');
     
@@ -78,13 +77,8 @@ const TaskifySidebar = ({
     setIsTaskSheetOpen(open);
   }, []);
   
+  // Removed the "Create Detailed Task" item from navItems
   const navItems = [
-    { 
-      icon: PlusCircle, 
-      label: "Create Detailed Task", 
-      action: () => handleOpenTaskCreation(),
-      highlight: true
-    },
     { 
       icon: CalendarCheck, 
       label: "Today", 
