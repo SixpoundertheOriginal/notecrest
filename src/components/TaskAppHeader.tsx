@@ -1,83 +1,51 @@
 
-import React, { ReactNode } from 'react';
-import { Menu, Moon, Sun } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useIsMobileValue } from '@/hooks/use-mobile';
-import { Button } from './ui/button';
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from './ui/tooltip';
+import React from 'react';
+import { MoonIcon, SunIcon, Search, LogIn } from 'lucide-react';
+import { Button } from "@/components/ui/button"
+import AuthSection from './app/AuthSection';
+import { useAuth } from '@/hooks/useAuth';
 
 interface TaskAppHeaderProps {
   darkMode: boolean;
   toggleTheme: () => void;
-  pageTitle?: string;
-  rightContent?: ReactNode;
+  pageTitle: string;
+  isLoggedIn?: boolean;
+  onOpenAuth?: () => void;
 }
 
-const TaskAppHeader = ({ darkMode, toggleTheme, pageTitle, rightContent }: TaskAppHeaderProps) => {
-  const isMobile = useIsMobileValue();
+const TaskAppHeader = ({ darkMode, toggleTheme, pageTitle, isLoggedIn, onOpenAuth }: TaskAppHeaderProps) => {
+  const { user, loading } = useAuth();
   
   return (
-    <header className="glass-morphism py-3 px-4 backdrop-blur-xl sticky top-0 z-30 border-b border-white/5">
-      <div className="flex justify-between items-center max-w-5xl mx-auto">
-        {isMobile ? (
-          <div className="flex items-center">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="mr-2"
-              onClick={() => {
-                // Target the sidebar toggle button
-                const sidebarToggleBtn = document.querySelector('[aria-label="Toggle sidebar"]');
-                if (sidebarToggleBtn instanceof HTMLElement) {
-                  sidebarToggleBtn.click();
-                }
-              }}
-            >
-              <Menu size={18} />
-            </Button>
-            <h1 className="text-xl font-bold">
-              {pageTitle || "Taskify"}
-            </h1>
-          </div>
-        ) : (
-          <h1 className="text-xl font-bold">
-            {pageTitle || "Taskify"}
-          </h1>
+    <header className="px-4 py-3 flex items-center justify-between border-b border-white/5">
+      <h1 className="text-lg font-medium">{pageTitle}</h1>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleTheme}
+          aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+        >
+          {darkMode ? (
+            <SunIcon className="h-5 w-5" />
+          ) : (
+            <MoonIcon className="h-5 w-5" />
+          )}
+        </Button>
+
+        {onOpenAuth && !isLoggedIn && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={onOpenAuth}
+            className="flex items-center gap-2"
+          >
+            <LogIn size={16} />
+            Login
+          </Button>
         )}
-        <div className="flex items-center gap-3">
-          {rightContent}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  onClick={toggleTheme} 
-                  variant="outline"
-                  size="icon"
-                  className={cn(
-                    "rounded-full transition-all duration-300",
-                    darkMode 
-                      ? "bg-blue-500/30 hover:bg-blue-500/40 border-blue-500/30" 
-                      : "bg-amber-500/20 hover:bg-amber-500/30 border-amber-400/30"
-                  )}
-                >
-                  {darkMode ? (
-                    <Sun size={18} className="text-blue-200" />
-                  ) : (
-                    <Moon size={18} className="text-amber-400" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+
+        {loading ? null : <AuthSection user={user} />}
       </div>
     </header>
   );

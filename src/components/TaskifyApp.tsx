@@ -9,10 +9,12 @@ import { useTasks } from '@/hooks/useTasks';
 import { useProjects } from '@/hooks/useProjects';
 import TaskifySidebar from './TaskifySidebar';
 import { SidebarInset } from './ui/sidebar';
+import AuthModal from './auth/AuthModal';
 
 const TaskifyApp = () => {
   const [activeTab, setActiveTab] = useState('tasks');
   const [darkMode, setDarkMode] = useState(true);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { user, loading: authLoading } = useAuth();
   
   const {
@@ -79,10 +81,17 @@ const TaskifyApp = () => {
           darkMode={darkMode} 
           toggleTheme={toggleTheme} 
           pageTitle={getPageTitle()}
+          isLoggedIn={isLoggedIn}
+          onOpenAuth={() => setIsAuthModalOpen(true)}
         />
 
         <div className="flex-grow p-4 md:p-6">
           <div className="max-w-5xl mx-auto">
+            <WelcomeHeader 
+              username={username} 
+              isLoggedIn={isLoggedIn} 
+              onOpenAuth={() => setIsAuthModalOpen(true)}
+            />
             <TaskContent
               activeTab={activeTab}
               darkMode={darkMode}
@@ -101,6 +110,11 @@ const TaskifyApp = () => {
           </div>
         </div>
       </SidebarInset>
+      
+      <AuthModal 
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
     </>
   );
 };

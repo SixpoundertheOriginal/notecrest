@@ -1,39 +1,34 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { LogIn } from 'lucide-react';
 import UserMenu from '@/components/auth/UserMenu';
-import AuthModal from '@/components/auth/AuthModal';
 
 interface AuthSectionProps {
   user: any;
+  onOpenAuth?: () => void;
 }
 
-const AuthSection = ({ user }: AuthSectionProps) => {
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-
+const AuthSection = ({ user, onOpenAuth }: AuthSectionProps) => {
   if (user) {
     return <UserMenu userEmail={user.email || ''} />;
   }
 
-  return (
-    <>
+  if (onOpenAuth) {
+    return (
       <Button 
         variant="outline" 
         size="sm" 
-        onClick={() => setIsAuthModalOpen(true)}
+        onClick={onOpenAuth}
         className="flex items-center gap-2"
       >
         <LogIn size={16} />
         Login
       </Button>
-      
-      <AuthModal 
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-      />
-    </>
-  );
+    );
+  }
+
+  return null;
 };
 
 export default AuthSection;
