@@ -45,6 +45,8 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import TaskCreationSheet from './TaskCreationSheet';
+import { useTasks } from '@/hooks/useTasks';
+import { Task } from '@/types/task';
 
 interface SidebarNavItemProps {
   icon: React.ElementType;
@@ -180,6 +182,93 @@ const ProjectDialog = ({ onCreateProject }: { onCreateProject: (data: { name: st
   );
 };
 
+const SearchDialog = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const { tasks } = useTasks();
+  const [searchResults, setSearchResults] = useState<Task[]>([]);
+  const { isMobile } = useIsMobile();
+
+  const handleSearch = () => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = tasks.filter(task => 
+      task.title.toLowerCase().includes(query) || 
+      (task.description && task.description.toLowerCase().includes(query))
+    );
+    
+    setSearchResults(filtered);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <div className="w-full cursor-pointer">
+          <Search size={18} />
+          <span>Search</span>
+        </div>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Search Tasks</DialogTitle>
+        </DialogHeader>
+        <div className="flex items-center space-x-2 py-4">
+          <div className="grid flex-1 gap-2">
+            <Input
+              placeholder="Search for tasks..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
+              autoFocus
+            />
+          </div>
+          <Button type="button" onClick={handleSearch}>
+            <Search className="h-4 w-4" />
+          </Button>
+        </div>
+        
+        <div className="max-h-[300px] overflow-y-auto">
+          {searchResults.length > 0 ? (
+            <div className="space-y-2">
+              {searchResults.map((task) => (
+                <div 
+                  key={task.id} 
+                  className="rounded-md border p-3 hover:bg-accent cursor-pointer"
+                  onClick={() => {
+                    console.log("Selected task:", task);
+                    setIsOpen(false);
+                  }}
+                >
+                  <div className="font-medium">{task.title}</div>
+                  {task.description && (
+                    <div className="text-sm text-muted-foreground line-clamp-1">
+                      {task.description}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : searchQuery ? (
+            <div className="py-6 text-center text-muted-foreground">
+              No results found
+            </div>
+          ) : null}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 interface TaskifySidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
@@ -229,8 +318,8 @@ const TaskifySidebar = ({
     { 
       icon: Search, 
       label: "Search", 
-      to: "/search", 
-      action: () => console.log("Search clicked") 
+      component: <SearchDialog />, 
+      isActive: false
     },
     { 
       icon: CalendarCheck, 
@@ -305,18 +394,25 @@ const TaskifySidebar = ({
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item, index) => (
-                <SidebarNavItem 
-                  key={item.label} 
-                  {...item} 
-                  action={() => {
-                    if (item.action) {
-                      item.action();
-                      if (isMobile) {
-                        setMobileMenuOpen(false);
-                      }
-                    }
-                  }}
-                />
+                <SidebarMenuItem key={item.label}>
+                  {item.component ? (
+                    <SidebarMenuButton>
+                      {item.component}
+                    </SidebarMenuButton>
+                  ) : (
+                    <SidebarNavItem 
+                      {...item} 
+                      action={() => {
+                        if (item.action) {
+                          item.action();
+                          if (isMobile) {
+                            setMobileMenuOpen(false);
+                          }
+                        }
+                      }}
+                    />
+                  )}
+                </SidebarMenuItem>
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
