@@ -19,7 +19,12 @@ interface TasksViewProps {
   onDrop: (e: React.DragEvent, id: number) => void;
   onToggleCompletion: (id: number) => void;
   onToggleExpansion: (id: number) => void;
-  onAddTask: () => void;
+  onAddTask: (task: {
+    title: string;
+    description: string;
+    priority: string;
+    dueDate: Date | null;
+  }) => void;
 }
 
 const TasksView = ({
@@ -44,7 +49,7 @@ const TasksView = ({
     dueDate: Date | null;
   }) => {
     console.log('New task created:', task);
-    onAddTask();
+    onAddTask(task); // Pass the actual task data to parent
     setIsTaskSheetOpen(false);
     toast({
       title: "Success",

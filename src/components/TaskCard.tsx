@@ -30,6 +30,26 @@ const TaskCard = ({
 }: TaskCardProps) => {
   const priorityColors = getPriorityColor(task.priority);
   const isMobile = useIsMobile();
+  
+  // Calculate relative time
+  const getRelativeTime = () => {
+    const now = new Date();
+    const taskDate = new Date(task.createdAt || now); // Use createdAt if available, or fallback to now
+    
+    const diffInMinutes = Math.floor((now.getTime() - taskDate.getTime()) / (1000 * 60));
+    
+    if (diffInMinutes < 1) return 'just now';
+    if (diffInMinutes < 60) return `${diffInMinutes} min ago`;
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours} ${diffInHours === 1 ? 'hour' : 'hours'} ago`;
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 30) return `${diffInDays} ${diffInDays === 1 ? 'day' : 'days'} ago`;
+    
+    const diffInMonths = Math.floor(diffInDays / 30);
+    return `${diffInMonths} ${diffInMonths === 1 ? 'month' : 'months'} ago`;
+  };
 
   return (
     <div 
@@ -105,7 +125,7 @@ const TaskCard = ({
             darkMode ? 'text-gray-500' : 'text-gray-400'
           )}>
             <Clock size={10} className="inline mr-1" />
-            42 min ago
+            {getRelativeTime()}
           </span>
           <ChevronDown 
             size={isMobile ? 14 : 16} 

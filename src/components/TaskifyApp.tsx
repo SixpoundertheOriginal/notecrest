@@ -20,7 +20,8 @@ const TaskifyApp = () => {
       priority: 'High', 
       status: 'In Progress',
       date: 'Mar 8',
-      expanded: false
+      expanded: false,
+      createdAt: new Date(Date.now() - 1000 * 60 * 42) // 42 minutes ago
     },
     { 
       id: 2, 
@@ -29,7 +30,8 @@ const TaskifyApp = () => {
       priority: 'Medium', 
       status: 'Todo',
       date: 'Mar 6',
-      expanded: false
+      expanded: false,
+      createdAt: new Date(Date.now() - 1000 * 60 * 120) // 2 hours ago
     },
     { 
       id: 3, 
@@ -38,7 +40,8 @@ const TaskifyApp = () => {
       priority: 'Low', 
       status: 'Todo',
       date: 'Mar 9',
-      expanded: false
+      expanded: false,
+      createdAt: new Date(Date.now() - 1000 * 60 * 180) // 3 hours ago
     },
     { 
       id: 4, 
@@ -47,7 +50,8 @@ const TaskifyApp = () => {
       priority: 'Medium', 
       status: 'Completed',
       date: 'Mar 5',
-      expanded: false
+      expanded: false,
+      createdAt: new Date(Date.now() - 1000 * 60 * 240) // 4 hours ago
     }
   ]);
   const [draggedTaskId, setDraggedTaskId] = useState<number | null>(null);
@@ -72,17 +76,24 @@ const TaskifyApp = () => {
     ));
   };
 
-  const addTask = () => {
+  const addTask = (taskData: {
+    title: string;
+    description: string;
+    priority: string;
+    dueDate: Date | null;
+  }) => {
     const newId = Math.max(0, ...tasks.map(task => task.id)) + 1;
+    const currentDate = new Date();
     
     const newTask: TaskData = {
       id: newId,
-      title: 'New task',
+      title: taskData.title, // Use the actual title from form
       completed: false,
-      priority: 'Medium',
+      priority: taskData.priority as 'High' | 'Medium' | 'Low',
       status: 'Todo',
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      expanded: false
+      date: currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      expanded: false,
+      createdAt: currentDate // Add timestamp
     };
     
     setTasks([newTask, ...tasks]);
