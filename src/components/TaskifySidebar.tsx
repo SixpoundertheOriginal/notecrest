@@ -45,15 +45,19 @@ const TaskifySidebar = ({
   const handleOpenTaskCreation = useCallback(() => {
     console.log('TaskifySidebar: Request to open task creation sheet');
     
-    // On mobile, first close the menu then set a timeout to open the sheet
+    // On mobile, use a different strategy:
+    // 1. Set the task sheet to open first so the state change is queued
+    // 2. Then close the mobile menu
     if (isMobile) {
+      // Set task sheet open first (this gets queued by React)
+      setIsTaskSheetOpen(true);
+      console.log('TaskifySidebar: Set task sheet to open, now closing mobile menu');
+      
+      // Then close mobile menu (also queued but will happen in the same render cycle)
       setMobileMenuOpen(false);
-      // Add a longer delay before opening the sheet to ensure menu is closed first
-      setTimeout(() => {
-        console.log('TaskifySidebar: Opening sheet after mobile menu close');
-        setIsTaskSheetOpen(true);
-      }, 150); // Increased from 50ms to 150ms for more reliable timing
     } else {
+      // On desktop, simply open the sheet
+      console.log('TaskifySidebar: Desktop - opening task sheet directly');
       setIsTaskSheetOpen(true);
     }
   }, [isMobile]);

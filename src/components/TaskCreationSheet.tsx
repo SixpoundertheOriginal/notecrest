@@ -33,34 +33,48 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
   const [priority, setPriority] = useState('Medium');
   const [dueDate, setDueDate] = useState<Date | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [sheetOpenState, setSheetOpenState] = useState(false);
+  
+  // Internal open state to ensure we have full control
+  const [internalOpen, setInternalOpen] = useState(false);
+  
   const titleInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  // Synchronize the external open state with internal state
+  // Explicitly log the props and state for debugging
+  useEffect(() => {
+    console.log(`TaskCreationSheet: Props isOpen=${isOpen}, internalOpen=${internalOpen}`);
+  }, [isOpen, internalOpen]);
+
+  // Synchronize the external and internal state
   useEffect(() => {
     console.log('TaskCreationSheet: External isOpen changed to:', isOpen);
-    if (isOpen !== sheetOpenState) {
-      setSheetOpenState(isOpen);
+    
+    // Important: only update internal state if it differs from external state
+    if (isOpen !== internalOpen) {
+      console.log('TaskCreationSheet: Updating internal open state to match props:', isOpen);
+      setInternalOpen(isOpen);
     }
-  }, [isOpen]);
+  }, [isOpen, internalOpen]);
 
-  // Focus title input when sheet opens
+  // Focus title input when sheet opens with a delay to ensure DOM is ready
   useEffect(() => {
-    if (isOpen && titleInputRef.current) {
-      // Reduced timeout for faster focus
-      setTimeout(() => {
+    if (internalOpen && titleInputRef.current) {
+      console.log('TaskCreationSheet: Sheet opened, focusing input after delay');
+      const timer = setTimeout(() => {
         titleInputRef.current?.focus();
-      }, 100);
+        console.log('TaskCreationSheet: Input focused');
+      }, 200);
+      
+      return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+  }, [internalOpen]);
 
   // Use the NLP hook
   const { handleTitleInput } = useTaskInputNLP(setTitle, setDueDate, setPriority);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('TaskCreationSheet: Form submitted');
+    console.log('TaskCreationSheet: Form submitted with data:', { title, description, priority, dueDate });
     onSubmit({ title, description, priority, dueDate });
     resetForm();
   };
@@ -76,25 +90,37 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
   const handleCancel = () => {
     console.log('TaskCreationSheet: Canceling form');
     resetForm();
-    onClose(false);
+    handleSheetOpenChange(false);
   };
   
-  const handleOpenChange = (open: boolean) => {
-    console.log('TaskCreationSheet: Sheet open state changing to:', open);
-    setSheetOpenState(open);
+  const handleSheetOpenChange = (open: boolean) => {
+    console.log('TaskCreationSheet: handleSheetOpenChange called with:', open);
+    
+    // Update internal state first
+    setInternalOpen(open);
+    
+    // Then notify parent component
+    console.log('TaskCreationSheet: Calling onClose with:', open);
     onClose(open);
     
+    // Reset form if closing
     if (!open) {
+      console.log('TaskCreationSheet: Sheet closing, resetting form');
       resetForm();
     }
   };
 
   return (
-    <Sheet open={sheetOpenState} onOpenChange={handleOpenChange}>
+    <Sheet 
+      open={internalOpen} 
+      onOpenChange={handleSheetOpenChange}
+    >
       <SheetContent side="bottom" className="h-auto max-h-[90vh] rounded-t-xl">
         <SheetHeader>
           <SheetTitle>New Task</SheetTitle>
-          <SheetDescription>Create a new task with details.</SheetDescription>
+          <SheetDescription>
+            Create a new task with title, priority, and due date.
+          </SheetDescription>
         </SheetHeader>
         
         <form onSubmit={handleSubmit} className="pt-2">
@@ -109,7 +135,6 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
                 className="text-base py-6"
                 required
                 autoComplete="off"
-                autoFocus
               />
             </div>
             

@@ -22,15 +22,16 @@ const AddTaskButton = ({ darkMode, onAddTask, className }: AddTaskButtonProps) =
   const [isPressed, setIsPressed] = useState(false);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   
-  // Enhanced click handler with improved logging and event management
+  // Simplified click handler focused only on preventing default behavior
+  // and ensuring the sheet opens
   const handleClick = (e: React.MouseEvent) => {
-    // Stop the event from bubbling up to parent elements
+    // Critical: prevent default behavior completely
     e.preventDefault();
     e.stopPropagation();
     
-    console.log('AddTaskButton: Opening task creation sheet, current state:', isTaskSheetOpen);
+    console.log('AddTaskButton: Click detected, setting sheet to open');
     
-    // Force state update to ensure the sheet opens
+    // Force sheet to open with a fresh state update
     setIsTaskSheetOpen(true);
   };
   
@@ -46,7 +47,7 @@ const AddTaskButton = ({ darkMode, onAddTask, className }: AddTaskButtonProps) =
   };
   
   const handleSheetClose = (open: boolean) => {
-    console.log('AddTaskButton: Sheet closed, open state:', open);
+    console.log('AddTaskButton: Sheet state changing to:', open);
     setIsTaskSheetOpen(open);
   };
   
