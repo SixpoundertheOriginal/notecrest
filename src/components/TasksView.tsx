@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
@@ -51,7 +50,7 @@ const TasksView = ({
     priority: string;
     dueDate: Date | null;
   }) => {
-    onAddTask(task); // Pass the actual task data to parent
+    onAddTask(task);
     setIsTaskSheetOpen(false);
   };
 
@@ -65,7 +64,6 @@ const TasksView = ({
       </div>
 
       <div className="px-3 sm:px-4 pb-3 sm:pb-4">
-        {/* Add the Smart Task Input component */}
         <SmartTaskInput 
           onCreateTask={onAddTask}
           darkMode={darkMode}
@@ -103,7 +101,7 @@ const TasksView = ({
           ))
         ) : (
           <div className="flex flex-col items-center justify-center h-40 text-center">
-            <p className="text-muted-foreground mb-2">No tasks found</p>
+            <p className="text-muted-foreground mb-2">No active tasks found</p>
             <p className="text-sm text-muted-foreground">
               Click "Add New Task" to create your first task
             </p>

@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { TaskData, NewTaskData } from '@/types/task';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
 import TaskAppTabs from './TaskAppTabs';
 import TasksView from './TasksView';
+import CompletedTasksView from './CompletedTasksView';
 import NotesView from './NotesView';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -25,11 +25,9 @@ const TaskifyApp = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLoadingTasks, setIsLoadingTasks] = useState(false);
 
-  // Fetch user's tasks from Supabase
   useEffect(() => {
     const fetchTasks = async () => {
       if (!user) {
-        // If not authenticated, use demo tasks
         setTasks([
           { 
             id: 1, 
@@ -99,11 +97,9 @@ const TaskifyApp = () => {
   const toggleTheme = () => setDarkMode(!darkMode);
 
   const toggleTaskCompletion = async (id: number | string) => {
-    // Find the task to toggle
     const taskToUpdate = tasks.find(task => task.id === id);
     if (!taskToUpdate) return;
 
-    // Update local state optimistically
     const newStatus = !taskToUpdate.completed 
       ? 'Completed' as const
       : taskToUpdate.status === 'Completed' 
@@ -121,7 +117,6 @@ const TaskifyApp = () => {
     );
     setTasks(updatedTasks);
 
-    // Update in Supabase if user is logged in
     if (user && typeof id === 'string') {
       try {
         const { error } = await supabase
@@ -136,7 +131,6 @@ const TaskifyApp = () => {
           throw error;
         }
       } catch (error: any) {
-        // Revert the optimistic update
         setTasks(tasks);
         toast({
           title: "Error updating task",
@@ -163,7 +157,6 @@ const TaskifyApp = () => {
     const formattedDate = currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     
     if (user) {
-      // Add to Supabase if user is logged in
       try {
         const newTask: NewTaskData = {
           title: taskData.title,
@@ -212,7 +205,6 @@ const TaskifyApp = () => {
         });
       }
     } else {
-      // Add to local state if not logged in
       const newId = Math.max(0, ...tasks.map(task => typeof task.id === 'number' ? task.id : 0)) + 1;
       
       const newTask: TaskData = {
@@ -260,9 +252,48 @@ const TaskifyApp = () => {
     
     setTasks(tasksCopy);
     setDraggedTaskId(null);
+  };
+
+  const clearCompletedTasks = async () => {
+    if (!user) {
+      setTasks(tasks.filter(task => !task.completed));
+      toast({
+        title: "Completed tasks cleared (Demo Mode)",
+        description: "Sign in to save your changes permanently.",
+      });
+      return;
+    }
     
-    // In a real app, you might want to sync the order to the backend
-    // This would require adding an 'order' field to the tasks table
+    const completedTaskIds = tasks
+      .filter(task => task.completed && typeof task.id === 'string')
+      .map(task => task.id as string);
+      
+    if (completedTaskIds.length === 0) return;
+    
+    try {
+      const remainingTasks = tasks.filter(task => !task.completed);
+      setTasks(remainingTasks);
+      
+      const { error } = await supabase
+        .from('tasks')
+        .delete()
+        .in('id', completedTaskIds);
+        
+      if (error) {
+        throw error;
+      }
+      
+      toast({
+        title: "Completed tasks cleared",
+        description: `${completedTaskIds.length} task(s) removed.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error clearing tasks",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -306,7 +337,7 @@ const TaskifyApp = () => {
           {activeTab === 'tasks' && (
             <TasksView 
               darkMode={darkMode}
-              tasks={tasks}
+              tasks={tasks.filter(task => !task.completed)}
               isLoading={isLoadingTasks}
               draggedTaskId={draggedTaskId}
               onDragStart={handleDragStart}
@@ -316,6 +347,21 @@ const TaskifyApp = () => {
               onToggleExpansion={toggleTaskExpansion}
               onAddTask={addTask}
               isLoggedIn={!!user}
+            />
+          )}
+          
+          {activeTab === 'completed' && (
+            <CompletedTasksView 
+              darkMode={darkMode}
+              tasks={tasks}
+              isLoading={isLoadingTasks}
+              draggedTaskId={draggedTaskId}
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              onToggleCompletion={toggleTaskCompletion}
+              onToggleExpansion={toggleTaskExpansion}
+              onClearCompletedTasks={clearCompletedTasks}
             />
           )}
 
