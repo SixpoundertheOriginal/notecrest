@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Calendar, Clock, Flag } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { parseTaskText, formatDate, formatTime } from '@/lib/nlp-parser';
 
 interface SmartTaskInputProps {
   onCreateTask: (task: {
@@ -17,9 +18,11 @@ interface SmartTaskInputProps {
 const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode }) => {
   const [inputValue, setInputValue] = useState('');
   const [parsedInfo, setParsedInfo] = useState<{
-    date: Date | null;
+    title: string;
+    dueDate: Date | null;
+    reminderTime: Date | null;
     priority: string | null;
-  }>({ date: null, priority: null });
+  }>({ title: '', dueDate: null, reminderTime: null, priority: null });
   
   const inputRef = useRef<HTMLInputElement>(null);
   const processingTimeout = useRef<NodeJS.Timeout>();
@@ -31,62 +34,6 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
     }
   }, []);
 
-  // Parse natural language input
-  const parseNaturalLanguage = (input: string) => {
-    let result = {
-      text: input,
-      date: null as Date | null,
-      priority: null as string | null
-    };
-    
-    // Extract date patterns
-    const tomorrowMatch = input.match(/\btomorrow\b/i);
-    const todayMatch = input.match(/\btoday\b/i);
-    const nextWeekMatch = input.match(/\bnext week\b/i);
-    const dateMatch = input.match(/\bon\s+(\d{1,2})[\/\-\.](\d{1,2})(?:[\/\-\.](\d{2,4}))?/i);
-    
-    if (tomorrowMatch) {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      result.date = tomorrow;
-    } else if (todayMatch) {
-      result.date = new Date();
-    } else if (nextWeekMatch) {
-      const nextWeek = new Date();
-      nextWeek.setDate(nextWeek.getDate() + 7);
-      result.date = nextWeek;
-    } else if (dateMatch) {
-      try {
-        const day = parseInt(dateMatch[1], 10);
-        const month = parseInt(dateMatch[2], 10) - 1; // JS months are 0-indexed
-        const year = dateMatch[3] ? parseInt(dateMatch[3], 10) : new Date().getFullYear();
-        // Handle 2-digit years
-        const fullYear = year < 100 ? 2000 + year : year;
-        const date = new Date(fullYear, month, day);
-        if (!isNaN(date.getTime())) {
-          result.date = date;
-        }
-      } catch (e) {
-        console.log('Date parsing error:', e);
-      }
-    }
-    
-    // Extract priority keywords
-    const highPriorityMatch = input.match(/\b(urgent|high priority|important)\b/i);
-    const mediumPriorityMatch = input.match(/\b(medium priority|normal)\b/i);
-    const lowPriorityMatch = input.match(/\b(low priority|whenever|someday)\b/i);
-    
-    if (highPriorityMatch) {
-      result.priority = 'High';
-    } else if (mediumPriorityMatch) {
-      result.priority = 'Medium';
-    } else if (lowPriorityMatch) {
-      result.priority = 'Low';
-    }
-    
-    return result;
-  };
-
   // Handle input change with debounced NLP processing
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -97,11 +44,17 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
     
     // Process after a short delay to avoid excessive processing during typing
     processingTimeout.current = setTimeout(() => {
-      const parsedInput = parseNaturalLanguage(value);
-      setParsedInfo({
-        date: parsedInput.date,
-        priority: parsedInput.priority
-      });
+      if (value.trim()) {
+        const parsedResult = parseTaskText(value);
+        setParsedInfo({
+          title: parsedResult.title,
+          dueDate: parsedResult.dueDate || null,
+          reminderTime: parsedResult.reminderTime || null,
+          priority: parsedResult.priority || null
+        });
+      } else {
+        setParsedInfo({ title: '', dueDate: null, reminderTime: null, priority: null });
+      }
     }, 300);
   };
 
@@ -113,15 +66,15 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
     
     // Create task with extracted information
     onCreateTask({
-      title: inputValue,
+      title: parsedInfo.title || inputValue,
       description: '',
       priority: parsedInfo.priority || 'Medium',
-      dueDate: parsedInfo.date
+      dueDate: parsedInfo.dueDate
     });
     
     // Clear input after creating task
     setInputValue('');
-    setParsedInfo({ date: null, priority: null });
+    setParsedInfo({ title: '', dueDate: null, reminderTime: null, priority: null });
     
     // Return focus to input
     inputRef.current?.focus();
@@ -145,10 +98,17 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
         
         {/* Visual indicators for parsed information */}
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-          {parsedInfo.date && (
+          {parsedInfo.dueDate && (
             <span className="inline-flex items-center bg-primary/20 text-primary px-2 py-1 rounded text-xs">
               <Calendar size={12} className="mr-1" />
-              {parsedInfo.date.toLocaleDateString()}
+              {formatDate(parsedInfo.dueDate)}
+            </span>
+          )}
+          
+          {parsedInfo.reminderTime && (
+            <span className="inline-flex items-center bg-blue-500/20 text-blue-500 px-2 py-1 rounded text-xs">
+              <Clock size={12} className="mr-1" />
+              {formatTime(parsedInfo.reminderTime)}
             </span>
           )}
           
