@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import SubtasksList from './SubtasksList';
 import SubtaskInput from './SubtaskInput';
@@ -20,6 +20,8 @@ const SubtasksSection = ({
   onAddSubtask, 
   darkMode 
 }: SubtasksSectionProps) => {
+  const [isAddingSubtask, setIsAddingSubtask] = useState(false);
+  
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
@@ -27,7 +29,7 @@ const SubtasksSection = ({
           Subtasks
         </label>
         <button 
-          onClick={() => {}}
+          onClick={() => setIsAddingSubtask(true)}
           className={cn(
             darkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-500 hover:text-blue-600',
             "min-h-[44px] min-w-[44px] flex items-center justify-center"
@@ -44,10 +46,15 @@ const SubtasksSection = ({
         darkMode={darkMode}
       />
       
-      <SubtaskInput 
-        onAddSubtask={onAddSubtask}
-        darkMode={darkMode}
-      />
+      {isAddingSubtask && (
+        <SubtaskInput 
+          onAddSubtask={(title) => {
+            onAddSubtask(title);
+            setIsAddingSubtask(false);
+          }}
+          darkMode={darkMode}
+        />
+      )}
     </div>
   );
 };

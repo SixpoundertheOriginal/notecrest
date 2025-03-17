@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { TaskData, SubTask } from '@/types/task';
 import TaskDetailsHeader from './task-details/TaskDetailsHeader';
@@ -15,7 +15,7 @@ interface TaskDetailsProps {
 }
 
 const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
-  const [subtasks, setSubtasks] = useState<SubTask[]>([]);
+  const subtasks = task.subtasks || [];
 
   const handleAddSubtask = (title: string) => {
     const newSubtask: SubTask = {
@@ -24,17 +24,26 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
       completed: false
     };
     
-    setSubtasks([...subtasks, newSubtask]);
+    if (!task.subtasks) {
+      task.subtasks = [newSubtask];
+    } else {
+      task.subtasks.push(newSubtask);
+    }
   };
 
   const toggleSubtaskCompletion = (id: string) => {
-    setSubtasks(subtasks.map(subtask => 
+    if (!task.subtasks) return;
+    
+    const updatedSubtasks = task.subtasks.map(subtask => 
       subtask.id === id ? { ...subtask, completed: !subtask.completed } : subtask
-    ));
+    );
+    
+    task.subtasks = updatedSubtasks;
   };
 
   const deleteSubtask = (id: string) => {
-    setSubtasks(subtasks.filter(subtask => subtask.id !== id));
+    if (!task.subtasks) return;
+    task.subtasks = task.subtasks.filter(subtask => subtask.id !== id);
   };
 
   return (

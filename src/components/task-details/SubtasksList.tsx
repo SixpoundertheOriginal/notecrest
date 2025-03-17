@@ -17,7 +17,7 @@ const SubtasksList = ({
   deleteSubtask, 
   darkMode 
 }: SubtasksListProps) => {
-  if (subtasks.length === 0) return null;
+  if (!subtasks || subtasks.length === 0) return null;
 
   return (
     <div className={cn(
