@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
-  PlusCircle, Search, Inbox, CalendarCheck, 
+  PlusCircle, Search, CalendarCheck, 
   CalendarDays, CheckSquare, Hash, User, 
   Plus, Trash2, Settings, MoreHorizontal, Menu, X 
 } from 'lucide-react';
@@ -231,12 +231,6 @@ const TaskifySidebar = ({
       label: "Search", 
       to: "/search", 
       action: () => console.log("Search clicked") 
-    },
-    { 
-      icon: Inbox, 
-      label: "Inbox", 
-      to: "/inbox",
-      count: 0
     },
     { 
       icon: CalendarCheck, 
