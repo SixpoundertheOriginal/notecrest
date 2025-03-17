@@ -6,6 +6,7 @@ import TaskFilters from './TaskFilters';
 import AddTaskButton from './AddTaskButton';
 import TaskCard from './TaskCard';
 import TaskCreationSheet from './TaskCreationSheet';
+import SmartTaskInput from './SmartTaskInput';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Loader2 } from 'lucide-react';
 
@@ -64,6 +65,12 @@ const TasksView = ({
       </div>
 
       <div className="px-3 sm:px-4 pb-3 sm:pb-4">
+        {/* Add the Smart Task Input component */}
+        <SmartTaskInput 
+          onCreateTask={onAddTask}
+          darkMode={darkMode}
+        />
+        
         <AddTaskButton 
           darkMode={darkMode} 
           onClick={() => setIsTaskSheetOpen(true)} 
