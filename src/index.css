@@ -36,6 +36,16 @@
     --ring: 216 12% 84%;
 
     --radius: 0.5rem;
+    
+    /* Sidebar specific colors */
+    --sidebar-background: 225 25% 15%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 210 20% 98%;
+    --sidebar-primary-foreground: 224 25% 15%;
+    --sidebar-accent: 224 25% 25%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 224 25% 20%;
+    --sidebar-ring: 216 12% 84%;
   }
 
   .dark {
@@ -66,6 +76,16 @@
     --border: 224 25% 20%;
     --input: 224 25% 20%;
     --ring: 216 12% 84%;
+    
+    /* Sidebar specific colors */
+    --sidebar-background: 225 25% 15%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 210 20% 98%;
+    --sidebar-primary-foreground: 224 25% 15%;
+    --sidebar-accent: 224 30% 25%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 224 25% 20%;
+    --sidebar-ring: 216 12% 84%;
   }
 }
 
@@ -111,6 +131,10 @@
 
   .glass-button-primary {
     @apply backdrop-blur-sm bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/20 text-blue-400 transition-all duration-300;
+  }
+  
+  .nav-item-active {
+    @apply bg-white/10 text-blue-400;
   }
 }
 

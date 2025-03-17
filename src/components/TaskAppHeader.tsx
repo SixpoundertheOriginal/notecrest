@@ -6,14 +6,17 @@ import { cn } from '@/lib/utils';
 interface TaskAppHeaderProps {
   darkMode: boolean;
   toggleTheme: () => void;
+  pageTitle?: string;
   rightContent?: ReactNode;
 }
 
-const TaskAppHeader = ({ darkMode, toggleTheme, rightContent }: TaskAppHeaderProps) => {
+const TaskAppHeader = ({ darkMode, toggleTheme, pageTitle, rightContent }: TaskAppHeaderProps) => {
   return (
     <header className="glass-morphism py-3 px-4 backdrop-blur-xl sticky top-0 z-30 border-b border-white/5">
       <div className="flex justify-between items-center max-w-5xl mx-auto">
-        <h1 className="text-xl font-bold text-gradient">Taskify</h1>
+        <h1 className="text-xl font-bold">
+          {pageTitle || "Taskify"}
+        </h1>
         <div className="flex items-center gap-3">
           {rightContent}
           <button 
