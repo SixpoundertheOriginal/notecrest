@@ -13,6 +13,11 @@ const TaskFilters = ({ darkMode }: TaskFiltersProps) => {
   const isMobile = useIsMobileValue();
   const [activeFilter, setActiveFilter] = useState<string>("list");
   
+  // Hide the filters on mobile devices
+  if (isMobile) {
+    return null;
+  }
+  
   return (
     <div className="overflow-x-auto pb-1">
       <Tabs defaultValue="list" className="w-full" onValueChange={setActiveFilter}>
