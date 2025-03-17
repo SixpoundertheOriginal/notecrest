@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { parseTaskText, formatDate, formatTime } from '@/lib/nlp-parser';
 import { cn } from '@/lib/utils';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SmartTaskInputProps {
   onCreateTask: (task: {
@@ -25,9 +24,7 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
     reminderTime: Date | null;
     priority: string | null;
   }>({ title: '', dueDate: null, reminderTime: null, priority: null });
-  const [isPressed, setIsPressed] = useState(false);
   
-  const isMobile = useIsMobile();
   const inputRef = useRef<HTMLInputElement>(null);
   const processingTimeout = useRef<NodeJS.Timeout>();
   
@@ -50,7 +47,6 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
     processingTimeout.current = setTimeout(() => {
       if (value.trim()) {
         const parsedResult = parseTaskText(value);
-        console.log('Parsed result:', parsedResult); // Debug log
         setParsedInfo({
           title: parsedResult.title,
           dueDate: parsedResult.dueDate || null,
@@ -102,45 +98,42 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
   };
 
   return (
-    <div className="mb-4 w-full space-y-2">
-      <form 
-        onSubmit={handleSubmit}
-        className="w-full"
-      >
+    <div className="w-full mb-2">
+      <form onSubmit={handleSubmit} className="w-full">
         <div className="relative">
           <Input
             ref={inputRef}
             type="text"
             value={inputValue}
             onChange={handleInputChange}
-            placeholder="Add task using natural language (e.g., 'Call John tomorrow', 'Finish report urgent')"
-            className="pr-24 py-6 text-base"
+            placeholder="Add task... (e.g., 'Call John tomorrow', 'High priority: finish report')"
+            className="py-5 pl-3 pr-20 text-sm rounded-lg shadow-sm bg-background/50 border-input/50"
             autoComplete="off"
           />
           
-          {/* Visual indicators for parsed information */}
+          {/* Subtle indicators for parsed information */}
           <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
             {parsedInfo.dueDate && (
-              <span className="inline-flex items-center bg-primary/20 text-primary px-2 py-1 rounded text-xs">
-                <Calendar size={12} className="mr-1" />
+              <span className="inline-flex items-center bg-primary/10 text-primary px-1.5 py-0.5 rounded text-xs">
+                <Calendar size={10} className="mr-1" />
                 {formatDate(parsedInfo.dueDate)}
               </span>
             )}
             
             {parsedInfo.reminderTime && (
-              <span className="inline-flex items-center bg-blue-500/20 text-blue-500 px-2 py-1 rounded text-xs">
-                <Clock size={12} className="mr-1" />
+              <span className="inline-flex items-center bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded text-xs">
+                <Clock size={10} className="mr-1" />
                 {formatTime(parsedInfo.reminderTime)}
               </span>
             )}
             
             {parsedInfo.priority && (
-              <span className={`inline-flex items-center px-2 py-1 rounded text-xs ${
-                parsedInfo.priority === 'High' ? 'bg-red-500/20 text-red-500' : 
-                parsedInfo.priority === 'Medium' ? 'bg-yellow-500/20 text-yellow-500' : 
-                'bg-green-500/20 text-green-500'
+              <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs ${
+                parsedInfo.priority === 'High' ? 'bg-red-500/10 text-red-400' : 
+                parsedInfo.priority === 'Medium' ? 'bg-yellow-500/10 text-yellow-400' : 
+                'bg-green-500/10 text-green-400'
               }`}>
-                <Flag size={12} className="mr-1" />
+                <Flag size={10} className="mr-1" />
                 {parsedInfo.priority}
               </span>
             )}
@@ -149,7 +142,8 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
               type="submit" 
               size="sm"
               disabled={!inputValue.trim()}
-              className="h-8 ml-1"
+              className="h-7 px-2 text-xs ml-1 bg-primary/80 hover:bg-primary"
+              aria-label="Add task"
             >
               Add
             </Button>
@@ -157,27 +151,18 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
         </div>
       </form>
       
-      {/* Enhanced Add Task Button */}
+      {/* Subtle detailed task button */}
       <Button 
         onClick={handleAdvancedTaskClick}
+        variant="ghost" 
+        size="sm"
         className={cn(
-          "w-full bg-blue-500/90 hover:bg-blue-600/90 text-white py-2.5 sm:py-3 rounded-lg transition-all duration-200 group relative overflow-hidden",
-          isPressed ? 'scale-[0.98]' : ''
+          "w-full mt-1 py-1 text-xs text-muted-foreground transition-colors",
+          darkMode ? "hover:bg-white/5" : "hover:bg-black/5"
         )}
-        onMouseDown={() => setIsPressed(true)}
-        onMouseUp={() => setIsPressed(false)}
-        onMouseLeave={() => setIsPressed(false)}
-        onTouchStart={() => setIsPressed(true)}
-        onTouchEnd={() => setIsPressed(false)}
       >
-        {/* Add subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-        
-        {/* Add subtle inner shadow for depth */}
-        <div className="absolute inset-0 shadow-inner shadow-blue-300/10" />
-        
-        <Plus size={isMobile ? 16 : 18} className="mr-2" />
-        <span>Create Detailed Task</span>
+        <Plus size={12} className="mr-1.5" />
+        <span>Detailed Task</span>
       </Button>
     </div>
   );

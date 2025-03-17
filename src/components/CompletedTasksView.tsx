@@ -36,32 +36,32 @@ const CompletedTasksView = ({
   const completedTasks = tasks.filter(task => task.completed);
 
   return (
-    <div className="glass-morphism rounded-xl overflow-hidden">
-      <div className="p-3 sm:p-4 flex justify-between items-center">
-        <h3 className="text-lg font-semibold">
-          Completed Tasks ({completedTasks.length})
+    <div className="glass-morphism rounded-lg overflow-hidden shadow-sm">
+      <div className="p-3 flex justify-between items-center border-b border-white/5">
+        <h3 className="text-sm font-medium">
+          Completed ({completedTasks.length})
         </h3>
         
         {completedTasks.length > 0 && onClearCompletedTasks && (
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             onClick={onClearCompletedTasks}
             className={cn(
-              "flex items-center gap-1",
-              darkMode ? "hover:bg-red-900/20" : "hover:bg-red-100"
+              "h-7 px-2 text-xs",
+              darkMode ? "hover:bg-red-900/10 text-red-400" : "hover:bg-red-100/50 text-red-500"
             )}
           >
-            <Trash2 size={14} className="text-red-500" />
-            Clear All
+            <Trash2 size={12} className="mr-1" />
+            Clear
           </Button>
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:gap-4 p-3 sm:p-4 min-h-[200px]">
+      <div className="grid grid-cols-1 gap-2 p-3 min-h-[150px] max-h-[60vh] overflow-y-auto">
         {isLoading ? (
-          <div className="flex items-center justify-center h-40">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <div className="flex items-center justify-center h-32">
+            <Loader2 className="h-5 w-5 animate-spin text-primary/70" />
           </div>
         ) : completedTasks.length > 0 ? (
           completedTasks.map((task) => (
@@ -78,10 +78,10 @@ const CompletedTasksView = ({
             />
           ))
         ) : (
-          <div className="flex flex-col items-center justify-center h-40 text-center">
-            <p className="text-muted-foreground mb-2">No completed tasks</p>
-            <p className="text-sm text-muted-foreground">
-              Complete tasks to see them here
+          <div className="flex flex-col items-center justify-center h-32 text-center">
+            <p className="text-muted-foreground text-sm">No completed tasks</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Complete tasks will appear here
             </p>
           </div>
         )}

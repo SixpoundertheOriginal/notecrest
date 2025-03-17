@@ -59,54 +59,52 @@ const TasksView = ({
   };
 
   return (
-    <div className="glass-morphism rounded-xl overflow-hidden">
-      <div className={cn(
-        "p-3 sm:p-4 flex", 
-        isMobile ? "flex-col space-y-2" : "flex-wrap gap-2"
-      )}>
+    <div className="glass-morphism rounded-lg overflow-hidden shadow-sm">
+      {/* Compact header with filters and input */}
+      <div className="p-3 space-y-2">
         <TaskFilters darkMode={darkMode} />
-      </div>
-
-      <div className="px-3 sm:px-4 pb-3 sm:pb-4">
         <SmartTaskInput 
           onCreateTask={handleTaskSubmit}
           darkMode={darkMode}
         />
         
         {!isLoggedIn && (
-          <div className="mt-2 text-center text-xs text-amber-500">
-            Note: Tasks are stored locally. Login to save your tasks.
+          <div className="text-center text-xs text-amber-400/80 opacity-80">
+            Tasks stored locally. Login to save.
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:gap-4 p-3 sm:p-4 min-h-[200px]">
-        {isLoading ? (
-          <div className="flex items-center justify-center h-40">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        ) : tasks.length > 0 ? (
-          tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              darkMode={darkMode}
-              draggedTaskId={draggedTaskId}
-              onDragStart={onDragStart}
-              onDragOver={onDragOver}
-              onDrop={onDrop}
-              onToggleCompletion={onToggleCompletion}
-              onToggleExpansion={onToggleExpansion}
-            />
-          ))
-        ) : (
-          <div className="flex flex-col items-center justify-center h-40 text-center">
-            <p className="text-muted-foreground mb-2">No active tasks found</p>
-            <p className="text-sm text-muted-foreground">
-              Use the text field above to create your first task
-            </p>
-          </div>
-        )}
+      {/* Task list with subtle divider */}
+      <div className="border-t border-white/5">
+        <div className="grid grid-cols-1 gap-2 p-3 min-h-[180px] max-h-[60vh] overflow-y-auto">
+          {isLoading ? (
+            <div className="flex items-center justify-center h-32">
+              <Loader2 className="h-5 w-5 animate-spin text-primary/70" />
+            </div>
+          ) : tasks.length > 0 ? (
+            tasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                darkMode={darkMode}
+                draggedTaskId={draggedTaskId}
+                onDragStart={onDragStart}
+                onDragOver={onDragOver}
+                onDrop={onDrop}
+                onToggleCompletion={onToggleCompletion}
+                onToggleExpansion={onToggleExpansion}
+              />
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center h-32 text-center">
+              <p className="text-muted-foreground text-sm">No active tasks</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Enter text above to create a task
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       <TaskCreationSheet 
