@@ -46,6 +46,7 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
     processingTimeout.current = setTimeout(() => {
       if (value.trim()) {
         const parsedResult = parseTaskText(value);
+        console.log('Parsed result:', parsedResult); // Debug log
         setParsedInfo({
           title: parsedResult.title,
           dueDate: parsedResult.dueDate || null,

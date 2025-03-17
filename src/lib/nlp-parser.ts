@@ -1,6 +1,6 @@
 
 // Helper types
-type TaskPriority = "Low" | "Medium" | "High";
+type TaskPriority = "Low" | "Medium" | "High"; 
 
 type ParsedTaskResult = {
   title: string;
@@ -48,6 +48,60 @@ export function parseTaskText(text: string): ParsedTaskResult {
 function extractDateInfo(text: string): { dueDate?: Date, dateText: string } {
   // Initialize result
   const result = { dueDate: undefined as Date | undefined, dateText: "" };
+  
+  // Check for days of the week (Monday, Tuesday, etc.)
+  const dayNames = [
+    { full: "sunday", short: "sun", offset: 0 },
+    { full: "monday", short: "mon", offset: 1 },
+    { full: "tuesday", short: "tue", offset: 2 },
+    { full: "wednesday", short: "wed", offset: 3 },
+    { full: "thursday", short: "thu", offset: 4 },
+    { full: "friday", short: "fri", offset: 5 },
+    { full: "saturday", short: "sat", offset: 6 }
+  ];
+  
+  // Create a regex pattern for all day variations (including common misspellings)
+  const dayVariations = dayNames.flatMap(day => [
+    day.full, day.short, 
+    day.full.replace("day", "dai"), // Common misspelling: "wednesdai"
+    day.full.replace("day", "dy"), // Common misspelling: "wednesdy"
+    day.full.replace("nes", "ned"), // Common misspelling: "wednedsday"
+    day.full.replace("es", "ed")  // Common misspelling: "wedneday"
+  ]);
+  
+  const dayPattern = new RegExp(`\\b(${dayVariations.join("|")})\\b`, "i");
+  const dayMatch = text.match(dayPattern);
+  
+  if (dayMatch) {
+    const matchedDay = dayMatch[1].toLowerCase();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const currentDayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    
+    // Find which day was matched (accounting for variations/misspellings)
+    let targetDay = -1;
+    for (const day of dayNames) {
+      if (
+        matchedDay === day.full || 
+        matchedDay === day.short ||
+        matchedDay.includes(day.full.substring(0, 3))
+      ) {
+        targetDay = day.offset;
+        break;
+      }
+    }
+    
+    if (targetDay >= 0) {
+      // Calculate the next occurrence of the specified day
+      const daysToAdd = (targetDay + 7 - currentDayOfWeek) % 7;
+      const nextOccurrence = new Date(today);
+      nextOccurrence.setDate(today.getDate() + (daysToAdd === 0 ? 7 : daysToAdd));
+      
+      result.dueDate = nextOccurrence;
+      result.dateText = dayMatch[0];
+      return result;
+    }
+  }
   
   // Check for "tomorrow"
   const tomorrowMatch = text.match(/\b(tomorrow)\b/i);
