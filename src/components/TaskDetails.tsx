@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -160,20 +161,6 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
             )}>
               + Add
             </button>
-          </div>
-          
-          <div className={cn(
-            "p-2 rounded-lg mb-2",
-            darkMode ? 'bg-gray-800/30' : 'bg-gray-100/50'
-          )}>
-            <div className="flex items-center mb-2">
-              <input type="checkbox" className="mr-2 min-h-[44px] min-w-[44px] appearance-none" defaultChecked />
-              <span className="text-xs line-through">Research competitors</span>
-            </div>
-            <div className="flex items-center">
-              <input type="checkbox" className="mr-2 min-h-[44px] min-w-[44px] appearance-none" />
-              <span className="text-xs">Prepare presentation slides</span>
-            </div>
           </div>
           
           <input 
