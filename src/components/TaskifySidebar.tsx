@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { PlusCircle, Search, CalendarCheck, CalendarDays, CheckSquare, Menu, X } from 'lucide-react';
+import { PlusCircle, CalendarCheck, CalendarDays, CheckSquare, Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { Sidebar } from "@/components/ui/sidebar";
@@ -8,7 +8,6 @@ import { Project } from '@/hooks/useProjects';
 import { Sheet, SheetContent } from './ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
 import SidebarContents from './sidebar/SidebarContents';
-import SearchDialog from './sidebar/SearchDialog';
 
 interface TaskifySidebarProps {
   activeTab: string;
@@ -55,12 +54,6 @@ const TaskifySidebar = ({
       label: "Create Detailed Task", 
       action: () => handleOpenTaskCreation(),
       highlight: true
-    },
-    { 
-      icon: Search, 
-      label: "Search", 
-      component: <SearchDialog />, 
-      isActive: false
     },
     { 
       icon: CalendarCheck, 

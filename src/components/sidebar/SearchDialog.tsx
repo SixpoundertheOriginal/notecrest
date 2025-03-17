@@ -48,10 +48,11 @@ const SearchDialog = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <div className="w-full flex items-center gap-3 p-2 rounded-md hover:bg-accent transition-colors cursor-pointer">
+        <Button variant="ghost" className="w-full justify-start gap-3 px-2 bg-blue-500/10 hover:bg-blue-500/20 transition-colors">
           <Search size={18} className="text-blue-400" />
-          <span>Search</span>
-        </div>
+          <span>Search tasks...</span>
+          <span className="ml-auto opacity-60 text-xs">⌘K</span>
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Project } from '@/hooks/useProjects';
-import { User, Hash } from 'lucide-react';
+import { User, Hash, Search } from 'lucide-react';
 import { 
   SidebarHeader, 
   SidebarContent, 
@@ -18,8 +18,6 @@ import SidebarNavItem from './SidebarNavItem';
 import ProjectDialog from './ProjectDialog';
 import SearchDialog from './SearchDialog';
 import TaskCreationSheet from '../TaskCreationSheet';
-import { Button } from '../ui/button';
-import { Search } from 'lucide-react';
 
 interface SidebarContentsProps {
   username: string;
@@ -178,11 +176,7 @@ const SidebarContents = ({
       
       <SidebarFooter className="border-t border-white/5">
         <div className="p-2">
-          <Button variant="ghost" className="w-full justify-start px-2 bg-blue-500/10 hover:bg-blue-500/20 transition-colors">
-            <Search size={16} className="mr-2 text-blue-400" />
-            <span className="text-xs">Quick search...</span>
-            <span className="ml-auto opacity-60 text-xs">⌘K</span>
-          </Button>
+          <SearchDialog />
         </div>
       </SidebarFooter>
       
