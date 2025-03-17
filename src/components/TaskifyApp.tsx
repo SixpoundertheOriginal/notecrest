@@ -36,7 +36,7 @@ const TaskifyApp = () => {
             title: 'Complete project proposal (Demo)', 
             completed: false, 
             priority: 'High', 
-            status: 'In Progress',
+            status: 'In Progress' as 'Todo' | 'In Progress' | 'Completed', 
             date: 'Mar 8',
             expanded: false,
             createdAt: new Date(Date.now() - 1000 * 60 * 42) // 42 minutes ago
@@ -46,7 +46,7 @@ const TaskifyApp = () => {
             title: 'Review and respond to emails (Demo)', 
             completed: false, 
             priority: 'Medium', 
-            status: 'Todo',
+            status: 'Todo' as 'Todo' | 'In Progress' | 'Completed', 
             date: 'Mar 6',
             expanded: false,
             createdAt: new Date(Date.now() - 1000 * 60 * 120) // 2 hours ago
@@ -104,7 +104,12 @@ const TaskifyApp = () => {
     if (!taskToUpdate) return;
 
     // Update local state optimistically
-    const newStatus = !taskToUpdate.completed ? 'Completed' : taskToUpdate.status === 'Completed' ? 'Todo' : taskToUpdate.status;
+    const newStatus = !taskToUpdate.completed 
+      ? 'Completed' as const
+      : taskToUpdate.status === 'Completed' 
+        ? 'Todo' as const 
+        : taskToUpdate.status;
+        
     const updatedTasks = tasks.map(task => 
       task.id === id 
         ? { 
@@ -163,7 +168,7 @@ const TaskifyApp = () => {
         const newTask: NewTaskData = {
           title: taskData.title,
           completed: false,
-          priority: taskData.priority as 'High' | 'Medium' | 'Low',
+          priority: taskData.priority,
           status: 'Todo',
           date: formattedDate,
           user_id: user.id

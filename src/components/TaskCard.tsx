@@ -10,12 +10,12 @@ import { useIsMobile } from '@/hooks/use-mobile';
 interface TaskCardProps {
   task: TaskData;
   darkMode: boolean;
-  draggedTaskId: number | null;
-  onDragStart: (e: React.DragEvent, id: number) => void;
+  draggedTaskId: number | string | null;
+  onDragStart: (e: React.DragEvent, id: number | string) => void;
   onDragOver: (e: React.DragEvent) => void;
-  onDrop: (e: React.DragEvent, id: number) => void;
-  onToggleCompletion: (id: number) => void;
-  onToggleExpansion: (id: number) => void;
+  onDrop: (e: React.DragEvent, id: number | string) => void;
+  onToggleCompletion: (id: number | string) => void;
+  onToggleExpansion: (id: number | string) => void;
 }
 
 const TaskCard = ({
