@@ -67,12 +67,12 @@ const TaskCard = ({
           </button>
           
           <div>
-            <p className={cn(
-              "text-sm font-medium",
+            <h3 className={cn(
+              "text-base font-display font-semibold mb-1 tracking-tight",
               task.completed ? 'line-through text-gray-500' : ''
             )}>
               {task.title}
-            </p>
+            </h3>
             
             <div className="flex flex-wrap mt-2 gap-2">
               <span className={`text-xs px-2 py-0.5 rounded-full bg-gradient-to-r ${priorityColors.bg} text-white flex items-center`}>

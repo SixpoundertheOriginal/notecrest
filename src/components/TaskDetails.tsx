@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -21,7 +22,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
       onClick={(e) => e.stopPropagation()}
     >
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-medium">Task Details</h3>
+        <h3 className="font-display font-medium text-base">Task Details</h3>
         <div className="flex space-x-1">
           <button
             className={cn(

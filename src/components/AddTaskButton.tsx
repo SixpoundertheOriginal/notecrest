@@ -12,7 +12,7 @@ const AddTaskButton = ({ darkMode, onClick }: AddTaskButtonProps) => {
   return (
     <button 
       onClick={onClick}
-      className="glass-button-primary w-full py-3 rounded-lg flex items-center justify-center text-sm font-medium"
+      className="glass-button-primary w-full py-3 rounded-lg flex items-center justify-center font-medium"
     >
       <PlusCircle size={16} className="mr-2" />
       Add New Task
