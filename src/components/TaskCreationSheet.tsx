@@ -1,8 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { format } from 'date-fns';
-import { ChevronUp, ChevronDown, Calendar as CalendarIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,12 +12,9 @@ import {
   SheetTitle,
   SheetFooter,
 } from '@/components/ui/sheet';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
+import PrioritySelector from './PrioritySelector';
+import QuickDateButtons from './QuickDateButtons';
+import DatePicker from './DatePicker';
 
 interface TaskCreationSheetProps {
   isOpen: boolean;
@@ -197,108 +192,6 @@ const TaskCreationSheet = ({ isOpen, onClose, onSubmit }: TaskCreationSheetProps
         </form>
       </SheetContent>
     </Sheet>
-  );
-};
-
-// Priority selector component
-interface PrioritySelectorProps {
-  value: string;
-  onChange: (value: string) => void;
-}
-
-const PrioritySelector = ({ value, onChange }: PrioritySelectorProps) => {
-  const priorities = ['Low', 'Medium', 'High'];
-  
-  return (
-    <div className="flex gap-1">
-      {priorities.map((priority) => (
-        <Button
-          key={priority}
-          type="button"
-          variant={value === priority ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => onChange(priority)}
-          className={cn(
-            value === priority && {
-              'Low': 'bg-green-500 hover:bg-green-600',
-              'Medium': 'bg-yellow-500 hover:bg-yellow-600',
-              'High': 'bg-red-500 hover:bg-red-600',
-            }[priority]
-          )}
-        >
-          {priority}
-        </Button>
-      ))}
-    </div>
-  );
-};
-
-// Quick date buttons component
-interface QuickDateButtonsProps {
-  onSelect: (date: Date | null) => void;
-}
-
-const QuickDateButtons = ({ onSelect }: QuickDateButtonsProps) => {
-  const today = new Date();
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
-  const nextWeek = new Date(today);
-  nextWeek.setDate(today.getDate() + 7);
-  
-  const quickDates = [
-    { label: 'Today', date: today },
-    { label: 'Tomorrow', date: tomorrow },
-    { label: 'Next Week', date: nextWeek },
-  ];
-  
-  return (
-    <div className="flex gap-1">
-      {quickDates.map(({ label, date }) => (
-        <Button
-          key={label}
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => onSelect(date)}
-        >
-          {label}
-        </Button>
-      ))}
-    </div>
-  );
-};
-
-// DatePicker component
-interface DatePickerProps {
-  date: Date | null;
-  setDate: (date: Date | null) => void;
-}
-
-const DatePicker = ({ date, setDate }: DatePickerProps) => {
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className={cn(
-            "w-full justify-start text-left font-normal mt-1",
-            !date && "text-muted-foreground"
-          )}
-        >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="single"
-          selected={date || undefined}
-          onSelect={setDate}
-          initialFocus
-          className="pointer-events-auto"
-        />
-      </PopoverContent>
-    </Popover>
   );
 };
 

@@ -7,5 +7,5 @@ export interface TaskData {
   status: 'Todo' | 'In Progress' | 'Completed';
   date: string;
   expanded: boolean;
-  createdAt?: Date; // Add createdAt field
+  createdAt: Date; // Updated to be required
 }
