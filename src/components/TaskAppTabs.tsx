@@ -17,8 +17,8 @@ const TaskAppTabs = ({ activeTab, setActiveTab, darkMode }: TaskAppTabsProps) =>
         className={cn(
           "flex-1 py-3 px-4 flex items-center justify-center gap-2 transition-all duration-300 min-h-[44px]",
           activeTab === 'tasks' 
-            ? 'bg-white/10 text-blue-400' 
-            : ''
+            ? 'bg-white/10 text-blue-300 font-medium' 
+            : 'text-gray-100 hover:text-white'
         )}
       >
         <ListTodo size={16} />
@@ -29,8 +29,8 @@ const TaskAppTabs = ({ activeTab, setActiveTab, darkMode }: TaskAppTabsProps) =>
         className={cn(
           "flex-1 py-3 px-4 flex items-center justify-center gap-2 transition-all duration-300 min-h-[44px]",
           activeTab === 'completed' 
-            ? 'bg-white/10 text-blue-400' 
-            : ''
+            ? 'bg-white/10 text-blue-300 font-medium' 
+            : 'text-gray-100 hover:text-white'
         )}
       >
         <CheckSquare size={16} />
@@ -41,8 +41,8 @@ const TaskAppTabs = ({ activeTab, setActiveTab, darkMode }: TaskAppTabsProps) =>
         className={cn(
           "flex-1 py-3 px-4 flex items-center justify-center gap-2 transition-all duration-300 min-h-[44px]",
           activeTab === 'notes' 
-            ? 'bg-white/10 text-blue-400' 
-            : ''
+            ? 'bg-white/10 text-blue-300 font-medium' 
+            : 'text-gray-100 hover:text-white'
         )}
       >
         <StickyNote size={16} />

@@ -23,9 +23,9 @@ const PrioritySelector = ({ value, onChange }: PrioritySelectorProps) => {
           className={cn(
             "min-h-[44px] min-w-[44px]",
             value === priority && {
-              'Low': 'bg-green-500 hover:bg-green-600',
-              'Medium': 'bg-yellow-500 hover:bg-yellow-600',
-              'High': 'bg-red-500 hover:bg-red-600',
+              'Low': 'bg-green-600 hover:bg-green-700 text-white',
+              'Medium': 'bg-yellow-600 hover:bg-yellow-700 text-white',
+              'High': 'bg-red-600 hover:bg-red-700 text-white',
             }[priority]
           )}
         >

@@ -12,7 +12,7 @@ const WelcomeHeader = ({ username, isLoggedIn }: WelcomeHeaderProps) => {
       <h2 className="text-3xl font-light mb-2">
         Welcome to <span className="font-bold text-gradient">Taskify</span>
       </h2>
-      <p className="text-sm text-gray-400">
+      <p className="text-sm text-white">
         {isLoggedIn 
           ? `Manage your tasks, ${username || 'User'}`
           : "Log in to save your tasks across devices"

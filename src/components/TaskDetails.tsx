@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -16,7 +15,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
       className={cn(
         "mt-4 p-4 rounded-xl text-sm transition-all duration-300 origin-top animate-expand overflow-hidden",
         darkMode 
-          ? 'bg-gray-900/70 border border-gray-800/70' 
+          ? 'bg-gray-900/80 border border-gray-800/70' 
           : 'bg-white/90 border border-gray-200/80'
       )}
       onClick={(e) => e.stopPropagation()}
@@ -28,8 +27,8 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
             className={cn(
               "p-1 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center",
               darkMode
-                ? 'hover:bg-gray-800 text-gray-400 hover:text-gray-300'
-                : 'hover:bg-gray-100 text-gray-500 hover:text-gray-600'
+                ? 'hover:bg-gray-800 text-gray-300 hover:text-gray-100'
+                : 'hover:bg-gray-100 text-gray-600 hover:text-gray-800'
             )}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
@@ -38,8 +37,8 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
             className={cn(
               "p-1 rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center",
               darkMode
-                ? 'hover:bg-gray-800 text-gray-400 hover:text-gray-300'
-                : 'hover:bg-gray-100 text-gray-500 hover:text-gray-600'
+                ? 'hover:bg-gray-800 text-gray-300 hover:text-gray-100'
+                : 'hover:bg-gray-100 text-gray-600 hover:text-gray-800'
             )}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
@@ -51,7 +50,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
       <div className="space-y-4">
         <div className="space-y-3">
           <div>
-            <label className={cn("block text-xs mb-1", darkMode ? 'text-gray-400' : 'text-gray-500')}>
+            <label className={cn("block text-xs mb-1", darkMode ? 'text-gray-300' : 'text-gray-600')}>
               Title
             </label>
             <input 
@@ -60,14 +59,14 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
               className={cn(
                 "w-full px-3 py-2 rounded-lg text-sm transition-all duration-200 min-h-[44px]",
                 darkMode 
-                  ? 'bg-gray-800/50 border border-gray-700 focus:border-primary text-white' 
-                  : 'bg-white border border-gray-200 focus:border-primary'
+                  ? 'bg-gray-800/70 border border-gray-700 focus:border-primary text-white' 
+                  : 'bg-white border border-gray-300 focus:border-primary text-gray-800'
               )}
             />
           </div>
           
           <div>
-            <label className={cn("block text-xs mb-1", darkMode ? 'text-gray-400' : 'text-gray-500')}>
+            <label className={cn("block text-xs mb-1", darkMode ? 'text-gray-300' : 'text-gray-600')}>
               Description
             </label>
             <textarea
@@ -76,8 +75,8 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
               className={cn(
                 "w-full px-3 py-2 rounded-lg text-sm transition-all duration-200 min-h-[44px]",
                 darkMode 
-                  ? 'bg-gray-800/50 border border-gray-700 focus:border-primary text-white placeholder-gray-600' 
-                  : 'bg-white border border-gray-200 focus:border-primary placeholder-gray-400'
+                  ? 'bg-gray-800/70 border border-gray-700 focus:border-primary text-white placeholder-gray-500' 
+                  : 'bg-white border border-gray-300 focus:border-primary text-gray-800 placeholder-gray-500'
               )}
             />
           </div>
@@ -85,7 +84,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className={cn("block text-xs mb-1", darkMode ? 'text-gray-400' : 'text-gray-500')}>
+            <label className={cn("block text-xs mb-1", darkMode ? 'text-gray-300' : 'text-gray-600')}>
               Due Date
             </label>
             <div className={cn(
@@ -104,7 +103,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
           </div>
           
           <div>
-            <label className={cn("block text-xs mb-1", darkMode ? 'text-gray-400' : 'text-gray-500')}>
+            <label className={cn("block text-xs mb-1", darkMode ? 'text-gray-300' : 'text-gray-600')}>
               Priority
             </label>
             <select
@@ -124,7 +123,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
         </div>
 
         <div>
-          <label className={cn("block text-xs mb-1", darkMode ? 'text-gray-400' : 'text-gray-500')}>
+          <label className={cn("block text-xs mb-1", darkMode ? 'text-gray-300' : 'text-gray-600')}>
             Status
           </label>
           <div className="flex space-x-4 mb-2">
@@ -152,7 +151,7 @@ const TaskDetails = ({ task, darkMode }: TaskDetailsProps) => {
 
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className={cn("block text-xs", darkMode ? 'text-gray-400' : 'text-gray-500')}>
+            <label className={cn("block text-xs", darkMode ? 'text-gray-300' : 'text-gray-600')}>
               Subtasks
             </label>
             <button className={cn(
