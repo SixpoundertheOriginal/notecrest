@@ -22,6 +22,7 @@ export const useTasks = (user: any) => {
             status: 'In Progress' as 'Todo' | 'In Progress' | 'Completed', 
             date: 'Mar 8',
             expanded: false,
+            project_id: '1', // Main project
             createdAt: new Date(Date.now() - 1000 * 60 * 42) // 42 minutes ago
           },
           { 
@@ -32,6 +33,7 @@ export const useTasks = (user: any) => {
             status: 'Todo' as 'Todo' | 'In Progress' | 'Completed', 
             date: 'Mar 6',
             expanded: false,
+            project_id: '2', // Projects project
             createdAt: new Date(Date.now() - 1000 * 60 * 120) // 2 hours ago
           },
         ]);
@@ -59,7 +61,8 @@ export const useTasks = (user: any) => {
             date: task.date,
             expanded: false,
             createdAt: new Date(task.created_at),
-            user_id: task.user_id
+            user_id: task.user_id,
+            project_id: task.project_id || null
           }));
           setTasks(formattedTasks);
         }
@@ -133,6 +136,7 @@ export const useTasks = (user: any) => {
     description: string;
     priority: string;
     dueDate: Date | null;
+    projectId?: string;
   }) => {
     const currentDate = new Date();
     const formattedDate = currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -145,7 +149,8 @@ export const useTasks = (user: any) => {
           priority: taskData.priority,
           status: 'Todo',
           date: formattedDate,
-          user_id: user.id
+          user_id: user.id,
+          project_id: taskData.projectId || null
         };
         
         const { data, error } = await supabase
@@ -168,7 +173,8 @@ export const useTasks = (user: any) => {
             date: data.date,
             expanded: false,
             createdAt: new Date(data.created_at),
-            user_id: data.user_id
+            user_id: data.user_id,
+            project_id: data.project_id || null
           };
           
           setTasks([formattedTask, ...tasks]);
@@ -196,7 +202,8 @@ export const useTasks = (user: any) => {
         status: 'Todo',
         date: formattedDate,
         expanded: false,
-        createdAt: currentDate
+        createdAt: currentDate,
+        project_id: taskData.projectId || null
       };
       
       setTasks([newTask, ...tasks]);

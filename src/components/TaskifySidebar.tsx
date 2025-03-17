@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   PlusCircle, Search, Inbox, CalendarCheck, 
-  CalendarDays, CheckSquare, Hash, User 
+  CalendarDays, CheckSquare, Hash, User, 
+  Plus, Trash2, Settings, MoreHorizontal 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
@@ -23,41 +24,177 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from './ui/button';
 import AuthSection from './app/AuthSection';
+import { Project } from '@/hooks/useProjects';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Input } from './ui/input';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface SidebarNavItemProps {
   icon: React.ElementType;
   label: string;
-  to: string;
+  to?: string;
+  action?: () => void;
   isActive?: boolean;
   count?: number;
+  highlight?: boolean;
 }
 
-const SidebarNavItem = ({ icon: Icon, label, to, isActive, count }: SidebarNavItemProps) => {
+const SidebarNavItem = ({ 
+  icon: Icon, 
+  label, 
+  to, 
+  action, 
+  isActive, 
+  count, 
+  highlight 
+}: SidebarNavItemProps) => {
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton 
-        asChild 
-        isActive={isActive}
-        tooltip={label}
-      >
-        <NavLink 
-          to={to}
-          className={({ isActive }) => cn(
-            isActive && "text-blue-400"
-          )}
+      {action ? (
+        <SidebarMenuButton 
+          onClick={action}
+          isActive={isActive}
+          tooltip={label}
+          className={highlight ? "text-red-400 hover:text-red-300" : ""}
         >
           <Icon size={18} />
           <span>{label}</span>
           {count !== undefined && count > 0 && (
             <span className="ml-auto text-xs opacity-60">{count}</span>
           )}
-        </NavLink>
-      </SidebarMenuButton>
+        </SidebarMenuButton>
+      ) : (
+        <SidebarMenuButton 
+          asChild 
+          isActive={isActive}
+          tooltip={label}
+        >
+          <div className="cursor-pointer">
+            <Icon size={18} />
+            <span>{label}</span>
+            {count !== undefined && count > 0 && (
+              <span className="ml-auto text-xs opacity-60">{count}</span>
+            )}
+          </div>
+        </SidebarMenuButton>
+      )}
     </SidebarMenuItem>
   );
 };
 
-const TaskifySidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (tab: string) => void }) => {
+const ProjectDialog = ({ onCreateProject }: { onCreateProject: (data: { name: string, color: string }) => void }) => {
+  const [name, setName] = useState('');
+  const [color, setColor] = useState('blue');
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (name.trim()) {
+      onCreateProject({ name, color });
+      setName('');
+    }
+  };
+  
+  const colors = [
+    { value: 'blue', label: 'Blue', class: 'bg-blue-500' },
+    { value: 'pink', label: 'Pink', class: 'bg-pink-500' },
+    { value: 'orange', label: 'Orange', class: 'bg-orange-500' },
+    { value: 'green', label: 'Green', class: 'bg-green-500' },
+    { value: 'purple', label: 'Purple', class: 'bg-purple-500' },
+  ];
+  
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+          <Plus size={16} />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle>Create new project</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <label htmlFor="name" className="text-sm font-medium">
+                Project name
+              </label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter project name"
+                className="col-span-3"
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">
+                Select color
+              </label>
+              <div className="flex gap-2">
+                {colors.map(c => (
+                  <button
+                    key={c.value}
+                    type="button"
+                    className={cn(
+                      "w-6 h-6 rounded-full ring-offset-2",
+                      c.class,
+                      color === c.value && "ring-2 ring-white"
+                    )}
+                    onClick={() => setColor(c.value)}
+                    title={c.label}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">Cancel</Button>
+            </DialogClose>
+            <DialogClose asChild>
+              <Button type="submit" disabled={!name.trim()}>Create</Button>
+            </DialogClose>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+interface TaskifySidebarProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+  projects: Project[];
+  isLoadingProjects: boolean;
+  activeProjectId: string | null;
+  setActiveProjectId: (id: string | null) => void;
+  createProject: (data: { name: string, color: string }) => void;
+}
+
+const TaskifySidebar = ({ 
+  activeTab, 
+  setActiveTab, 
+  projects, 
+  isLoadingProjects,
+  activeProjectId,
+  setActiveProjectId,
+  createProject
+}: TaskifySidebarProps) => {
   const { user } = useAuth();
   const username = user?.email ? user.email.split('@')[0] : 'User';
   
@@ -84,28 +221,41 @@ const TaskifySidebar = ({ activeTab, setActiveTab }: { activeTab: string, setAct
     { 
       icon: CalendarCheck, 
       label: "Today", 
-      action: () => setActiveTab('tasks'),
-      isActive: activeTab === 'tasks'
+      action: () => {
+        setActiveTab('tasks');
+        setActiveProjectId(null);
+      },
+      isActive: activeTab === 'tasks' && !activeProjectId
     },
     { 
       icon: CalendarDays, 
       label: "Upcoming", 
-      action: () => setActiveTab('notes'),
-      isActive: activeTab === 'notes'
+      action: () => {
+        setActiveTab('notes');
+        setActiveProjectId(null);
+      },
+      isActive: activeTab === 'notes' && !activeProjectId
     },
     { 
       icon: CheckSquare, 
       label: "Completed", 
-      action: () => setActiveTab('completed'),
-      isActive: activeTab === 'completed'
+      action: () => {
+        setActiveTab('completed');
+        setActiveProjectId(null);
+      },
+      isActive: activeTab === 'completed' && !activeProjectId
     },
   ];
   
-  const projects = [
-    { name: "Main", count: 22, color: "pink" },
-    { name: "Projects", count: 34, color: "blue" },
-    { name: "Yodel-Work", count: 17, color: "orange" },
-  ];
+  const favoritedProjects = projects.filter(project => 
+    project.name.toLowerCase() === 'projects' || 
+    project.name.toLowerCase() === 'main'
+  );
+
+  const handleProjectClick = (projectId: string) => {
+    setActiveProjectId(projectId);
+    setActiveTab('tasks'); // Reset to tasks view when clicking on a project
+  };
 
   return (
     <Sidebar className="border-r border-white/5">
@@ -127,36 +277,7 @@ const TaskifySidebar = ({ activeTab, setActiveTab }: { activeTab: string, setAct
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item, index) => (
-                <SidebarMenuItem key={item.label}>
-                  {item.action ? (
-                    <SidebarMenuButton 
-                      onClick={item.action}
-                      isActive={item.isActive}
-                      tooltip={item.label}
-                      className={item.highlight ? "text-red-400 hover:text-red-300" : ""}
-                    >
-                      <item.icon size={18} />
-                      <span>{item.label}</span>
-                      {item.count !== undefined && item.count > 0 && (
-                        <span className="ml-auto text-xs opacity-60">{item.count}</span>
-                      )}
-                    </SidebarMenuButton>
-                  ) : (
-                    <SidebarMenuButton 
-                      asChild 
-                      isActive={item.isActive}
-                      tooltip={item.label}
-                    >
-                      <div className="cursor-pointer">
-                        <item.icon size={18} />
-                        <span>{item.label}</span>
-                        {item.count !== undefined && item.count > 0 && (
-                          <span className="ml-auto text-xs opacity-60">{item.count}</span>
-                        )}
-                      </div>
-                    </SidebarMenuButton>
-                  )}
-                </SidebarMenuItem>
+                <SidebarNavItem key={item.label} {...item} />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -169,13 +290,24 @@ const TaskifySidebar = ({ activeTab, setActiveTab }: { activeTab: string, setAct
           <SidebarGroupLabel>Favorites</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton>
-                  <Hash size={18} className="text-blue-400" />
-                  <span>Projects</span>
-                  <span className="ml-auto text-xs opacity-60">34</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {favoritedProjects.map(project => (
+                <SidebarMenuItem key={project.id}>
+                  <SidebarMenuButton 
+                    isActive={activeProjectId === project.id}
+                    onClick={() => handleProjectClick(project.id)}
+                  >
+                    <Hash size={18} className={
+                      project.color === "blue" ? "text-blue-400" : 
+                      project.color === "pink" ? "text-pink-400" : 
+                      project.color === "green" ? "text-green-400" : 
+                      project.color === "purple" ? "text-purple-400" : 
+                      "text-orange-400"
+                    } />
+                    <span>{project.name}</span>
+                    <span className="ml-auto text-xs opacity-60">{project.task_count}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -184,22 +316,45 @@ const TaskifySidebar = ({ activeTab, setActiveTab }: { activeTab: string, setAct
         
         {/* My Projects section */}
         <SidebarGroup>
-          <SidebarGroupLabel>My Projects</SidebarGroupLabel>
+          <div className="flex items-center justify-between px-4 py-2">
+            <SidebarGroupLabel>My Projects</SidebarGroupLabel>
+            <ProjectDialog onCreateProject={createProject} />
+          </div>
           <SidebarGroupContent>
             <SidebarMenu>
-              {projects.map(project => (
-                <SidebarMenuItem key={project.name}>
-                  <SidebarMenuButton>
+              {projects
+                .filter(project => 
+                  project.name.toLowerCase() !== 'projects' && 
+                  project.name.toLowerCase() !== 'main'
+                )
+                .map(project => (
+                <SidebarMenuItem key={project.id}>
+                  <SidebarMenuButton 
+                    isActive={activeProjectId === project.id}
+                    onClick={() => handleProjectClick(project.id)}
+                  >
                     <Hash size={18} className={
                       project.color === "blue" ? "text-blue-400" : 
                       project.color === "pink" ? "text-pink-400" : 
+                      project.color === "green" ? "text-green-400" : 
+                      project.color === "purple" ? "text-purple-400" : 
                       "text-orange-400"
                     } />
                     <span>{project.name}</span>
-                    <span className="ml-auto text-xs opacity-60">{project.count}</span>
+                    <span className="ml-auto text-xs opacity-60">{project.task_count}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {projects.length === 0 && !isLoadingProjects && (
+                <div className="px-4 py-2 text-sm text-muted-foreground">
+                  No projects yet. Create one to get started.
+                </div>
+              )}
+              {isLoadingProjects && (
+                <div className="px-4 py-2 text-sm text-muted-foreground">
+                  Loading projects...
+                </div>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

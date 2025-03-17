@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import WelcomeHeader from './app/WelcomeHeader';
 import TaskContent from './app/TaskContent';
 import { useTasks } from '@/hooks/useTasks';
+import { useProjects } from '@/hooks/useProjects';
 import TaskifySidebar from './TaskifySidebar';
 import { SidebarInset } from './ui/sidebar';
 
@@ -27,6 +28,15 @@ const TaskifyApp = () => {
     clearCompletedTasks
   } = useTasks(user);
 
+  const {
+    projects,
+    isLoadingProjects,
+    activeProjectId,
+    setActiveProjectId,
+    createProject,
+    deleteProject
+  } = useProjects(user);
+
   const toggleTheme = () => setDarkMode(!darkMode);
   
   const username = user?.email ? user.email.split('@')[0] : undefined;
@@ -34,6 +44,11 @@ const TaskifyApp = () => {
 
   // Map activeTab to a more user-friendly title
   const getPageTitle = () => {
+    if (activeProjectId) {
+      const project = projects.find(p => p.id === activeProjectId);
+      return project ? project.name : 'Project';
+    }
+
     switch(activeTab) {
       case 'tasks': return 'Today';
       case 'completed': return 'Completed';
@@ -42,9 +57,22 @@ const TaskifyApp = () => {
     }
   };
 
+  // Filter tasks based on active project
+  const filteredTasks = activeProjectId
+    ? tasks.filter(task => task.project_id === activeProjectId)
+    : tasks;
+
   return (
     <>
-      <TaskifySidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <TaskifySidebar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab}
+        projects={projects}
+        isLoadingProjects={isLoadingProjects}
+        activeProjectId={activeProjectId}
+        setActiveProjectId={setActiveProjectId}
+        createProject={createProject}
+      />
       <SidebarInset>
         <TaskAppHeader 
           darkMode={darkMode} 
@@ -57,7 +85,7 @@ const TaskifyApp = () => {
             <TaskContent
               activeTab={activeTab}
               darkMode={darkMode}
-              tasks={tasks}
+              tasks={filteredTasks}
               isLoadingTasks={isLoadingTasks}
               draggedTaskId={draggedTaskId}
               isLoggedIn={isLoggedIn}
