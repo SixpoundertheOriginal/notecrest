@@ -4,6 +4,12 @@ import { Menu, Moon, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobileValue } from '@/hooks/use-mobile';
 import { Button } from './ui/button';
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './ui/tooltip';
 
 interface TaskAppHeaderProps {
   darkMode: boolean;
@@ -45,12 +51,32 @@ const TaskAppHeader = ({ darkMode, toggleTheme, pageTitle, rightContent }: TaskA
         )}
         <div className="flex items-center gap-3">
           {rightContent}
-          <button 
-            onClick={toggleTheme} 
-            className="glass-button p-2 rounded-full"
-          >
-            {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  onClick={toggleTheme} 
+                  variant="outline"
+                  size="icon"
+                  className={cn(
+                    "rounded-full transition-all duration-300",
+                    darkMode 
+                      ? "bg-blue-500/30 hover:bg-blue-500/40 border-blue-500/30" 
+                      : "bg-amber-500/20 hover:bg-amber-500/30 border-amber-400/30"
+                  )}
+                >
+                  {darkMode ? (
+                    <Sun size={18} className="text-blue-200" />
+                  ) : (
+                    <Moon size={18} className="text-amber-400" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
     </header>
