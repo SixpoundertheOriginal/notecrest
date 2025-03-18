@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
@@ -21,7 +22,7 @@ const TaskifyApp = () => {
   const { user, loading: authLoading } = useAuth();
   const { isMobile } = useIsMobile();
   const { darkMode, toggleTheme } = useTheme();
-  const { activeProjectId } = useProjects();
+  const { projects, activeProjectId } = useProjects();
   
   const {
     tasks,
