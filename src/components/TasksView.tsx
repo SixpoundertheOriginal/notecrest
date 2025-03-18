@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
@@ -23,6 +24,8 @@ interface TasksViewProps {
     dueDate: Date | null;
   }) => void;
   isLoggedIn?: boolean;
+  sortOption?: string;
+  onSortChange?: (value: string) => void;
 }
 
 const TasksView = ({
@@ -37,6 +40,8 @@ const TasksView = ({
   onToggleExpansion,
   onAddTask,
   isLoggedIn = false,
+  sortOption = "date-desc",
+  onSortChange
 }: TasksViewProps) => {
   const { isMobile } = useIsMobile();
   
@@ -58,7 +63,11 @@ const TasksView = ({
       </div>
       
       <div className="p-3 space-y-2 relative z-10">
-        <TaskFilters darkMode={darkMode} />
+        <TaskFilters 
+          darkMode={darkMode} 
+          value={sortOption} 
+          onSortChange={onSortChange} 
+        />
         
         {!isLoggedIn && (
           <div className="text-center text-xs text-amber-400/80 opacity-80">

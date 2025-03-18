@@ -14,9 +14,9 @@ const TaskMetaFields = ({ task, darkMode }: TaskMetaFieldsProps) => {
   // Function to get priority-specific styling for the select element
   const getPriorityStyle = () => {
     switch (task.priority) {
-      case 'High': return 'focus:border-[#D946EF] text-[#D946EF]';
-      case 'Medium': return 'focus:border-[#8B5CF6] text-[#8B5CF6]';
-      case 'Low': return 'focus:border-[#0EA5E9] text-[#0EA5E9]';
+      case 'High': return 'focus:border-rose-500 text-rose-500';
+      case 'Medium': return 'focus:border-amber-500 text-amber-500';
+      case 'Low': return 'focus:border-blue-500 text-blue-500';
       default: return '';
     }
   };
@@ -56,9 +56,9 @@ const TaskMetaFields = ({ task, darkMode }: TaskMetaFieldsProps) => {
             getPriorityStyle()
           )}
         >
-          <option value="High" className="text-[#D946EF]">High</option>
-          <option value="Medium" className="text-[#8B5CF6]">Medium</option>
-          <option value="Low" className="text-[#0EA5E9]">Low</option>
+          <option value="High" className="text-rose-500">High</option>
+          <option value="Medium" className="text-amber-500">Medium</option>
+          <option value="Low" className="text-blue-500">Low</option>
         </select>
       </div>
     </div>

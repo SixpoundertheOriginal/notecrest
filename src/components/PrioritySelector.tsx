@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { AlertTriangle, Minus, ArrowDown } from 'lucide-react';
 
 interface PrioritySelectorProps {
   value: string;
@@ -23,12 +24,17 @@ const PrioritySelector = ({ value, onChange }: PrioritySelectorProps) => {
           className={cn(
             "min-h-[44px] min-w-[44px]",
             value === priority && {
-              'Low': 'bg-[#0EA5E9] hover:bg-[#0EA5E9]/90 text-white',
-              'Medium': 'bg-[#8B5CF6] hover:bg-[#8B5CF6]/90 text-white',
-              'High': 'bg-[#D946EF] hover:bg-[#D946EF]/90 text-white',
+              'Low': 'bg-blue-500 hover:bg-blue-600 text-white',
+              'Medium': 'bg-amber-500 hover:bg-amber-600 text-white',
+              'High': 'bg-rose-500 hover:bg-rose-600 text-white',
             }[priority]
           )}
         >
+          <span className="mr-1.5 flex items-center">
+            {priority === 'High' && <AlertTriangle size={14} />}
+            {priority === 'Medium' && <Minus size={14} />}
+            {priority === 'Low' && <ArrowDown size={14} />}
+          </span>
           {priority}
         </Button>
       ))}

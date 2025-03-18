@@ -1,6 +1,6 @@
 
 import { ReactNode } from 'react';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, AlertTriangle, Minus, ArrowDown } from 'lucide-react';
 
 export const getStatusIcon = (status: string): ReactNode => {
   switch(status) {
@@ -42,31 +42,31 @@ interface PriorityColor {
 export const getPriorityColor = (priority: string): PriorityColor => {
   switch(priority) {
     case 'High': return {
-      bg: 'from-[#D946EF] to-[#F97316]',
-      dot: 'bg-[#D946EF]',
-      text: 'text-[#D946EF]',
-      border: 'border-[#D946EF]/30',
-      light: 'bg-[#D946EF]/10',
-      dark: 'bg-[#D946EF]/20',
-      icon: <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1 text-[#D946EF]"><path d="m6 15 6-6 6 6"></path></svg>
+      bg: 'from-rose-500 to-rose-600',
+      dot: 'bg-rose-500',
+      text: 'text-rose-500',
+      border: 'border-rose-500/30',
+      light: 'bg-rose-500/10',
+      dark: 'bg-rose-500/20',
+      icon: <AlertTriangle size={12} className="mr-1 text-rose-500" />
     };
     case 'Medium': return {
-      bg: 'from-[#8B5CF6] to-[#6366F1]',
-      dot: 'bg-[#8B5CF6]',
-      text: 'text-[#8B5CF6]',
-      border: 'border-[#8B5CF6]/30',
-      light: 'bg-[#8B5CF6]/10',
-      dark: 'bg-[#8B5CF6]/20',
-      icon: <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1 text-[#8B5CF6]"><path d="M8 12h8"></path></svg>
+      bg: 'from-amber-500 to-amber-600',
+      dot: 'bg-amber-500',
+      text: 'text-amber-500',
+      border: 'border-amber-500/30',
+      light: 'bg-amber-500/10',
+      dark: 'bg-amber-500/20',
+      icon: <Minus size={12} className="mr-1 text-amber-500" />
     };
     case 'Low': return {
-      bg: 'from-[#0EA5E9] to-[#38BDF8]',
-      dot: 'bg-[#0EA5E9]',
-      text: 'text-[#0EA5E9]',
-      border: 'border-[#0EA5E9]/30',
-      light: 'bg-[#0EA5E9]/10',
-      dark: 'bg-[#0EA5E9]/20',
-      icon: <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1 text-[#0EA5E9]"><path d="m6 9 6 6 6-6"></path></svg>
+      bg: 'from-blue-500 to-blue-600',
+      dot: 'bg-blue-500',
+      text: 'text-blue-500',
+      border: 'border-blue-500/30',
+      light: 'bg-blue-500/10',
+      dark: 'bg-blue-500/20',
+      icon: <ArrowDown size={12} className="mr-1 text-blue-500" />
     };
     default: return {
       bg: 'from-slate-400 to-slate-500',

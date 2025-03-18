@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import TasksView from '@/components/TasksView';
 import CompletedTasksView from '@/components/CompletedTasksView';
 import NotesView from '@/components/NotesView';
@@ -40,11 +40,35 @@ const TaskContent = ({
   onAddTask,
   onClearCompletedTasks
 }: TaskContentProps) => {
+  const [sortOption, setSortOption] = useState<string>("date-desc");
+
+  const sortedTasks = useMemo(() => {
+    if (!tasks) return [];
+    
+    // Create a copy to avoid mutating the original array
+    const tasksCopy = [...tasks];
+    
+    switch (sortOption) {
+      case 'date-asc':
+        return tasksCopy.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      case 'priority-desc':
+        return tasksCopy.sort((a, b) => {
+          const priorityValue = { 'High': 3, 'Medium': 2, 'Low': 1 };
+          return (priorityValue[b.priority] || 0) - (priorityValue[a.priority] || 0);
+        });
+      case 'title-asc':
+        return tasksCopy.sort((a, b) => a.title.localeCompare(b.title));
+      case 'date-desc':
+      default:
+        return tasksCopy.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+  }, [tasks, sortOption]);
+
   if (activeTab === 'tasks') {
     return (
       <TasksView 
         darkMode={darkMode}
-        tasks={tasks.filter(task => !task.completed)}
+        tasks={sortedTasks.filter(task => !task.completed)}
         isLoading={isLoadingTasks}
         draggedTaskId={draggedTaskId}
         onDragStart={onDragStart}
@@ -54,6 +78,8 @@ const TaskContent = ({
         onToggleExpansion={onToggleExpansion}
         onAddTask={onAddTask}
         isLoggedIn={isLoggedIn}
+        sortOption={sortOption}
+        onSortChange={setSortOption}
       />
     );
   }
