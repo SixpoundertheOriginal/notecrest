@@ -13,13 +13,21 @@ interface WelcomeHeaderProps {
 }
 
 const WelcomeHeader = ({ username, isLoggedIn, onOpenAuth, tasks = [] }: WelcomeHeaderProps) => {
-  console.log('WelcomeHeader tasks:', tasks.length, 'isLoggedIn:', isLoggedIn);
+  // Filter out completed tasks for better visibility into the task state
+  const activeTasks = tasks.filter(task => !task.completed);
+  
+  console.log('WelcomeHeader tasks:', {
+    totalTasks: tasks.length,
+    activeTasks: activeTasks.length,
+    completedTasks: tasks.length - activeTasks.length,
+    isLoggedIn
+  });
   
   // If we have tasks or the user is logged in, show the TaskProgressDashboard
   if (tasks.length > 0 || isLoggedIn) {
     return (
       <TaskProgressDashboard 
-        tasks={tasks} 
+        tasks={activeTasks}  // Only pass active tasks to the dashboard
         username={username} 
         isLoggedIn={isLoggedIn} 
       />

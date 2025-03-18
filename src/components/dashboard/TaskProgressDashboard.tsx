@@ -13,14 +13,15 @@ interface TaskProgressDashboardProps {
 
 const TaskProgressDashboard = ({ tasks, username, isLoggedIn }: TaskProgressDashboardProps) => {
   const metrics = useMemo(() => {
-    // Calculate task metrics
-    const totalTasks = tasks.length;
-    const completedTasks = tasks.filter(task => task.completed).length;
+    // Only consider visible tasks (not completed tasks)
+    const visibleTasks = tasks.filter(task => !task.completed);
+    const totalTasks = visibleTasks.length;
+    const completedTasks = 0; // These are filtered out already
     
     // For today's tasks, compare the task date with today's date in the same format
     const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    const todayTasks = tasks.filter(task => {
-      // Some tasks might have different date formats, so we need to handle that
+    
+    const todayTasks = visibleTasks.filter(task => {
       if (!task.date) return false;
       
       // Try to match formats like "Mar 18" or similar
@@ -31,15 +32,17 @@ const TaskProgressDashboard = ({ tasks, username, isLoggedIn }: TaskProgressDash
     }).length;
     
     const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-    const highPriorityTasks = tasks.filter(task => task.priority === 'High').length;
+    const highPriorityTasks = visibleTasks.filter(task => task.priority === 'High').length;
     
-    console.log('Task metrics:', {
-      totalTasks,
+    console.log('Task metrics (visible tasks only):', {
+      totalVisibleTasks: totalTasks,
       completedTasks,
       todayTasks,
       completionRate,
       highPriorityTasks,
-      today
+      today,
+      allTasksCount: tasks.length,
+      completedTasksCount: tasks.filter(task => task.completed).length
     });
     
     return {
@@ -51,20 +54,20 @@ const TaskProgressDashboard = ({ tasks, username, isLoggedIn }: TaskProgressDash
     };
   }, [tasks]);
 
-  // Generate a motivational message based on completion rate
+  // Generate a motivational message based on task count
   const motivationalMessage = useMemo(() => {
-    if (metrics.completionRate >= 75) {
+    if (metrics.totalTasks === 0) {
+      return "Ready to add some tasks for today? 🌠";
+    } else if (metrics.completionRate >= 75) {
       return "Excellent progress! You're crushing it! 🚀";
     } else if (metrics.completionRate >= 50) {
       return "Great work! You're halfway there! ✨";
     } else if (metrics.completionRate >= 25) {
       return "Good start! Keep the momentum going! 💫";
-    } else if (metrics.completionRate > 0) {
-      return "You've started your journey! Keep going! 🌟";
     } else {
-      return "Ready to accomplish something today? 🌠";
+      return "You've started your journey! Keep going! 🌟";
     }
-  }, [metrics.completionRate]);
+  }, [metrics.totalTasks, metrics.completionRate]);
 
   return (
     <div className="mb-8 text-center pt-4 md:pt-0">
@@ -84,15 +87,15 @@ const TaskProgressDashboard = ({ tasks, username, isLoggedIn }: TaskProgressDash
         {/* Progress Bar */}
         <div className="glass-morphism p-4 rounded-lg border border-white/10">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium">Task Completion</span>
-            <span className="text-sm font-bold">{metrics.completionRate}%</span>
+            <span className="text-sm font-medium">Active Tasks</span>
+            <span className="text-sm font-bold">{metrics.totalTasks}</span>
           </div>
           <Progress 
-            value={metrics.completionRate} 
+            value={metrics.totalTasks > 0 ? 100 : 0} 
             className="h-2 bg-white/10" 
           />
           <p className="text-xs mt-2 text-muted-foreground">
-            {metrics.completedTasks} of {metrics.totalTasks} tasks completed
+            {metrics.totalTasks} tasks to work on
           </p>
         </div>
 
