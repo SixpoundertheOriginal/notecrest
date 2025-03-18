@@ -44,6 +44,11 @@ const TaskifyApp = () => {
     deleteProject
   } = useProjects(user);
 
+  // Create a wrapper function to adapt the return type
+  const handleCreateProject = async (projectData: { name: string, color: string }): Promise<void> => {
+    await createProject(projectData);
+  };
+
   const toggleTheme = () => setDarkMode(!darkMode);
   
   const username = user?.email ? user.email.split('@')[0] : undefined;
@@ -98,7 +103,7 @@ const TaskifyApp = () => {
           isLoadingProjects={isLoadingProjects}
           activeProjectId={activeProjectId}
           setActiveProjectId={setActiveProjectId}
-          createProject={createProject}
+          createProject={handleCreateProject}
           onAddTask={addTask}
         />
       )}
