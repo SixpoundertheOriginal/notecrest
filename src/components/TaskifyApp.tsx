@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
@@ -117,6 +118,7 @@ const TaskifyApp = () => {
                 username={username} 
                 isLoggedIn={isLoggedIn} 
                 onOpenAuth={() => setIsAuthModalOpen(true)}
+                tasks={tasks} // Pass all tasks, not just filtered tasks
               />
               <TaskContent
                 activeTab={activeTab}
