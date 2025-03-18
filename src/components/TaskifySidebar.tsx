@@ -32,17 +32,6 @@ const TaskifySidebar = ({
 }: TaskifySidebarProps) => {
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
 
-  const handleTaskSubmit = (task: {
-    title: string;
-    description: string;
-    priority: string;
-    dueDate: Date | null;
-  }) => {
-    console.log('Task submitted from Sidebar', task);
-    onAddTask(task);
-    setIsTaskSheetOpen(false);
-  };
-
   // Define navigation items for the sidebar
   const navItems = [
     // Add navigation items as needed - empty array for now as it's a required prop
@@ -58,7 +47,7 @@ const TaskifySidebar = ({
           <div className="flex-1 overflow-y-auto">
             <SidebarContents
               username="User" // Provide a default username
-              navItems={navItems} // Pass the empty array for now
+              navItems={navItems} 
               projects={projects}
               isLoadingProjects={isLoadingProjects}
               activeProjectId={activeProjectId || null}
@@ -68,16 +57,6 @@ const TaskifySidebar = ({
               setIsTaskSheetOpen={setIsTaskSheetOpen}
               onAddTask={onAddTask}
             />
-            
-            {/* Calendar integration navigation */}
-            <div className="px-3 py-2">
-              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-2 mb-2">
-                Integrations
-              </h3>
-              <div className="space-y-1">
-                <CalendarNavItem />
-              </div>
-            </div>
           </div>
           
           <div className="flex-none p-4">
