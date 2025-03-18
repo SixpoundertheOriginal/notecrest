@@ -2,14 +2,29 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { LogIn } from 'lucide-react';
+import TaskProgressDashboard from '@/components/dashboard/TaskProgressDashboard';
+import { TaskData } from '@/types/task';
 
 interface WelcomeHeaderProps {
   username?: string;
   isLoggedIn: boolean;
   onOpenAuth?: () => void;
+  tasks?: TaskData[];
 }
 
-const WelcomeHeader = ({ username, isLoggedIn, onOpenAuth }: WelcomeHeaderProps) => {
+const WelcomeHeader = ({ username, isLoggedIn, onOpenAuth, tasks = [] }: WelcomeHeaderProps) => {
+  // If we have tasks, show the TaskProgressDashboard
+  if (tasks.length > 0 || isLoggedIn) {
+    return (
+      <TaskProgressDashboard 
+        tasks={tasks} 
+        username={username} 
+        isLoggedIn={isLoggedIn} 
+      />
+    );
+  }
+  
+  // If no tasks (likely a new user), show the original welcome message
   return (
     <div className="mb-8 text-center pt-4 md:pt-0">
       <h2 className="text-2xl md:text-3xl font-light mb-2">

@@ -85,3 +85,11 @@
   0%, 100% { opacity: 0.2; }
   50% { opacity: 0.8; }
 }
+
+.animate-cosmic-pulse {
+  background: linear-gradient(-45deg, #9b87f5, #7a6ef5, #1EAEDB, #0FA0CE);
+  background-size: 400% 400%;
+  animation: cosmic-pulse 3s ease infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+}

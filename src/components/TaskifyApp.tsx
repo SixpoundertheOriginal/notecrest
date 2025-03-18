@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
@@ -47,7 +46,6 @@ const TaskifyApp = () => {
   const username = user?.email ? user.email.split('@')[0] : undefined;
   const isLoggedIn = !!user;
 
-  // Map activeTab to a more user-friendly title
   const getPageTitle = () => {
     if (activeProjectId) {
       const project = projects.find(p => p.id === activeProjectId);
@@ -62,7 +60,6 @@ const TaskifyApp = () => {
     }
   };
 
-  // Filter tasks based on active project
   const filteredTasks = activeProjectId
     ? tasks.filter(task => task.project_id === activeProjectId)
     : tasks;
@@ -139,7 +136,6 @@ const TaskifyApp = () => {
             </div>
           </div>
           
-          {/* Floating Action Button */}
           <FloatingActionButton onClick={handleOpenTaskSheet} />
         </div>
       </SidebarInset>
