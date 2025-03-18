@@ -16,15 +16,31 @@ const TaskProgressDashboard = ({ tasks, username, isLoggedIn }: TaskProgressDash
     // Calculate task metrics
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter(task => task.completed).length;
+    
+    // For today's tasks, compare the task date with today's date in the same format
+    const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     const todayTasks = tasks.filter(task => {
-      // For simplicity, we'll consider tasks with today's date
-      // In a real app, we might want to check the actual date
-      const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      return task.date === today;
+      // Some tasks might have different date formats, so we need to handle that
+      if (!task.date) return false;
+      
+      // Try to match formats like "Mar 18" or similar
+      return task.date === today || 
+             task.date.includes(today) || 
+             // Also check if the date is today in another format
+             (task.createdAt && new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) === today);
     }).length;
     
     const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
     const highPriorityTasks = tasks.filter(task => task.priority === 'High').length;
+    
+    console.log('Task metrics:', {
+      totalTasks,
+      completedTasks,
+      todayTasks,
+      completionRate,
+      highPriorityTasks,
+      today
+    });
     
     return {
       totalTasks,

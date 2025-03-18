@@ -13,7 +13,9 @@ interface WelcomeHeaderProps {
 }
 
 const WelcomeHeader = ({ username, isLoggedIn, onOpenAuth, tasks = [] }: WelcomeHeaderProps) => {
-  // If we have tasks, show the TaskProgressDashboard
+  console.log('WelcomeHeader tasks:', tasks.length, 'isLoggedIn:', isLoggedIn);
+  
+  // If we have tasks or the user is logged in, show the TaskProgressDashboard
   if (tasks.length > 0 || isLoggedIn) {
     return (
       <TaskProgressDashboard 
