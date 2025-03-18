@@ -12,6 +12,7 @@ import { SidebarInset } from './ui/sidebar';
 import AuthModal from './auth/AuthModal';
 import FloatingActionButton from './FloatingActionButton';
 import TaskCreationSheet from './TaskCreationSheet';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const TaskifyApp = () => {
   const [activeTab, setActiveTab] = useState('tasks');
@@ -19,6 +20,7 @@ const TaskifyApp = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   const { user, loading: authLoading } = useAuth();
+  const { isMobile } = useIsMobile();
   
   const {
     tasks,
@@ -41,11 +43,6 @@ const TaskifyApp = () => {
     createProject,
     deleteProject
   } = useProjects(user);
-
-  // Update the function to accept a single object parameter instead of two separate parameters
-  const handleCreateProject = async (projectData: { name: string, color: string }) => {
-    await createProject(projectData);
-  };
 
   const toggleTheme = () => setDarkMode(!darkMode);
   
@@ -93,19 +90,21 @@ const TaskifyApp = () => {
 
   return (
     <>
-      <TaskifySidebar 
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab}
-        projects={projects}
-        isLoadingProjects={isLoadingProjects}
-        activeProjectId={activeProjectId}
-        setActiveProjectId={setActiveProjectId}
-        createProject={handleCreateProject}
-        onAddTask={addTask}
-      />
-      <SidebarInset>
+      {!isMobile && (
+        <TaskifySidebar 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab}
+          projects={projects}
+          isLoadingProjects={isLoadingProjects}
+          activeProjectId={activeProjectId}
+          setActiveProjectId={setActiveProjectId}
+          createProject={createProject}
+          onAddTask={addTask}
+        />
+      )}
+      <SidebarInset className={cn(isMobile ? "w-full" : "")}>
         <div className="flex flex-col min-h-screen">
-          <div className="pt-10 md:pt-0">
+          <div className={cn("pt-10 md:pt-0", isMobile ? "pl-0" : "")}>
             <TaskAppHeader 
               darkMode={darkMode} 
               toggleTheme={toggleTheme} 
@@ -114,6 +113,7 @@ const TaskifyApp = () => {
               onOpenAuth={() => setIsAuthModalOpen(true)}
               onAddTask={addTask}
               showLoginButton={false}
+              showSidebarTrigger={isMobile}
             />
           </div>
 
@@ -123,7 +123,7 @@ const TaskifyApp = () => {
                 username={username} 
                 isLoggedIn={isLoggedIn} 
                 onOpenAuth={() => setIsAuthModalOpen(true)}
-                tasks={tasks} // Pass all tasks, not just filtered tasks
+                tasks={tasks}
               />
               <TaskContent
                 activeTab={activeTab}
