@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
@@ -151,6 +150,19 @@
   
   .space-glow {
     box-shadow: 0 0 25px rgba(234, 56, 76, 0.2);
+  }
+  
+  .space-button {
+    @apply relative overflow-hidden bg-gradient-to-r from-[#ea384c] to-[#ff7e54] text-white rounded-lg hover:from-[#ff4c5f] hover:to-[#ff8f69] transition-all duration-300;
+  }
+  
+  .futuristic-border {
+    @apply rounded-xl border border-white/10 relative;
+  }
+  
+  .futuristic-border::after {
+    content: "";
+    @apply absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent;
   }
 }
 

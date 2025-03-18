@@ -43,8 +43,18 @@ const TasksView = ({
   
   return (
     <div className="space-themed-glass relative overflow-hidden shadow-lg rounded-2xl border border-white/10 bg-[#1A1F2C]/90 backdrop-blur-xl">
-      {/* Red/Orange circular gradient in the background */}
-      <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-gradient-to-br from-[#ea384c] to-[#ff7e54] opacity-20 blur-2xl -translate-y-1/2 translate-x-1/4"></div>
+      {/* Enhanced space-themed background elements */}
+      <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-gradient-to-br from-[#ea384c] to-[#ff7e54] opacity-10 blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+      <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-[#1e66de]/20 blur-2xl"></div>
+      
+      {/* Star-like dots */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-[10%] left-[20%] w-0.5 h-0.5 bg-white/70 rounded-full"></div>
+        <div className="absolute top-[15%] left-[35%] w-1 h-1 bg-white/40 rounded-full"></div>
+        <div className="absolute top-[45%] left-[78%] w-0.5 h-0.5 bg-white/50 rounded-full"></div>
+        <div className="absolute top-[65%] left-[15%] w-1 h-1 bg-white/30 rounded-full"></div>
+        <div className="absolute top-[85%] left-[60%] w-0.5 h-0.5 bg-white/60 rounded-full"></div>
+      </div>
       
       <div className="p-3 space-y-2 relative z-10">
         <TaskFilters darkMode={darkMode} />
@@ -58,7 +68,7 @@ const TasksView = ({
 
       <div className="border-t border-white/5 relative z-10">
         <div className={cn(
-          "grid grid-cols-1 gap-3 p-4 min-h-[180px] overflow-y-auto",
+          "grid grid-cols-1 gap-4 p-4 min-h-[180px] overflow-y-auto",
           isMobile ? "max-h-[calc(100vh-280px)]" : "max-h-[60vh]"
         )}>
           {isLoading ? (
@@ -80,15 +90,18 @@ const TasksView = ({
                 />
                 {index < tasks.length - 1 && (
                   <div className={cn(
-                    "h-px w-full",
-                    darkMode ? "bg-white/5" : "bg-black/5"
+                    "h-px w-full bg-gradient-to-r from-transparent via-white/5 to-transparent"
                   )} />
                 )}
               </React.Fragment>
             ))
           ) : (
             <div className="flex flex-col items-center justify-center h-32 text-center">
-              <div className="w-16 h-16 mb-4 rounded-full bg-gradient-to-br from-[#ea384c] to-[#ff7e54] opacity-30"></div>
+              <div className="w-20 h-20 mb-4 rounded-full bg-gradient-to-br from-[#ea384c] to-[#ff7e54] opacity-20 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-[#1A1F2C]/90 flex items-center justify-center">
+                  <div className="w-1 h-1 bg-white/70 rounded-full"></div>
+                </div>
+              </div>
               <p className="text-muted-foreground text-sm">No active tasks</p>
               <p className="text-xs text-muted-foreground mt-1">
                 Use the + button to create a task
@@ -98,8 +111,8 @@ const TasksView = ({
         </div>
       </div>
       
-      {/* Additional decorative element inspired by the image */}
-      <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#ea384c]/10 to-[#ff7e54]/10 blur-xl rounded-full -translate-x-1/2 translate-y-1/2"></div>
+      {/* Enhanced decorative footer element */}
+      <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#1A1F2C]/80 to-transparent pointer-events-none"></div>
     </div>
   );
 };
