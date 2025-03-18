@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
 import { useAuth } from '@/hooks/useAuth';
 import WelcomeHeader from './app/WelcomeHeader';
 import { useTasks } from '@/hooks/useTasks';
-import { useProjects } from '@/hooks/useProjects';
+import { useProjects } from '@/contexts/ProjectContext';
 import TaskifySidebar from './TaskifySidebar';
 import { SidebarInset } from './ui/sidebar';
 import AuthModal from './auth/AuthModal';
@@ -21,6 +22,13 @@ const TaskifyApp = () => {
   const { user, loading: authLoading } = useAuth();
   const { isMobile } = useIsMobile();
   const { darkMode, toggleTheme } = useTheme();
+  const { 
+    projects, 
+    isLoadingProjects, 
+    activeProjectId, 
+    setActiveProjectId, 
+    createProject
+  } = useProjects();
   
   const {
     tasks,
@@ -34,19 +42,6 @@ const TaskifyApp = () => {
     handleDrop,
     clearCompletedTasks
   } = useTasks(user);
-
-  const {
-    projects,
-    isLoadingProjects,
-    activeProjectId,
-    setActiveProjectId,
-    createProject,
-    deleteProject
-  } = useProjects(user);
-
-  const handleCreateProject = async (projectData: { name: string, color: string }): Promise<void> => {
-    await createProject(projectData);
-  };
   
   const username = user?.email ? user.email.split('@')[0] : undefined;
   const isLoggedIn = !!user;
@@ -81,7 +76,10 @@ const TaskifyApp = () => {
     dueDate: Date | null;
   }) => {
     console.log('Task submitted from FAB', task);
-    addTask(task);
+    addTask({
+      ...task,
+      projectId: activeProjectId || undefined
+    });
     setIsTaskSheetOpen(false);
   };
   
@@ -96,11 +94,6 @@ const TaskifyApp = () => {
         <TaskifySidebar 
           activeTab={activeTab} 
           setActiveTab={setActiveTab}
-          projects={projects}
-          isLoadingProjects={isLoadingProjects}
-          activeProjectId={activeProjectId}
-          setActiveProjectId={setActiveProjectId}
-          createProject={handleCreateProject}
           onAddTask={addTask}
         />
       )}

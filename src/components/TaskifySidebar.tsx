@@ -8,29 +8,27 @@ import { FolderPlus } from 'lucide-react';
 import { Sidebar } from './ui/sidebar';
 import CalendarNavItem from './calendar/CalendarNavItem';
 import Logo from './Logo';
+import { useProjects } from '@/contexts/ProjectContext';
 
 interface TaskifySidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
-  projects: any[];
-  isLoadingProjects: boolean;
-  activeProjectId: string | null;
-  setActiveProjectId: (projectId: string | null) => void;
-  createProject: (projectData: { name: string, color: string }) => Promise<void>;
   onAddTask: (task: any) => void;
 }
 
 const TaskifySidebar = ({ 
   activeTab, 
   setActiveTab,
-  projects,
-  isLoadingProjects,
-  activeProjectId,
-  setActiveProjectId,
-  createProject,
   onAddTask
 }: TaskifySidebarProps) => {
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
+  const { 
+    projects, 
+    isLoadingProjects, 
+    activeProjectId, 
+    setActiveProjectId, 
+    createProject 
+  } = useProjects();
 
   // Define navigation items for the sidebar
   const navItems = [

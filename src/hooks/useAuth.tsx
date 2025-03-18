@@ -1,56 +1,150 @@
 
-import { useEffect, useState, createContext, useContext } from 'react';
-import { Session, User } from '@supabase/supabase-js';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
-type AuthContextType = {
-  session: Session | null;
-  user: User | null;
-  loading: boolean;
-  error: Error | null;
+type User = {
+  id: string;
+  email: string;
 };
 
-const AuthContext = createContext<AuthContextType>({
-  session: null,
-  user: null,
-  loading: true,
-  error: null,
-});
+type AuthContextType = {
+  user: User | null;
+  loading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+};
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [session, setSession] = useState<Session | null>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ 
+  children 
+}: { 
+  children: ((props: { user: User | null, loading: boolean }) => React.ReactNode) | React.ReactNode 
+}) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Get the current session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    // Check for existing session
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      
+      if (data.session?.user) {
+        const { id, email } = data.session.user;
+        setUser({ id, email: email || '' });
+      }
+      
       setLoading(false);
-      if (error) setError(error);
-    });
+    };
+
+    checkSession();
 
     // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          const { id, email } = session.user;
+          setUser({ id, email: email || '' });
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
+        }
+      }
+    );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
+  const signIn = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+      
+      if (data.user) {
+        const { id, email } = data.user;
+        setUser({ id, email: email || '' });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Login failed",
+        description: error.message || "An error occurred during login",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  const signUp = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+      
+      toast({
+        title: "Registration successful",
+        description: "Please check your email to verify your account",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Registration failed",
+        description: error.message || "An error occurred during registration",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+    } catch (error: any) {
+      toast({
+        title: "Sign out failed",
+        description: error.message || "An error occurred during sign out",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const value = {
+    user,
+    loading,
+    signIn,
+    signUp,
+    signOut,
+  };
+  
+  if (typeof children === 'function') {
+    return (
+      <AuthContext.Provider value={value}>
+        {children({ user, loading })}
+      </AuthContext.Provider>
+    );
+  }
+
   return (
-    <AuthContext.Provider value={{ session, user, loading, error }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export function useAuth(): AuthContextType {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}
