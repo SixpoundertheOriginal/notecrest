@@ -11,6 +11,7 @@ import {
   SidebarMenuButton 
 } from "@/components/ui/sidebar";
 import ProjectDialog from './ProjectDialog';
+import { getProjectColorClasses } from '@/lib/projectColors';
 
 interface ProjectsSectionProps {
   projects: Project[];
@@ -46,13 +47,7 @@ const ProjectsSection = ({
                 isActive={activeProjectId === project.id}
                 onClick={() => handleProjectClick(project.id)}
               >
-                <Hash size={18} className={
-                  project.color === "blue" ? "text-blue-400" : 
-                  project.color === "pink" ? "text-pink-400" : 
-                  project.color === "green" ? "text-green-400" : 
-                  project.color === "purple" ? "text-purple-400" : 
-                  "text-orange-400"
-                } />
+                <Hash size={18} className={getProjectColorClasses(project.color)} />
                 <span>{project.name}</span>
                 <span className="ml-auto text-xs opacity-60">{project.task_count}</span>
               </SidebarMenuButton>

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { projectColorOptions } from '@/lib/projectColors';
 import {
   Dialog,
   DialogContent,
@@ -29,14 +30,6 @@ const ProjectDialog = ({ onCreateProject }: ProjectDialogProps) => {
       setName('');
     }
   };
-  
-  const colors = [
-    { value: 'blue', label: 'Blue', class: 'bg-blue-500' },
-    { value: 'pink', label: 'Pink', class: 'bg-pink-500' },
-    { value: 'orange', label: 'Orange', class: 'bg-orange-500' },
-    { value: 'green', label: 'Green', class: 'bg-green-500' },
-    { value: 'purple', label: 'Purple', class: 'bg-purple-500' },
-  ];
   
   return (
     <Dialog>
@@ -69,7 +62,7 @@ const ProjectDialog = ({ onCreateProject }: ProjectDialogProps) => {
                 Select color
               </label>
               <div className="flex gap-2">
-                {colors.map(c => (
+                {projectColorOptions.map(c => (
                   <button
                     key={c.value}
                     type="button"
