@@ -14,6 +14,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ProjectDialogProps {
   onCreateProject: (data: { name: string, color: string }) => void;
@@ -61,21 +62,23 @@ const ProjectDialog = ({ onCreateProject }: ProjectDialogProps) => {
               <label className="text-sm font-medium">
                 Select color
               </label>
-              <div className="flex gap-2">
-                {projectColorOptions.map(c => (
-                  <button
-                    key={c.value}
-                    type="button"
-                    className={cn(
-                      "w-6 h-6 rounded-full ring-offset-2",
-                      c.class,
-                      color === c.value && "ring-2 ring-white"
-                    )}
-                    onClick={() => setColor(c.value)}
-                    title={c.label}
-                  />
-                ))}
-              </div>
+              <ScrollArea className="h-20">
+                <div className="flex flex-wrap gap-2 p-1">
+                  {projectColorOptions.map(c => (
+                    <button
+                      key={c.value}
+                      type="button"
+                      className={cn(
+                        "w-8 h-8 rounded-full ring-offset-2 transition-all",
+                        c.class,
+                        color === c.value ? "ring-2 ring-white scale-110" : "hover:scale-105"
+                      )}
+                      onClick={() => setColor(c.value)}
+                      title={c.label}
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
             </div>
           </div>
           <DialogFooter>

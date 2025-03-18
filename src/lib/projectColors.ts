@@ -1,7 +1,17 @@
 
 import { cn } from "@/lib/utils";
 
-export type ProjectColor = "blue" | "pink" | "orange" | "green" | "purple";
+export type ProjectColor = 
+  | "blue" 
+  | "pink" 
+  | "orange" 
+  | "green" 
+  | "purple" 
+  | "red"
+  | "yellow"
+  | "teal"
+  | "indigo"
+  | "gray";
 
 export interface ProjectColorConfig {
   text: string;
@@ -15,7 +25,7 @@ export interface ProjectColorConfig {
  */
 export const getProjectColorClasses = (
   color: ProjectColor | string, 
-  variant: "text" | "bg" | "border" | "all" = "text"
+  variant: "text" | "bg" | "border" | "hoverBg" | "all" = "text"
 ): string => {
   const colorMap: Record<ProjectColor, ProjectColorConfig> = {
     blue: {
@@ -48,6 +58,37 @@ export const getProjectColorClasses = (
       border: "border-purple-400/30",
       hoverBg: "hover:bg-purple-400/20",
     },
+    // New colors
+    red: {
+      text: "text-red-400",
+      bg: "bg-red-400/10",
+      border: "border-red-400/30",
+      hoverBg: "hover:bg-red-400/20",
+    },
+    yellow: {
+      text: "text-yellow-400",
+      bg: "bg-yellow-400/10",
+      border: "border-yellow-400/30",
+      hoverBg: "hover:bg-yellow-400/20",
+    },
+    teal: {
+      text: "text-teal-400",
+      bg: "bg-teal-400/10",
+      border: "border-teal-400/30",
+      hoverBg: "hover:bg-teal-400/20",
+    },
+    indigo: {
+      text: "text-indigo-400",
+      bg: "bg-indigo-400/10",
+      border: "border-indigo-400/30",
+      hoverBg: "hover:bg-indigo-400/20",
+    },
+    gray: {
+      text: "text-gray-400",
+      bg: "bg-gray-400/10",
+      border: "border-gray-400/30",
+      hoverBg: "hover:bg-gray-400/20",
+    }
   };
 
   // Default to orange if color is not recognized
@@ -61,6 +102,8 @@ export const getProjectColorClasses = (
       return colorConfig.bg;
     case "border":
       return colorConfig.border;
+    case "hoverBg":
+      return colorConfig.hoverBg;
     case "all":
       return cn(colorConfig.text, colorConfig.bg, colorConfig.border);
     default:
@@ -77,4 +120,10 @@ export const projectColorOptions = [
   { value: 'orange', label: 'Orange', class: 'bg-orange-500' },
   { value: 'green', label: 'Green', class: 'bg-green-500' },
   { value: 'purple', label: 'Purple', class: 'bg-purple-500' },
+  // New colors
+  { value: 'red', label: 'Red', class: 'bg-red-500' },
+  { value: 'yellow', label: 'Yellow', class: 'bg-yellow-500' },
+  { value: 'teal', label: 'Teal', class: 'bg-teal-500' },
+  { value: 'indigo', label: 'Indigo', class: 'bg-indigo-500' },
+  { value: 'gray', label: 'Gray', class: 'bg-gray-500' }
 ];
