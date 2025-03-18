@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
 import { useAuth } from '@/hooks/useAuth';
 import WelcomeHeader from './app/WelcomeHeader';
-import TaskContent from './app/TaskContent';
 import { useTasks } from '@/hooks/useTasks';
 import { useProjects } from '@/hooks/useProjects';
 import TaskifySidebar from './TaskifySidebar';
@@ -13,6 +12,7 @@ import AuthModal from './auth/AuthModal';
 import FloatingActionButton from './FloatingActionButton';
 import TaskCreationSheet from './TaskCreationSheet';
 import { useIsMobile } from '@/hooks/use-mobile';
+import TaskManager from './app/TaskManager';
 
 const TaskifyApp = () => {
   const [activeTab, setActiveTab] = useState('tasks');
@@ -130,8 +130,9 @@ const TaskifyApp = () => {
                 onOpenAuth={() => setIsAuthModalOpen(true)}
                 tasks={tasks}
               />
-              <TaskContent
+              <TaskManager
                 activeTab={activeTab}
+                setActiveTab={setActiveTab}
                 darkMode={darkMode}
                 tasks={filteredTasks}
                 isLoadingTasks={isLoadingTasks}

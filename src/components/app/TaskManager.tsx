@@ -1,10 +1,14 @@
-import React, { useState, useEffect, useMemo } from 'react';
+
+import React, { useState } from 'react';
+import { cn } from '@/lib/utils';
 import TasksView from '@/components/TasksView';
 import CompletedTasksView from '@/components/CompletedTasksView';
 import NotesView from '@/components/NotesView';
+import TaskAppTabs from '@/components/TaskAppTabs';
 
-interface TaskContentProps {
+interface TaskManagerProps {
   activeTab: string;
+  setActiveTab: (tab: string) => void;
   darkMode: boolean;
   tasks: any[];
   isLoadingTasks: boolean;
@@ -24,8 +28,9 @@ interface TaskContentProps {
   onClearCompletedTasks: () => void;
 }
 
-const TaskContent = ({
+const TaskManager: React.FC<TaskManagerProps> = ({
   activeTab,
+  setActiveTab,
   darkMode,
   tasks,
   isLoadingTasks,
@@ -38,36 +43,66 @@ const TaskContent = ({
   onToggleExpansion,
   onAddTask,
   onClearCompletedTasks
-}: TaskContentProps) => {
+}) => {
   const [sortOption, setSortOption] = useState<string>("date-desc");
 
-  const sortedTasks = useMemo(() => {
-    if (!tasks) return [];
-    
-    // Create a copy to avoid mutating the original array
-    const tasksCopy = [...tasks];
-    
-    switch (sortOption) {
-      case 'date-asc':
-        return tasksCopy.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-      case 'priority-desc':
-        return tasksCopy.sort((a, b) => {
-          const priorityValue = { 'High': 3, 'Medium': 2, 'Low': 1 };
-          return (priorityValue[b.priority] || 0) - (priorityValue[a.priority] || 0);
-        });
-      case 'title-asc':
-        return tasksCopy.sort((a, b) => a.title.localeCompare(b.title));
-      case 'date-desc':
-      default:
-        return tasksCopy.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    }
-  }, [tasks, sortOption]);
+  return (
+    <>
+      <TaskAppTabs 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+        darkMode={darkMode} 
+      />
+      
+      <TaskContent
+        activeTab={activeTab}
+        darkMode={darkMode}
+        tasks={tasks}
+        isLoadingTasks={isLoadingTasks}
+        draggedTaskId={draggedTaskId}
+        isLoggedIn={isLoggedIn}
+        onDragStart={onDragStart}
+        onDragOver={onDragOver}
+        onDrop={onDrop}
+        onToggleCompletion={onToggleCompletion}
+        onToggleExpansion={onToggleExpansion}
+        onAddTask={onAddTask}
+        onClearCompletedTasks={onClearCompletedTasks}
+        sortOption={sortOption}
+        onSortChange={setSortOption}
+      />
+    </>
+  );
+};
 
+interface TaskContentProps extends Omit<TaskManagerProps, 'activeTab' | 'setActiveTab'> {
+  activeTab: string;
+  sortOption: string;
+  onSortChange: (value: string) => void;
+}
+
+const TaskContent: React.FC<TaskContentProps> = ({
+  activeTab,
+  darkMode,
+  tasks,
+  isLoadingTasks,
+  draggedTaskId,
+  isLoggedIn,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onToggleCompletion,
+  onToggleExpansion,
+  onAddTask,
+  onClearCompletedTasks,
+  sortOption,
+  onSortChange
+}) => {
   if (activeTab === 'tasks') {
     return (
       <TasksView 
         darkMode={darkMode}
-        tasks={sortedTasks.filter(task => !task.completed)}
+        tasks={tasks.filter(task => !task.completed)}
         isLoading={isLoadingTasks}
         draggedTaskId={draggedTaskId}
         onDragStart={onDragStart}
@@ -78,7 +113,7 @@ const TaskContent = ({
         onAddTask={onAddTask}
         isLoggedIn={isLoggedIn}
         sortOption={sortOption}
-        onSortChange={setSortOption}
+        onSortChange={onSortChange}
       />
     );
   }
@@ -104,4 +139,4 @@ const TaskContent = ({
   return <NotesView darkMode={darkMode} />;
 };
 
-export default TaskContent;
+export default TaskManager;
