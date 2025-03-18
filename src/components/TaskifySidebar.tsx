@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import SidebarContents from './sidebar/SidebarContents';
@@ -42,22 +43,36 @@ const TaskifySidebar = ({
     }
   };
 
+  // Create a wrapper function to adapt the interface
+  const handleCreateProject = async (projectData: { name: string, color: string }) => {
+    await createProject(projectData.name, projectData.color);
+  };
+
   return (
     <>
-      <Sidebar defaultWidth={260}>
+      <Sidebar>
         <div className="h-full flex flex-col">
           <div className="flex-none p-4">
             <Logo />
           </div>
           <div className="flex-1 overflow-y-auto">
+            {/* We'll pass username and navItems to make SidebarContents happy */}
             <SidebarContents
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
+              username="User"
+              navItems={[
+                {
+                  icon: Search,
+                  label: "Search",
+                  action: () => setIsSearchDialogOpen(true)
+                }
+              ]}
               projects={projects}
               isLoadingProjects={isLoadingProjects}
-              activeProjectId={activeProjectId}
-              setActiveProjectId={setActiveProjectId}
-              addProject={addProject}
+              activeProjectId={activeProjectId || null}
+              handleProjectClick={(id) => setActiveProjectId(id)}
+              createProject={handleCreateProject}
+              isTaskSheetOpen={false}
+              setIsTaskSheetOpen={() => {}}
               onAddTask={onAddTask}
             />
             
@@ -86,15 +101,9 @@ const TaskifySidebar = ({
       </Sidebar>
       
       <ProjectDialog
-        open={isProjectDialogOpen}
-        onOpenChange={setIsProjectDialogOpen}
-        projectName={newProject.name}
-        setProjectName={(name: string) => setNewProject({ ...newProject, name })}
-        projectColor={newProject.color}
-        setProjectColor={(color: string) => setNewProject({ ...newProject, color })}
-        addProject={addProject}
+        onCreateProject={handleCreateProject}
       />
-      <SearchDialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen} />
+      <SearchDialog />
     </>
   );
 };

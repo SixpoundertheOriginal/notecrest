@@ -7,7 +7,7 @@ const CalendarNavItem = () => {
   return (
     <SidebarNavItem
       to="/settings/calendar"
-      icon={<Calendar size={18} />}
+      icon={Calendar}
       label="Calendar"
     />
   );

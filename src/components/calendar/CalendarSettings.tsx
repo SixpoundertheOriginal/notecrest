@@ -27,15 +27,8 @@ const CalendarSettings = () => {
       // Check MSAL connection
       const account = getActiveAccount();
       
-      // Also check our database record
-      const { data, error } = await supabase
-        .from('calendar_connections')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('provider', 'microsoft')
-        .single();
-      
-      setIsConnected(!!account && !!data?.is_connected);
+      // Just use the MSAL account for now until the table is created
+      setIsConnected(!!account);
     };
     
     checkConnection();
@@ -44,15 +37,6 @@ const CalendarSettings = () => {
   const handleDisconnect = async () => {
     try {
       await signOutFromMicrosoft();
-      
-      if (user) {
-        // Update database record
-        await supabase
-          .from('calendar_connections')
-          .update({ is_connected: false })
-          .eq('user_id', user.id)
-          .eq('provider', 'microsoft');
-      }
       
       setIsConnected(false);
       toast({

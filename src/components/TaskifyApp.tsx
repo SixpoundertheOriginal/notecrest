@@ -42,6 +42,11 @@ const TaskifyApp = () => {
     deleteProject
   } = useProjects(user);
 
+  // Create a wrapper function to adapt the interface
+  const handleCreateProject = async (name: string, color: string) => {
+    await createProject({ name, color });
+  };
+
   const toggleTheme = () => setDarkMode(!darkMode);
   
   const username = user?.email ? user.email.split('@')[0] : undefined;
@@ -95,7 +100,7 @@ const TaskifyApp = () => {
         isLoadingProjects={isLoadingProjects}
         activeProjectId={activeProjectId}
         setActiveProjectId={setActiveProjectId}
-        createProject={createProject}
+        createProject={handleCreateProject}
         onAddTask={addTask}
       />
       <SidebarInset>

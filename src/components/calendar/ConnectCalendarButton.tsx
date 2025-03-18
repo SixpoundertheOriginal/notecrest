@@ -29,32 +29,12 @@ const ConnectCalendarButton = () => {
       const response = await signInWithMicrosoft();
       
       if (response && response.accessToken) {
-        // Store token info in Supabase
-        const { error } = await supabase
-          .from('calendar_connections')
-          .upsert({
-            user_id: user.id,
-            provider: 'microsoft',
-            connected_at: new Date().toISOString(),
-            // Don't store the actual token in the database for security reasons
-            // The MSAL library will handle token storage internally
-            is_connected: true,
-          });
-
-        if (error) {
-          console.error('Error storing connection info:', error);
-          toast({
-            title: "Connection error",
-            description: "Failed to save your calendar connection",
-            variant: "destructive"
-          });
-        } else {
-          setIsConnected(true);
-          toast({
-            title: "Calendar connected!",
-            description: "Your Microsoft calendar has been connected successfully",
-          });
-        }
+        // Store connection info in local state for now until the table is created
+        setIsConnected(true);
+        toast({
+          title: "Calendar connected!",
+          description: "Your Microsoft calendar has been connected successfully",
+        });
       }
     } catch (error) {
       console.error('Calendar connection error:', error);
