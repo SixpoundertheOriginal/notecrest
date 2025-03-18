@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import TasksView from '@/components/TasksView';
 import CompletedTasksView from '@/components/CompletedTasksView';
@@ -87,7 +88,7 @@ const TaskContent = ({
     return (
       <CompletedTasksView 
         darkMode={darkMode}
-        tasks={tasks}
+        tasks={sortedTasks.filter(task => task.completed)}
         isLoading={isLoadingTasks}
         draggedTaskId={draggedTaskId}
         onDragStart={onDragStart}

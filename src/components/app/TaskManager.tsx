@@ -1,10 +1,7 @@
 
 import React, { useState } from 'react';
-import { cn } from '@/lib/utils';
-import TasksView from '@/components/TasksView';
-import CompletedTasksView from '@/components/CompletedTasksView';
-import NotesView from '@/components/NotesView';
 import TaskAppTabs from '@/components/TaskAppTabs';
+import TaskContent from './TaskContent';
 
 interface TaskManagerProps {
   activeTab: string;
@@ -44,8 +41,6 @@ const TaskManager: React.FC<TaskManagerProps> = ({
   onAddTask,
   onClearCompletedTasks
 }) => {
-  const [sortOption, setSortOption] = useState<string>("date-desc");
-
   return (
     <>
       <TaskAppTabs 
@@ -68,75 +63,9 @@ const TaskManager: React.FC<TaskManagerProps> = ({
         onToggleExpansion={onToggleExpansion}
         onAddTask={onAddTask}
         onClearCompletedTasks={onClearCompletedTasks}
-        sortOption={sortOption}
-        onSortChange={setSortOption}
       />
     </>
   );
-};
-
-interface TaskContentProps extends Omit<TaskManagerProps, 'activeTab' | 'setActiveTab'> {
-  activeTab: string;
-  sortOption: string;
-  onSortChange: (value: string) => void;
-}
-
-const TaskContent: React.FC<TaskContentProps> = ({
-  activeTab,
-  darkMode,
-  tasks,
-  isLoadingTasks,
-  draggedTaskId,
-  isLoggedIn,
-  onDragStart,
-  onDragOver,
-  onDrop,
-  onToggleCompletion,
-  onToggleExpansion,
-  onAddTask,
-  onClearCompletedTasks,
-  sortOption,
-  onSortChange
-}) => {
-  if (activeTab === 'tasks') {
-    return (
-      <TasksView 
-        darkMode={darkMode}
-        tasks={tasks.filter(task => !task.completed)}
-        isLoading={isLoadingTasks}
-        draggedTaskId={draggedTaskId}
-        onDragStart={onDragStart}
-        onDragOver={onDragOver}
-        onDrop={onDrop}
-        onToggleCompletion={onToggleCompletion}
-        onToggleExpansion={onToggleExpansion}
-        onAddTask={onAddTask}
-        isLoggedIn={isLoggedIn}
-        sortOption={sortOption}
-        onSortChange={onSortChange}
-      />
-    );
-  }
-  
-  if (activeTab === 'completed') {
-    return (
-      <CompletedTasksView 
-        darkMode={darkMode}
-        tasks={tasks}
-        isLoading={isLoadingTasks}
-        draggedTaskId={draggedTaskId}
-        onDragStart={onDragStart}
-        onDragOver={onDragOver}
-        onDrop={onDrop}
-        onToggleCompletion={onToggleCompletion}
-        onToggleExpansion={onToggleExpansion}
-        onClearCompletedTasks={onClearCompletedTasks}
-      />
-    );
-  }
-  
-  // Default to notes view
-  return <NotesView darkMode={darkMode} />;
 };
 
 export default TaskManager;
