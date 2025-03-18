@@ -3,9 +3,8 @@ import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import SidebarContents from './sidebar/SidebarContents';
 import ProjectDialog from './sidebar/ProjectDialog';
-import SearchDialog from './sidebar/SearchDialog';
 import { Button } from './ui/button';
-import { Search, Plus, FolderPlus } from 'lucide-react';
+import { FolderPlus } from 'lucide-react';
 import { Sidebar } from './ui/sidebar';
 import CalendarNavItem from './calendar/CalendarNavItem';
 import Logo from './Logo';
@@ -31,21 +30,22 @@ const TaskifySidebar = ({
   createProject,
   onAddTask
 }: TaskifySidebarProps) => {
-  const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false);
-  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
-  const [newProject, setNewProject] = useState({ name: '', color: '#7dd3fc' });
-
-  const addProject = async () => {
-    if (newProject.name.trim() !== '') {
-      await createProject(newProject.name, newProject.color);
-      setNewProject({ name: '', color: '#7dd3fc' });
-      setIsProjectDialogOpen(false);
-    }
-  };
+  const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
 
   // Create a wrapper function to adapt the interface
   const handleCreateProject = async (projectData: { name: string, color: string }) => {
     await createProject(projectData.name, projectData.color);
+  };
+
+  const handleTaskSubmit = (task: {
+    title: string;
+    description: string;
+    priority: string;
+    dueDate: Date | null;
+  }) => {
+    console.log('Task submitted from Sidebar', task);
+    onAddTask(task);
+    setIsTaskSheetOpen(false);
   };
 
   return (
@@ -56,23 +56,16 @@ const TaskifySidebar = ({
             <Logo />
           </div>
           <div className="flex-1 overflow-y-auto">
-            {/* We'll pass username and navItems to make SidebarContents happy */}
             <SidebarContents
               username="User"
-              navItems={[
-                {
-                  icon: Search,
-                  label: "Search",
-                  action: () => setIsSearchDialogOpen(true)
-                }
-              ]}
+              navItems={[]}
               projects={projects}
               isLoadingProjects={isLoadingProjects}
               activeProjectId={activeProjectId || null}
               handleProjectClick={(id) => setActiveProjectId(id)}
               createProject={handleCreateProject}
-              isTaskSheetOpen={false}
-              setIsTaskSheetOpen={() => {}}
+              isTaskSheetOpen={isTaskSheetOpen}
+              setIsTaskSheetOpen={setIsTaskSheetOpen}
               onAddTask={onAddTask}
             />
             
@@ -87,12 +80,8 @@ const TaskifySidebar = ({
             </div>
           </div>
           
-          <div className="flex-none p-4 space-y-2">
-            <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => setIsSearchDialogOpen(true)}>
-              <Search className="mr-2 h-4 w-4" />
-              Search
-            </Button>
-            <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => setIsProjectDialogOpen(true)}>
+          <div className="flex-none p-4">
+            <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => setIsTaskSheetOpen(true)}>
               <FolderPlus className="mr-2 h-4 w-4" />
               New Project
             </Button>
@@ -103,7 +92,6 @@ const TaskifySidebar = ({
       <ProjectDialog
         onCreateProject={handleCreateProject}
       />
-      <SearchDialog />
     </>
   );
 };
