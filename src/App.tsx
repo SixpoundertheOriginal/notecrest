@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import CalendarSettings from "./components/calendar/CalendarSettings";
@@ -18,22 +19,24 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <MsalProvider instance={msalInstance}>
       <AuthProvider>
-        <TooltipProvider>
-          <SidebarProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <div className="flex min-h-svh w-full">
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/settings/calendar" element={<CalendarSettings />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </div>
-            </BrowserRouter>
-          </SidebarProvider>
-        </TooltipProvider>
+        <ThemeProvider>
+          <TooltipProvider>
+            <SidebarProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <div className="flex min-h-svh w-full">
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/settings/calendar" element={<CalendarSettings />} />
+                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </div>
+              </BrowserRouter>
+            </SidebarProvider>
+          </TooltipProvider>
+        </ThemeProvider>
       </AuthProvider>
     </MsalProvider>
   </QueryClientProvider>

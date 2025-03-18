@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
@@ -13,14 +12,15 @@ import FloatingActionButton from './FloatingActionButton';
 import TaskCreationSheet from './TaskCreationSheet';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TaskManager from './app/TaskManager';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const TaskifyApp = () => {
   const [activeTab, setActiveTab] = useState('tasks');
-  const [darkMode, setDarkMode] = useState(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   const { user, loading: authLoading } = useAuth();
   const { isMobile } = useIsMobile();
+  const { darkMode, toggleTheme } = useTheme();
   
   const {
     tasks,
@@ -44,12 +44,9 @@ const TaskifyApp = () => {
     deleteProject
   } = useProjects(user);
 
-  // Create a wrapper function to adapt the return type
   const handleCreateProject = async (projectData: { name: string, color: string }): Promise<void> => {
     await createProject(projectData);
   };
-
-  const toggleTheme = () => setDarkMode(!darkMode);
   
   const username = user?.email ? user.email.split('@')[0] : undefined;
   const isLoggedIn = !!user;
