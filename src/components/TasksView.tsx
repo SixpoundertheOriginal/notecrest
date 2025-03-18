@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
 import TaskFilters from './TaskFilters';
@@ -42,8 +42,11 @@ const TasksView = ({
   const { isMobile } = useIsMobile();
   
   return (
-    <div className="glass-morphism rounded-lg overflow-hidden shadow-sm">
-      <div className="p-3 space-y-2">
+    <div className="space-themed-glass relative overflow-hidden shadow-lg rounded-2xl border border-white/10 bg-[#1A1F2C]/90 backdrop-blur-xl">
+      {/* Red/Orange circular gradient in the background */}
+      <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-gradient-to-br from-[#ea384c] to-[#ff7e54] opacity-20 blur-2xl -translate-y-1/2 translate-x-1/4"></div>
+      
+      <div className="p-3 space-y-2 relative z-10">
         <TaskFilters darkMode={darkMode} />
         
         {!isLoggedIn && (
@@ -53,14 +56,14 @@ const TasksView = ({
         )}
       </div>
 
-      <div className="border-t border-white/5">
+      <div className="border-t border-white/5 relative z-10">
         <div className={cn(
           "grid grid-cols-1 gap-3 p-4 min-h-[180px] overflow-y-auto",
           isMobile ? "max-h-[calc(100vh-280px)]" : "max-h-[60vh]"
         )}>
           {isLoading ? (
             <div className="flex items-center justify-center h-32">
-              <Loader2 className="h-5 w-5 animate-spin text-primary/70" />
+              <Loader2 className="h-5 w-5 animate-spin text-[#ea384c]" />
             </div>
           ) : tasks.length > 0 ? (
             tasks.map((task, index) => (
@@ -85,6 +88,7 @@ const TasksView = ({
             ))
           ) : (
             <div className="flex flex-col items-center justify-center h-32 text-center">
+              <div className="w-16 h-16 mb-4 rounded-full bg-gradient-to-br from-[#ea384c] to-[#ff7e54] opacity-30"></div>
               <p className="text-muted-foreground text-sm">No active tasks</p>
               <p className="text-xs text-muted-foreground mt-1">
                 Use the + button to create a task
@@ -93,6 +97,9 @@ const TasksView = ({
           )}
         </div>
       </div>
+      
+      {/* Additional decorative element inspired by the image */}
+      <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-[#ea384c]/10 to-[#ff7e54]/10 blur-xl rounded-full -translate-x-1/2 translate-y-1/2"></div>
     </div>
   );
 };
