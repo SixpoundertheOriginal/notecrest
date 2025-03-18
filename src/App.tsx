@@ -8,28 +8,34 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import CalendarSettings from "./components/calendar/CalendarSettings";
+import { MsalProvider } from "@azure/msal-react";
+import { msalInstance } from "./lib/microsoftAuth";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <SidebarProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <div className="flex min-h-svh w-full">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
-          </BrowserRouter>
-        </SidebarProvider>
-      </TooltipProvider>
-    </AuthProvider>
+    <MsalProvider instance={msalInstance}>
+      <AuthProvider>
+        <TooltipProvider>
+          <SidebarProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <div className="flex min-h-svh w-full">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/settings/calendar" element={<CalendarSettings />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </div>
+            </BrowserRouter>
+          </SidebarProvider>
+        </TooltipProvider>
+      </AuthProvider>
+    </MsalProvider>
   </QueryClientProvider>
 );
 

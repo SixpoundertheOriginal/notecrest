@@ -1,181 +1,100 @@
-
-import React, { useState, useCallback } from 'react';
-import { CalendarCheck, CalendarDays, CheckSquare, Menu, X } from 'lucide-react';
-import { Button } from './ui/button';
-import { useAuth } from '@/hooks/useAuth';
-import { Sidebar } from "@/components/ui/sidebar";
-import { Project } from '@/hooks/useProjects';
-import { Sheet, SheetContent } from './ui/sheet';
-import { useIsMobile } from '@/hooks/use-mobile';
+import React, { useState } from 'react';
+import { cn } from '@/lib/utils';
 import SidebarContents from './sidebar/SidebarContents';
+import ProjectDialog from './sidebar/ProjectDialog';
+import SearchDialog from './sidebar/SearchDialog';
+import { Button } from './ui/button';
+import { Search, Plus, FolderPlus } from 'lucide-react';
+import { Sidebar } from './ui/sidebar';
+import CalendarNavItem from './calendar/CalendarNavItem';
+import Logo from './Logo';
 
 interface TaskifySidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
-  projects: Project[];
+  projects: any[];
   isLoadingProjects: boolean;
   activeProjectId: string | null;
-  setActiveProjectId: (id: string | null) => void;
-  createProject: (data: { name: string, color: string }) => void;
-  onAddTask: (task: {
-    title: string;
-    description: string;
-    priority: string;
-    dueDate: Date | null;
-  }) => void;
+  setActiveProjectId: (projectId: string | null) => void;
+  createProject: (name: string, color: string) => Promise<void>;
+  onAddTask: (task: any) => void;
 }
 
 const TaskifySidebar = ({ 
   activeTab, 
-  setActiveTab, 
-  projects, 
+  setActiveTab,
+  projects,
   isLoadingProjects,
   activeProjectId,
   setActiveProjectId,
   createProject,
   onAddTask
 }: TaskifySidebarProps) => {
-  const { user } = useAuth();
-  const { isMobile } = useIsMobile();
-  const username = user?.email ? user.email.split('@')[0] : 'User';
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
-  
-  const handleOpenTaskCreation = useCallback(() => {
-    console.log('TaskifySidebar: Request to open task creation sheet');
-    
-    // On mobile, use a different strategy:
-    // 1. Set the task sheet to open first so the state change is queued
-    // 2. Then close the mobile menu
-    if (isMobile) {
-      // Set task sheet open first (this gets queued by React)
-      setIsTaskSheetOpen(true);
-      console.log('TaskifySidebar: Set task sheet to open, now closing mobile menu');
-      
-      // Then close mobile menu (also queued but will happen in the same render cycle)
-      setMobileMenuOpen(false);
-    } else {
-      // On desktop, simply open the sheet
-      console.log('TaskifySidebar: Desktop - opening task sheet directly');
-      setIsTaskSheetOpen(true);
-    }
-  }, [isMobile]);
+  const [isProjectDialogOpen, setIsProjectDialogOpen] = useState(false);
+  const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false);
+  const [newProject, setNewProject] = useState({ name: '', color: '#7dd3fc' });
 
-  const handleTaskSubmit = useCallback((task: {
-    title: string;
-    description: string;
-    priority: string;
-    dueDate: Date | null;
-  }) => {
-    console.log('TaskifySidebar: Task submitted', task);
-    onAddTask(task);
-    setIsTaskSheetOpen(false);
-  }, [onAddTask]);
-  
-  const handleSheetClose = useCallback((open: boolean) => {
-    console.log('TaskifySidebar: Setting sheet open state to:', open);
-    setIsTaskSheetOpen(open);
-  }, []);
-  
-  // Removed the "Create Detailed Task" item from navItems
-  const navItems = [
-    { 
-      icon: CalendarCheck, 
-      label: "Today", 
-      action: () => {
-        setActiveTab('tasks');
-        setActiveProjectId(null);
-        if (isMobile) {
-          setMobileMenuOpen(false);
-        }
-      },
-      isActive: activeTab === 'tasks' && !activeProjectId
-    },
-    { 
-      icon: CalendarDays, 
-      label: "Upcoming", 
-      action: () => {
-        setActiveTab('notes');
-        setActiveProjectId(null);
-        if (isMobile) {
-          setMobileMenuOpen(false);
-        }
-      },
-      isActive: activeTab === 'notes' && !activeProjectId
-    },
-    { 
-      icon: CheckSquare, 
-      label: "Completed", 
-      action: () => {
-        setActiveTab('completed');
-        setActiveProjectId(null);
-        if (isMobile) {
-          setMobileMenuOpen(false);
-        }
-      },
-      isActive: activeTab === 'completed' && !activeProjectId
-    },
-  ];
-
-  const handleProjectClick = (projectId: string) => {
-    setActiveProjectId(projectId);
-    setActiveTab('tasks');
-    if (isMobile) {
-      setMobileMenuOpen(false);
+  const addProject = async () => {
+    if (newProject.name.trim() !== '') {
+      await createProject(newProject.name, newProject.color);
+      setNewProject({ name: '', color: '#7dd3fc' });
+      setIsProjectDialogOpen(false);
     }
   };
 
-  const MobileMenuToggle = () => (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-      className="md:hidden fixed z-50 top-3.5 left-3.5 bg-background/50 backdrop-blur-sm"
-      aria-label="Toggle mobile menu"
-    >
-      {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-    </Button>
-  );
-
   return (
     <>
-      <MobileMenuToggle />
-      
-      <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <SheetContent side="left" className="p-0 w-[80%] max-w-[300px] border-r border-white/5">
-          <div className="h-full bg-sidebar">
-            <SidebarContents 
-              username={username}
-              navItems={navItems}
+      <Sidebar defaultWidth={260}>
+        <div className="h-full flex flex-col">
+          <div className="flex-none p-4">
+            <Logo />
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            <SidebarContents
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
               projects={projects}
               isLoadingProjects={isLoadingProjects}
               activeProjectId={activeProjectId}
-              handleProjectClick={handleProjectClick}
-              createProject={createProject}
-              isTaskSheetOpen={isTaskSheetOpen}
-              setIsTaskSheetOpen={handleSheetClose}
-              onAddTask={handleTaskSubmit}
+              setActiveProjectId={setActiveProjectId}
+              addProject={addProject}
+              onAddTask={onAddTask}
             />
+            
+            {/* Calendar integration navigation */}
+            <div className="px-3 py-2">
+              <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-2 mb-2">
+                Integrations
+              </h3>
+              <div className="space-y-1">
+                <CalendarNavItem />
+              </div>
+            </div>
           </div>
-        </SheetContent>
-      </Sheet>
+          
+          <div className="flex-none p-4 space-y-2">
+            <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => setIsSearchDialogOpen(true)}>
+              <Search className="mr-2 h-4 w-4" />
+              Search
+            </Button>
+            <Button variant="secondary" size="sm" className="w-full justify-start" onClick={() => setIsProjectDialogOpen(true)}>
+              <FolderPlus className="mr-2 h-4 w-4" />
+              New Project
+            </Button>
+          </div>
+        </div>
+      </Sidebar>
       
-      <div className="hidden md:block">
-        <Sidebar className="border-r border-white/5">
-          <SidebarContents 
-            username={username}
-            navItems={navItems}
-            projects={projects}
-            isLoadingProjects={isLoadingProjects}
-            activeProjectId={activeProjectId}
-            handleProjectClick={handleProjectClick}
-            createProject={createProject}
-            isTaskSheetOpen={isTaskSheetOpen}
-            setIsTaskSheetOpen={handleSheetClose}
-            onAddTask={handleTaskSubmit}
-          />
-        </Sidebar>
-      </div>
+      <ProjectDialog
+        open={isProjectDialogOpen}
+        onOpenChange={setIsProjectDialogOpen}
+        projectName={newProject.name}
+        setProjectName={(name: string) => setNewProject({ ...newProject, name })}
+        projectColor={newProject.color}
+        setProjectColor={(color: string) => setNewProject({ ...newProject, color })}
+        addProject={addProject}
+      />
+      <SearchDialog open={isSearchDialogOpen} onOpenChange={setIsSearchDialogOpen} />
     </>
   );
 };
