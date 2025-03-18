@@ -42,9 +42,9 @@ const TaskifyApp = () => {
     deleteProject
   } = useProjects(user);
 
-  // Create a wrapper function to adapt the interface
-  const handleCreateProject = async (name: string, color: string) => {
-    await createProject({ name, color });
+  // Update the function to accept a single object parameter instead of two separate parameters
+  const handleCreateProject = async (projectData: { name: string, color: string }) => {
+    await createProject(projectData);
   };
 
   const toggleTheme = () => setDarkMode(!darkMode);

@@ -48,6 +48,11 @@ const TaskifySidebar = ({
     setIsTaskSheetOpen(false);
   };
 
+  // Define navigation items for the sidebar
+  const navItems = [
+    // Add navigation items as needed - empty array for now as it's a required prop
+  ];
+
   return (
     <>
       <Sidebar>
@@ -57,6 +62,8 @@ const TaskifySidebar = ({
           </div>
           <div className="flex-1 overflow-y-auto">
             <SidebarContents
+              username="User" // Provide a default username
+              navItems={navItems} // Pass the empty array for now
               projects={projects}
               isLoadingProjects={isLoadingProjects}
               activeProjectId={activeProjectId || null}
