@@ -32,11 +32,6 @@ const TaskifySidebar = ({
 }: TaskifySidebarProps) => {
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
 
-  // Create a wrapper function to adapt the interface
-  const handleCreateProject = async (projectData: { name: string, color: string }) => {
-    await createProject(projectData);
-  };
-
   const handleTaskSubmit = (task: {
     title: string;
     description: string;
@@ -68,7 +63,7 @@ const TaskifySidebar = ({
               isLoadingProjects={isLoadingProjects}
               activeProjectId={activeProjectId || null}
               handleProjectClick={(id) => setActiveProjectId(id)}
-              createProject={handleCreateProject}
+              createProject={createProject}
               isTaskSheetOpen={isTaskSheetOpen}
               setIsTaskSheetOpen={setIsTaskSheetOpen}
               onAddTask={onAddTask}
@@ -95,7 +90,7 @@ const TaskifySidebar = ({
       </Sidebar>
       
       <ProjectDialog
-        onCreateProject={handleCreateProject}
+        onCreateProject={createProject}
       />
     </>
   );
