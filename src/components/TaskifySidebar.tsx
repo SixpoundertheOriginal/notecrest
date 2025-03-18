@@ -16,7 +16,7 @@ interface TaskifySidebarProps {
   isLoadingProjects: boolean;
   activeProjectId: string | null;
   setActiveProjectId: (projectId: string | null) => void;
-  createProject: (name: string, color: string) => Promise<void>;
+  createProject: (projectData: { name: string, color: string }) => Promise<void>;
   onAddTask: (task: any) => void;
 }
 
@@ -34,7 +34,7 @@ const TaskifySidebar = ({
 
   // Create a wrapper function to adapt the interface
   const handleCreateProject = async (projectData: { name: string, color: string }) => {
-    await createProject(projectData.name, projectData.color);
+    await createProject(projectData);
   };
 
   const handleTaskSubmit = (task: {
@@ -57,8 +57,6 @@ const TaskifySidebar = ({
           </div>
           <div className="flex-1 overflow-y-auto">
             <SidebarContents
-              username="User"
-              navItems={[]}
               projects={projects}
               isLoadingProjects={isLoadingProjects}
               activeProjectId={activeProjectId || null}
