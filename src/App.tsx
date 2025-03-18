@@ -8,6 +8,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ProjectProvider } from "@/contexts/ProjectContext";
+import { TasksProvider } from "@/contexts/TasksContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import CalendarSettings from "./components/calendar/CalendarSettings";
@@ -23,22 +24,24 @@ const App = () => (
         {(authProps) => (
           <ThemeProvider>
             <ProjectProvider user={authProps.user}>
-              <TooltipProvider>
-                <SidebarProvider>
-                  <Toaster />
-                  <Sonner />
-                  <BrowserRouter>
-                    <div className="flex min-h-svh w-full">
-                      <Routes>
-                        <Route path="/" element={<Index />} />
-                        <Route path="/settings/calendar" element={<CalendarSettings />} />
-                        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </div>
-                  </BrowserRouter>
-                </SidebarProvider>
-              </TooltipProvider>
+              <TasksProvider user={authProps.user}>
+                <TooltipProvider>
+                  <SidebarProvider>
+                    <Toaster />
+                    <Sonner />
+                    <BrowserRouter>
+                      <div className="flex min-h-svh w-full">
+                        <Routes>
+                          <Route path="/" element={<Index />} />
+                          <Route path="/settings/calendar" element={<CalendarSettings />} />
+                          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </div>
+                    </BrowserRouter>
+                  </SidebarProvider>
+                </TooltipProvider>
+              </TasksProvider>
             </ProjectProvider>
           </ThemeProvider>
         )}

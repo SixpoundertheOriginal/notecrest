@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
 import { useAuth } from '@/hooks/useAuth';
 import WelcomeHeader from './app/WelcomeHeader';
-import { useTasks } from '@/hooks/useTasks';
+import { useTasks } from '@/contexts/TasksContext';
 import { useProjects } from '@/contexts/ProjectContext';
 import TaskifySidebar from './TaskifySidebar';
 import { SidebarInset } from './ui/sidebar';
@@ -22,13 +21,7 @@ const TaskifyApp = () => {
   const { user, loading: authLoading } = useAuth();
   const { isMobile } = useIsMobile();
   const { darkMode, toggleTheme } = useTheme();
-  const { 
-    projects, 
-    isLoadingProjects, 
-    activeProjectId, 
-    setActiveProjectId, 
-    createProject
-  } = useProjects();
+  const { activeProjectId } = useProjects();
   
   const {
     tasks,
@@ -41,7 +34,7 @@ const TaskifyApp = () => {
     handleDragOver,
     handleDrop,
     clearCompletedTasks
-  } = useTasks(user);
+  } = useTasks();
   
   const username = user?.email ? user.email.split('@')[0] : undefined;
   const isLoggedIn = !!user;
