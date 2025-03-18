@@ -16,10 +16,12 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      {/* Outer glow effect */}
-      <div className="absolute inset-0 rounded-full animate-pulse bg-[#ea384c]/20 scale-150 blur-xl"></div>
+      {/* Enhanced cosmic glow effect */}
+      <div className="absolute inset-0 rounded-full animate-pulse bg-[#ea384c]/30 scale-150 blur-xl"></div>
+      <div className="absolute inset-0 rounded-full animate-pulse bg-[#3d85c6]/20 scale-[1.8] blur-xl" 
+           style={{animationDelay: '0.5s', animationDuration: '3s'}}></div>
       
-      {/* Button with enhanced UI */}
+      {/* Button with enhanced cosmic UI */}
       <button
         onClick={onClick}
         className={cn(
@@ -28,6 +30,7 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
           "bg-gradient-to-br from-[#ea384c] to-[#ff7e54]",
           "hover:from-[#ff4c5f] hover:to-[#ff8f69]",
           isPressed ? 'scale-95' : 'scale-100',
+          "cosmic-pulse", // New class for the cosmic pulse effect
           className
         )}
         onMouseDown={() => setIsPressed(true)}
@@ -37,20 +40,21 @@ const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
         onTouchEnd={() => setIsPressed(false)}
         aria-label="Add new task"
       >
-        {/* Circular border effect */}
+        {/* Cosmic border effect */}
         <div className="absolute inset-0 rounded-full border border-white/20 overflow-hidden">
-          {/* Subtle radial reflections */}
+          {/* Subtle cosmic dust particles */}
           <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-white/70 rounded-full"></div>
           <div className="absolute bottom-1/4 right-1/4 w-0.5 h-0.5 bg-white/50 rounded-full"></div>
+          <div className="absolute top-1/3 right-1/3 w-0.75 h-0.75 bg-[#61dafb]/50 rounded-full"></div>
         </div>
         
-        {/* Inner ring */}
-        <div className="absolute inset-2 rounded-full border border-white/10"></div>
+        {/* Inner ring with cosmic glow */}
+        <div className="absolute inset-2 rounded-full border border-white/10 shadow-[inset_0_0_10px_rgba(234,56,76,0.3)]"></div>
         
         {/* Plus icon with enhanced appearance */}
         <Plus size={28} className="text-white relative z-10" strokeWidth={2.5} />
         
-        {/* Inner glow effect */}
+        {/* Inner cosmic glow effect */}
         <div className="absolute inset-0 rounded-full shadow-[inset_0_0_15px_rgba(255,255,255,0.2)]"></div>
       </button>
     </div>

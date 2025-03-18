@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
@@ -42,12 +41,14 @@ const TasksView = ({
   const { isMobile } = useIsMobile();
   
   return (
-    <div className="space-themed-glass relative overflow-hidden shadow-lg rounded-2xl border border-white/10 bg-[#1A1F2C]/90 backdrop-blur-xl">
-      {/* Enhanced space-themed background elements */}
-      <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-gradient-to-br from-[#ea384c] to-[#ff7e54] opacity-10 blur-3xl -translate-y-1/2 translate-x-1/4"></div>
-      <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-[#1e66de]/20 blur-2xl"></div>
+    <div className="space-themed-glass relative overflow-hidden shadow-lg rounded-2xl border border-white/10 bg-[#1A1F2C]/80 backdrop-blur-xl cosmic-background">
+      <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 z-0" 
+           style={{ backgroundImage: 'url("/lovable-uploads/8ecf6916-e9ea-443f-a269-2ab79f920208.png")' }}>
+      </div>
       
-      {/* Star-like dots */}
+      <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-gradient-to-br from-[#ea384c] to-[#ff7e54] opacity-5 blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+      <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full bg-[#1e66de]/10 blur-2xl"></div>
+      
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-[10%] left-[20%] w-0.5 h-0.5 bg-white/70 rounded-full"></div>
         <div className="absolute top-[15%] left-[35%] w-1 h-1 bg-white/40 rounded-full"></div>
@@ -111,7 +112,6 @@ const TasksView = ({
         </div>
       </div>
       
-      {/* Enhanced decorative footer element */}
       <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#1A1F2C]/80 to-transparent pointer-events-none"></div>
     </div>
   );
