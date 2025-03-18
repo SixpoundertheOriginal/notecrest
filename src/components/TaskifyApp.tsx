@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
@@ -14,6 +13,7 @@ import TaskCreationSheet from './TaskCreationSheet';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TaskManager from './app/TaskManager';
 import { useTheme } from '@/contexts/ThemeContext';
+import { filterTasksByProject } from '@/lib/taskFilters';
 
 const TaskifyApp = () => {
   const [activeTab, setActiveTab] = useState('tasks');
@@ -54,9 +54,7 @@ const TaskifyApp = () => {
     }
   };
 
-  const filteredTasks = activeProjectId
-    ? tasks.filter(task => task.project_id === activeProjectId)
-    : tasks;
+  const filteredTasks = filterTasksByProject(tasks, activeProjectId);
     
   const handleOpenTaskSheet = () => {
     console.log("Opening task creation sheet from FAB");
