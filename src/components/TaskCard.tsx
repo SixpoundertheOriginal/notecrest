@@ -73,9 +73,9 @@ const TaskCard = ({
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Gradient glow based on priority */}
         <div className={`absolute -right-6 -top-6 w-12 h-12 rounded-full bg-gradient-to-br ${
-          task.priority === 'High' ? 'from-red-500/20 to-[#ea384c]/10' : 
-          task.priority === 'Medium' ? 'from-yellow-500/20 to-amber-500/10' : 
-          'from-blue-500/20 to-indigo-500/10'
+          task.priority === 'High' ? 'from-[#D946EF]/20 to-[#F97316]/10' : 
+          task.priority === 'Medium' ? 'from-[#8B5CF6]/20 to-[#6366F1]/10' : 
+          'from-[#0EA5E9]/20 to-[#38BDF8]/10'
         } blur-xl opacity-60`}></div>
         
         {/* Subtle cosmic dust */}
@@ -88,9 +88,9 @@ const TaskCard = ({
         
         {/* Left border cosmic glow effect */}
         <div className={`absolute left-0 top-0 h-full w-0.5 bg-gradient-to-b ${
-          task.priority === 'High' ? 'from-red-500/0 via-red-500/30 to-red-500/0' : 
-          task.priority === 'Medium' ? 'from-yellow-500/0 via-yellow-500/30 to-yellow-500/0' : 
-          'from-blue-500/0 via-blue-500/30 to-blue-500/0'
+          task.priority === 'High' ? 'from-[#D946EF]/0 via-[#D946EF]/30 to-[#D946EF]/0' : 
+          task.priority === 'Medium' ? 'from-[#8B5CF6]/0 via-[#8B5CF6]/30 to-[#8B5CF6]/0' : 
+          'from-[#0EA5E9]/0 via-[#0EA5E9]/30 to-[#0EA5E9]/0'
         }`}></div>
       </div>
       
@@ -124,9 +124,9 @@ const TaskCard = ({
             
             <div className="flex flex-wrap mt-1 gap-1">
               <span className={`text-[10px] px-1.5 py-0.5 rounded-full flex items-center backdrop-blur-sm ${
-                task.priority === 'High' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 
-                task.priority === 'Medium' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' : 
-                'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                task.priority === 'High' ? 'bg-[#D946EF]/20 text-[#D946EF] border border-[#D946EF]/30' : 
+                task.priority === 'Medium' ? 'bg-[#8B5CF6]/20 text-[#8B5CF6] border border-[#8B5CF6]/30' : 
+                'bg-[#0EA5E9]/20 text-[#0EA5E9] border border-[#0EA5E9]/30'
               }`}>
                 {priorityColors.icon}
                 {task.priority}

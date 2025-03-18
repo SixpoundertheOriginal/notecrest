@@ -183,10 +183,10 @@ const HighlightedTaskInput: React.FC<HighlightedTaskInputProps> = ({
         token.type === 'time' && 'bg-purple-500/20 text-purple-300',
         token.type === 'priority' && 
           (token.text.match(/urgent|high/i) 
-            ? 'bg-red-500/20 text-red-300'
+            ? 'bg-[#D946EF]/20 text-[#D946EF]'
             : token.text.match(/low|whenever|someday/i)
-              ? 'bg-green-500/20 text-green-300'
-              : 'bg-yellow-500/20 text-yellow-300'),
+              ? 'bg-[#0EA5E9]/20 text-[#0EA5E9]'
+              : 'bg-[#8B5CF6]/20 text-[#8B5CF6]'),
         token.type === 'project' && 'bg-indigo-500/20 text-indigo-300'
       );
 
@@ -263,10 +263,10 @@ const HighlightedTaskInput: React.FC<HighlightedTaskInputProps> = ({
           <span className={cn(
             "inline-flex items-center px-1.5 py-0.5 rounded",
             parsedInfo.priority === "High" 
-              ? "bg-red-500/10 text-red-400" 
+              ? "bg-[#D946EF]/10 text-[#D946EF]" 
               : parsedInfo.priority === "Medium" 
-                ? "bg-yellow-500/10 text-yellow-400" 
-                : "bg-green-500/10 text-green-400"
+                ? "bg-[#8B5CF6]/10 text-[#8B5CF6]" 
+                : "bg-[#0EA5E9]/10 text-[#0EA5E9]"
           )}>
             <Flag size={12} className="mr-1" />
             {parsedInfo.priority}

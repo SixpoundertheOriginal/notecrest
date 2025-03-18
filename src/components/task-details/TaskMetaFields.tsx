@@ -11,6 +11,16 @@ interface TaskMetaFieldsProps {
 }
 
 const TaskMetaFields = ({ task, darkMode }: TaskMetaFieldsProps) => {
+  // Function to get priority-specific styling for the select element
+  const getPriorityStyle = () => {
+    switch (task.priority) {
+      case 'High': return 'focus:border-[#D946EF] text-[#D946EF]';
+      case 'Medium': return 'focus:border-[#8B5CF6] text-[#8B5CF6]';
+      case 'Low': return 'focus:border-[#0EA5E9] text-[#0EA5E9]';
+      default: return '';
+    }
+  };
+
   return (
     <div className="grid grid-cols-2 gap-3">
       <div>
@@ -41,13 +51,14 @@ const TaskMetaFields = ({ task, darkMode }: TaskMetaFieldsProps) => {
           className={cn(
             "w-full px-3 py-2 rounded-lg text-sm appearance-none transition-all duration-200 min-h-[44px]",
             darkMode 
-              ? 'bg-gray-800/50 border border-gray-700 focus:border-primary text-white' 
-              : 'bg-white border border-gray-300 focus:border-primary'
+              ? 'bg-gray-800/50 border border-gray-700 text-white' 
+              : 'bg-white border border-gray-300',
+            getPriorityStyle()
           )}
         >
-          <option value="High">High</option>
-          <option value="Medium">Medium</option>
-          <option value="Low">Low</option>
+          <option value="High" className="text-[#D946EF]">High</option>
+          <option value="Medium" className="text-[#8B5CF6]">Medium</option>
+          <option value="Low" className="text-[#0EA5E9]">Low</option>
         </select>
       </div>
     </div>
