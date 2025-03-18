@@ -20,7 +20,7 @@ const SearchDialog = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
-  const { tasks } = useTasks(user);
+  const { tasks } = useTasks();
   const [searchResults, setSearchResults] = useState<TaskData[]>([]);
   const { isMobile } = useIsMobile();
 

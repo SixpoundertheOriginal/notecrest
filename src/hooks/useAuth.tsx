@@ -1,9 +1,20 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User, AuthState } from '@/types/auth';
 
-export const useAuth = () => {
+// Create auth context
+const AuthContext = createContext<AuthState>({
+  user: null,
+  loading: true,
+  error: null
+});
+
+// Export hook to use auth context
+export const useAuth = () => useContext(AuthContext);
+
+// Create AuthProvider component
+export const AuthProvider = ({ children }: { children: (authState: AuthState) => ReactNode }) => {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     loading: true,
@@ -50,5 +61,9 @@ export const useAuth = () => {
     };
   }, []);
 
-  return authState;
+  return (
+    <AuthContext.Provider value={authState}>
+      {children(authState)}
+    </AuthContext.Provider>
+  );
 };
