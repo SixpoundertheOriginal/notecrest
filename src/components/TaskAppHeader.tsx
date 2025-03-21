@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MoonIcon, SunIcon, LogIn, Search, Menu } from 'lucide-react';
+import { MoonIcon, SunIcon, LogIn, Search } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import AuthSection from './app/AuthSection';
 import { useAuth } from '@/hooks/useAuth';
@@ -42,7 +42,7 @@ const TaskAppHeader = ({
     <header className="px-4 py-3 flex items-center justify-between border-b border-white/5">
       <div className="flex items-center gap-2">
         {showSidebarTrigger && (
-          <SidebarTrigger />
+          <SidebarTrigger className="h-9 w-9" aria-label="Toggle sidebar" />
         )}
         <h1 className="text-lg font-medium">{pageTitle}</h1>
       </div>

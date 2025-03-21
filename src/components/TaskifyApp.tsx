@@ -7,7 +7,7 @@ import WelcomeHeader from './app/WelcomeHeader';
 import { useTasks } from '@/contexts/TasksContext';
 import { useProjects } from '@/contexts/ProjectContext';
 import TaskifySidebar from './TaskifySidebar';
-import { SidebarInset, SidebarProvider } from './ui/sidebar';
+import { SidebarInset, SidebarProvider, SidebarRail } from './ui/sidebar';
 import AuthModal from './auth/AuthModal';
 import FloatingActionButton from './FloatingActionButton';
 import TaskCreationSheet from './TaskCreationSheet';
@@ -82,7 +82,7 @@ const TaskifyApp = () => {
   };
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={!isMobile}>
       {!isMobile && (
         <TaskifySidebar 
           activeTab={activeTab} 
@@ -90,6 +90,7 @@ const TaskifyApp = () => {
           onAddTask={addTask}
         />
       )}
+      <SidebarRail />
       <SidebarInset className={cn(isMobile ? "w-full" : "")}>
         <div className="flex flex-col min-h-screen">
           <div className={cn("pt-10 md:pt-0", isMobile ? "pl-0" : "")}>
