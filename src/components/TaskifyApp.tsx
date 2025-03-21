@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
@@ -9,6 +8,7 @@ import { useProjects } from '@/contexts/ProjectContext';
 import TaskifySidebar from './TaskifySidebar';
 import { SidebarInset } from './ui/sidebar';
 import AuthModal from './auth/AuthModal';
+import FloatingActionButton from './FloatingActionButton';
 import TaskCreationSheet from './TaskCreationSheet';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TaskManager from './app/TaskManager';
@@ -56,13 +56,18 @@ const TaskifyApp = () => {
 
   const filteredTasks = filterTasksByProject(tasks, activeProjectId);
     
+  const handleOpenTaskSheet = () => {
+    console.log("Opening task creation sheet from FAB");
+    setIsTaskSheetOpen(true);
+  };
+  
   const handleTaskSubmit = (task: {
     title: string;
     description: string;
     priority: string;
     dueDate: Date | null;
   }) => {
-    console.log('Task submitted from sheet', task);
+    console.log('Task submitted from FAB', task);
     addTask({
       ...task,
       projectId: activeProjectId || undefined
@@ -125,6 +130,8 @@ const TaskifyApp = () => {
               />
             </div>
           </div>
+          
+          <FloatingActionButton onClick={handleOpenTaskSheet} />
         </div>
       </SidebarInset>
       
