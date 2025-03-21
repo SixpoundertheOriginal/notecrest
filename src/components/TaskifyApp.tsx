@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
@@ -7,8 +6,9 @@ import WelcomeHeader from './app/WelcomeHeader';
 import { useTasks } from '@/contexts/TasksContext';
 import { useProjects } from '@/contexts/ProjectContext';
 import TaskifySidebar from './TaskifySidebar';
-import { SidebarInset, SidebarProvider, SidebarRail } from './ui/sidebar';
+import { SidebarInset } from './ui/sidebar';
 import AuthModal from './auth/AuthModal';
+import FloatingActionButton from './FloatingActionButton';
 import TaskCreationSheet from './TaskCreationSheet';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TaskManager from './app/TaskManager';
@@ -55,6 +55,11 @@ const TaskifyApp = () => {
   };
 
   const filteredTasks = filterTasksByProject(tasks, activeProjectId);
+    
+  const handleOpenTaskSheet = () => {
+    console.log("Opening task creation sheet from FAB");
+    setIsTaskSheetOpen(true);
+  };
   
   const handleTaskSubmit = (task: {
     title: string;
@@ -62,7 +67,7 @@ const TaskifyApp = () => {
     priority: string;
     dueDate: Date | null;
   }) => {
-    console.log('Task submitted from sheet', task);
+    console.log('Task submitted from FAB', task);
     addTask({
       ...task,
       projectId: activeProjectId || undefined
@@ -76,7 +81,7 @@ const TaskifyApp = () => {
   };
 
   return (
-    <SidebarProvider defaultOpen={!isMobile}>
+    <>
       {!isMobile && (
         <TaskifySidebar 
           activeTab={activeTab} 
@@ -84,7 +89,6 @@ const TaskifyApp = () => {
           onAddTask={addTask}
         />
       )}
-      <SidebarRail />
       <SidebarInset className={cn(isMobile ? "w-full" : "")}>
         <div className="flex flex-col min-h-screen">
           <div className={cn("pt-10 md:pt-0", isMobile ? "pl-0" : "")}>
@@ -126,6 +130,8 @@ const TaskifyApp = () => {
               />
             </div>
           </div>
+          
+          <FloatingActionButton onClick={handleOpenTaskSheet} />
         </div>
       </SidebarInset>
       
@@ -139,7 +145,7 @@ const TaskifyApp = () => {
         onClose={handleSheetOpenChange}
         onSubmit={handleTaskSubmit}
       />
-    </SidebarProvider>
+    </>
   );
 };
 

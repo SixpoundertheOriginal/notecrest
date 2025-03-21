@@ -4,21 +4,14 @@ import * as React from "react"
 const MOBILE_BREAKPOINT = 768
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean>(
-    typeof window !== 'undefined' ? window.innerWidth < MOBILE_BREAKPOINT : false
-  )
-  const [isInitialized, setIsInitialized] = React.useState<boolean>(
-    typeof window !== 'undefined'
-  )
+  const [isMobile, setIsMobile] = React.useState<boolean>(false)
+  const [isInitialized, setIsInitialized] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
       if (!isInitialized) setIsInitialized(true)
     }
-    
-    // Set initial state
-    checkMobile()
     
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
     
@@ -29,6 +22,9 @@ export function useIsMobile() {
       // Fallback for older browsers
       window.addEventListener('resize', checkMobile)
     }
+    
+    // Initial check
+    checkMobile()
     
     return () => {
       if (typeof mql.removeEventListener === 'function') {
@@ -57,9 +53,6 @@ export function useIsMobileValue() {
   React.useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     
-    // Set initial state
-    checkMobile()
-    
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
     
     // Modern event listener
@@ -69,6 +62,9 @@ export function useIsMobileValue() {
       // Fallback for older browsers
       window.addEventListener('resize', checkMobile)
     }
+    
+    // Initial check
+    checkMobile()
     
     return () => {
       if (typeof mql.removeEventListener === 'function') {
