@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
@@ -6,7 +7,7 @@ import WelcomeHeader from './app/WelcomeHeader';
 import { useTasks } from '@/contexts/TasksContext';
 import { useProjects } from '@/contexts/ProjectContext';
 import TaskifySidebar from './TaskifySidebar';
-import { SidebarInset } from './ui/sidebar';
+import { SidebarInset, SidebarProvider } from './ui/sidebar';
 import AuthModal from './auth/AuthModal';
 import FloatingActionButton from './FloatingActionButton';
 import TaskCreationSheet from './TaskCreationSheet';
@@ -81,7 +82,7 @@ const TaskifyApp = () => {
   };
 
   return (
-    <>
+    <SidebarProvider>
       {!isMobile && (
         <TaskifySidebar 
           activeTab={activeTab} 
@@ -145,7 +146,7 @@ const TaskifyApp = () => {
         onClose={handleSheetOpenChange}
         onSubmit={handleTaskSubmit}
       />
-    </>
+    </SidebarProvider>
   );
 };
 

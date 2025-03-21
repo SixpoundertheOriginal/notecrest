@@ -42,9 +42,7 @@ const TaskAppHeader = ({
     <header className="px-4 py-3 flex items-center justify-between border-b border-white/5">
       <div className="flex items-center gap-2">
         {showSidebarTrigger && (
-          <Button variant="ghost" size="icon" className="md:hidden">
-            <Menu className="h-5 w-5" />
-          </Button>
+          <SidebarTrigger />
         )}
         <h1 className="text-lg font-medium">{pageTitle}</h1>
       </div>
