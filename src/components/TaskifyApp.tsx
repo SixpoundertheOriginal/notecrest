@@ -9,7 +9,6 @@ import { useProjects } from '@/contexts/ProjectContext';
 import TaskifySidebar from './TaskifySidebar';
 import { SidebarInset, SidebarProvider, SidebarRail } from './ui/sidebar';
 import AuthModal from './auth/AuthModal';
-import FloatingActionButton from './FloatingActionButton';
 import TaskCreationSheet from './TaskCreationSheet';
 import { useIsMobile } from '@/hooks/use-mobile';
 import TaskManager from './app/TaskManager';
@@ -56,11 +55,6 @@ const TaskifyApp = () => {
   };
 
   const filteredTasks = filterTasksByProject(tasks, activeProjectId);
-    
-  const handleOpenTaskSheet = () => {
-    console.log("Opening task creation sheet from FAB");
-    setIsTaskSheetOpen(true);
-  };
   
   const handleTaskSubmit = (task: {
     title: string;
@@ -68,7 +62,7 @@ const TaskifyApp = () => {
     priority: string;
     dueDate: Date | null;
   }) => {
-    console.log('Task submitted from FAB', task);
+    console.log('Task submitted from sheet', task);
     addTask({
       ...task,
       projectId: activeProjectId || undefined
@@ -132,8 +126,6 @@ const TaskifyApp = () => {
               />
             </div>
           </div>
-          
-          <FloatingActionButton onClick={handleOpenTaskSheet} />
         </div>
       </SidebarInset>
       
