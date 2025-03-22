@@ -37,7 +37,7 @@ const TaskifySidebar = ({
 
   return (
     <>
-      <Sidebar>
+      <Sidebar collapsible="icon">
         <div className="h-full flex flex-col">
           <div className="flex-none p-4">
             <Logo />
