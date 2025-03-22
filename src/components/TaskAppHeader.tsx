@@ -4,7 +4,6 @@ import { MoonIcon, SunIcon, LogIn, Menu } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import AuthSection from './app/AuthSection';
 import { useAuth } from '@/hooks/useAuth';
-import { Input } from './ui/input';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 import { SidebarTrigger } from './ui/sidebar';
@@ -50,8 +49,6 @@ const TaskAppHeader = ({
         )}
         <h1 className="text-lg font-medium">{pageTitle}</h1>
       </div>
-      
-      {/* Removed the center search section that was here */}
       
       <div className="flex items-center gap-2">
         <Button
