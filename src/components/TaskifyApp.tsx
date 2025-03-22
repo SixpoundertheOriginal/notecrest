@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
@@ -89,6 +90,7 @@ const TaskifyApp = () => {
           onAddTask={addTask}
         />
       )}
+      {/* Removing any additional elements between sidebar and main content */}
       <SidebarInset className={cn(isMobile ? "w-full" : "")}>
         <div className="flex flex-col min-h-screen">
           <div className={cn("pt-10 md:pt-0", isMobile ? "pl-0" : "")}>
