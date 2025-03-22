@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { LogIn } from 'lucide-react';
 import TaskProgressDashboard from '@/components/dashboard/TaskProgressDashboard';
 import { TaskData } from '@/types/task';
-import { filterTasksByCompletion } from '@/lib/taskFilters';
 
 interface WelcomeHeaderProps {
   username?: string;
@@ -14,8 +13,8 @@ interface WelcomeHeaderProps {
 }
 
 const WelcomeHeader = ({ username, isLoggedIn, onOpenAuth, tasks = [] }: WelcomeHeaderProps) => {
-  // Use utility function to filter out completed tasks
-  const activeTasks = filterTasksByCompletion(tasks, false);
+  // Filter out completed tasks for better visibility into the task state
+  const activeTasks = tasks.filter(task => !task.completed);
   
   console.log('WelcomeHeader tasks:', {
     totalTasks: tasks.length,

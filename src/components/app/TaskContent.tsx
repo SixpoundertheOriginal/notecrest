@@ -1,9 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import TasksView from '@/components/TasksView';
 import CompletedTasksView from '@/components/CompletedTasksView';
 import NotesView from '@/components/NotesView';
-import { sortTasks, filterTasksByCompletion } from '@/lib/taskFilters';
 
 interface TaskContentProps {
   activeTab: string;
@@ -43,17 +42,33 @@ const TaskContent = ({
 }: TaskContentProps) => {
   const [sortOption, setSortOption] = useState<string>("date-desc");
 
-  // Use the utility function to get sorted tasks
-  const sortedTasks = sortTasks(tasks, sortOption);
+  const sortedTasks = useMemo(() => {
+    if (!tasks) return [];
+    
+    // Create a copy to avoid mutating the original array
+    const tasksCopy = [...tasks];
+    
+    switch (sortOption) {
+      case 'date-asc':
+        return tasksCopy.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      case 'priority-desc':
+        return tasksCopy.sort((a, b) => {
+          const priorityValue = { 'High': 3, 'Medium': 2, 'Low': 1 };
+          return (priorityValue[b.priority] || 0) - (priorityValue[a.priority] || 0);
+        });
+      case 'title-asc':
+        return tasksCopy.sort((a, b) => a.title.localeCompare(b.title));
+      case 'date-desc':
+      default:
+        return tasksCopy.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+  }, [tasks, sortOption]);
 
   if (activeTab === 'tasks') {
-    // Use utility function to filter active tasks
-    const activeTasks = filterTasksByCompletion(sortedTasks, false);
-    
     return (
       <TasksView 
         darkMode={darkMode}
-        tasks={activeTasks}
+        tasks={sortedTasks.filter(task => !task.completed)}
         isLoading={isLoadingTasks}
         draggedTaskId={draggedTaskId}
         onDragStart={onDragStart}
@@ -70,13 +85,10 @@ const TaskContent = ({
   }
   
   if (activeTab === 'completed') {
-    // Use utility function to filter completed tasks
-    const completedTasks = filterTasksByCompletion(sortedTasks, true);
-    
     return (
       <CompletedTasksView 
         darkMode={darkMode}
-        tasks={completedTasks}
+        tasks={tasks}
         isLoading={isLoadingTasks}
         draggedTaskId={draggedTaskId}
         onDragStart={onDragStart}

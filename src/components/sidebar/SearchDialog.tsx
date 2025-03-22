@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,7 +20,7 @@ const SearchDialog = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useAuth();
-  const { tasks } = useTasks();
+  const { tasks } = useTasks(user);
   const [searchResults, setSearchResults] = useState<TaskData[]>([]);
   const { isMobile } = useIsMobile();
 

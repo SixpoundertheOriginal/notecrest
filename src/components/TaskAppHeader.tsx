@@ -1,12 +1,9 @@
 
 import React from 'react';
-import { MoonIcon, SunIcon, LogIn, Menu } from 'lucide-react';
+import { MoonIcon, SunIcon, LogIn } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import AuthSection from './app/AuthSection';
 import { useAuth } from '@/hooks/useAuth';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
-import { SidebarTrigger } from './ui/sidebar';
 
 interface TaskAppHeaderProps {
   darkMode: boolean;
@@ -21,7 +18,6 @@ interface TaskAppHeaderProps {
     dueDate: Date | null;
   }) => void;
   showLoginButton?: boolean;
-  showSidebarTrigger?: boolean;
 }
 
 const TaskAppHeader = ({ 
@@ -31,25 +27,15 @@ const TaskAppHeader = ({
   isLoggedIn, 
   onOpenAuth,
   onAddTask,
-  showLoginButton = true,
-  showSidebarTrigger = false
+  showLoginButton = true
 }: TaskAppHeaderProps) => {
   const { user, loading } = useAuth();
-  const { isMobile } = useIsMobile();
   
   return (
     <header className="px-4 py-3 flex items-center justify-between border-b border-white/5">
-      <div className="flex items-center gap-2">
-        {showSidebarTrigger && (
-          <SidebarTrigger>
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </SidebarTrigger>
-        )}
-        <h1 className="text-lg font-medium">{pageTitle}</h1>
+      <div className="flex items-center">
+        <h1 className="text-lg font-medium ml-2 md:ml-0">{pageTitle}</h1>
       </div>
-      
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"

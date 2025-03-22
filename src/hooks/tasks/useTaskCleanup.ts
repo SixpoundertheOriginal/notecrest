@@ -2,12 +2,11 @@
 import { TaskData } from '@/types/task';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import { User } from '@/types/auth';
 
 export const useTaskCleanup = (
   tasks: TaskData[],
   setTasks: React.Dispatch<React.SetStateAction<TaskData[]>>,
-  user: User | null
+  user: any
 ) => {
   const { toast } = useToast();
 

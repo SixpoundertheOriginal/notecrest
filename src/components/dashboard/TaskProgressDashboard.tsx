@@ -1,9 +1,9 @@
+
 import React, { useMemo } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { TaskData } from '@/types/task';
 import { cn } from '@/lib/utils';
 import { CheckCircle, Clock } from 'lucide-react';
-import { getTaskMetrics } from '@/lib/taskFilters';
 
 interface TaskProgressDashboardProps {
   tasks: TaskData[];
@@ -13,13 +13,45 @@ interface TaskProgressDashboardProps {
 
 const TaskProgressDashboard = ({ tasks, username, isLoggedIn }: TaskProgressDashboardProps) => {
   const metrics = useMemo(() => {
-    // Use the utility function to get task metrics
-    const taskMetrics = getTaskMetrics(tasks);
+    // Only consider visible tasks (not completed tasks)
+    const visibleTasks = tasks.filter(task => !task.completed);
+    const totalTasks = visibleTasks.length;
+    const completedTasks = 0; // These are filtered out already
     
-    // Log metrics for debugging
-    console.log('Task metrics (visible tasks only):', taskMetrics);
+    // For today's tasks, compare the task date with today's date in the same format
+    const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     
-    return taskMetrics;
+    const todayTasks = visibleTasks.filter(task => {
+      if (!task.date) return false;
+      
+      // Try to match formats like "Mar 18" or similar
+      return task.date === today || 
+             task.date.includes(today) || 
+             // Also check if the date is today in another format
+             (task.createdAt && new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) === today);
+    }).length;
+    
+    const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+    const highPriorityTasks = visibleTasks.filter(task => task.priority === 'High').length;
+    
+    console.log('Task metrics (visible tasks only):', {
+      totalVisibleTasks: totalTasks,
+      completedTasks,
+      todayTasks,
+      completionRate,
+      highPriorityTasks,
+      today,
+      allTasksCount: tasks.length,
+      completedTasksCount: tasks.filter(task => task.completed).length
+    });
+    
+    return {
+      totalTasks,
+      completedTasks,
+      todayTasks,
+      completionRate,
+      highPriorityTasks
+    };
   }, [tasks]);
 
   // Generate a motivational message based on task count

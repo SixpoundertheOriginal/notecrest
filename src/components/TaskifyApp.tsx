@@ -4,26 +4,21 @@ import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
 import { useAuth } from '@/hooks/useAuth';
 import WelcomeHeader from './app/WelcomeHeader';
-import { useTasks } from '@/contexts/TasksContext';
-import { useProjects } from '@/contexts/ProjectContext';
+import TaskContent from './app/TaskContent';
+import { useTasks } from '@/hooks/useTasks';
+import { useProjects } from '@/hooks/useProjects';
 import TaskifySidebar from './TaskifySidebar';
-import { SidebarInset, SidebarProvider } from './ui/sidebar';
+import { SidebarInset } from './ui/sidebar';
 import AuthModal from './auth/AuthModal';
 import FloatingActionButton from './FloatingActionButton';
 import TaskCreationSheet from './TaskCreationSheet';
-import { useIsMobile } from '@/hooks/use-mobile';
-import TaskManager from './app/TaskManager';
-import { useTheme } from '@/contexts/ThemeContext';
-import { filterTasksByProject } from '@/lib/taskFilters';
 
 const TaskifyApp = () => {
   const [activeTab, setActiveTab] = useState('tasks');
+  const [darkMode, setDarkMode] = useState(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
   const { user, loading: authLoading } = useAuth();
-  const { isMobile } = useIsMobile();
-  const { darkMode, toggleTheme } = useTheme();
-  const { projects, activeProjectId } = useProjects();
   
   const {
     tasks,
@@ -36,7 +31,18 @@ const TaskifyApp = () => {
     handleDragOver,
     handleDrop,
     clearCompletedTasks
-  } = useTasks();
+  } = useTasks(user);
+
+  const {
+    projects,
+    isLoadingProjects,
+    activeProjectId,
+    setActiveProjectId,
+    createProject,
+    deleteProject
+  } = useProjects(user);
+
+  const toggleTheme = () => setDarkMode(!darkMode);
   
   const username = user?.email ? user.email.split('@')[0] : undefined;
   const isLoggedIn = !!user;
@@ -55,7 +61,9 @@ const TaskifyApp = () => {
     }
   };
 
-  const filteredTasks = filterTasksByProject(tasks, activeProjectId);
+  const filteredTasks = activeProjectId
+    ? tasks.filter(task => task.project_id === activeProjectId)
+    : tasks;
     
   const handleOpenTaskSheet = () => {
     console.log("Opening task creation sheet from FAB");
@@ -69,10 +77,7 @@ const TaskifyApp = () => {
     dueDate: Date | null;
   }) => {
     console.log('Task submitted from FAB', task);
-    addTask({
-      ...task,
-      projectId: activeProjectId || undefined
-    });
+    addTask(task);
     setIsTaskSheetOpen(false);
   };
   
@@ -82,17 +87,20 @@ const TaskifyApp = () => {
   };
 
   return (
-    <SidebarProvider>
-      {!isMobile && (
-        <TaskifySidebar 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab}
-          onAddTask={addTask}
-        />
-      )}
-      <SidebarInset className={cn(isMobile ? "w-full" : "")}>
+    <>
+      <TaskifySidebar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab}
+        projects={projects}
+        isLoadingProjects={isLoadingProjects}
+        activeProjectId={activeProjectId}
+        setActiveProjectId={setActiveProjectId}
+        createProject={createProject}
+        onAddTask={addTask}
+      />
+      <SidebarInset>
         <div className="flex flex-col min-h-screen">
-          <div className={cn("pt-10 md:pt-0", isMobile ? "pl-0" : "")}>
+          <div className="pt-10 md:pt-0">
             <TaskAppHeader 
               darkMode={darkMode} 
               toggleTheme={toggleTheme} 
@@ -101,7 +109,6 @@ const TaskifyApp = () => {
               onOpenAuth={() => setIsAuthModalOpen(true)}
               onAddTask={addTask}
               showLoginButton={false}
-              showSidebarTrigger={isMobile}
             />
           </div>
 
@@ -111,11 +118,10 @@ const TaskifyApp = () => {
                 username={username} 
                 isLoggedIn={isLoggedIn} 
                 onOpenAuth={() => setIsAuthModalOpen(true)}
-                tasks={tasks}
+                tasks={tasks} // Pass all tasks, not just filtered tasks
               />
-              <TaskManager
+              <TaskContent
                 activeTab={activeTab}
-                setActiveTab={setActiveTab}
                 darkMode={darkMode}
                 tasks={filteredTasks}
                 isLoadingTasks={isLoadingTasks}
@@ -146,7 +152,7 @@ const TaskifyApp = () => {
         onClose={handleSheetOpenChange}
         onSubmit={handleTaskSubmit}
       />
-    </SidebarProvider>
+    </>
   );
 };
 

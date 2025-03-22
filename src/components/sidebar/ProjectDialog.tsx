@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { projectColorOptions } from '@/lib/projectColors';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +13,6 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ProjectDialogProps {
   onCreateProject: (data: { name: string, color: string }) => void;
@@ -31,6 +29,14 @@ const ProjectDialog = ({ onCreateProject }: ProjectDialogProps) => {
       setName('');
     }
   };
+  
+  const colors = [
+    { value: 'blue', label: 'Blue', class: 'bg-blue-500' },
+    { value: 'pink', label: 'Pink', class: 'bg-pink-500' },
+    { value: 'orange', label: 'Orange', class: 'bg-orange-500' },
+    { value: 'green', label: 'Green', class: 'bg-green-500' },
+    { value: 'purple', label: 'Purple', class: 'bg-purple-500' },
+  ];
   
   return (
     <Dialog>
@@ -62,23 +68,21 @@ const ProjectDialog = ({ onCreateProject }: ProjectDialogProps) => {
               <label className="text-sm font-medium">
                 Select color
               </label>
-              <ScrollArea className="h-20">
-                <div className="flex flex-wrap gap-2 p-1">
-                  {projectColorOptions.map(c => (
-                    <button
-                      key={c.value}
-                      type="button"
-                      className={cn(
-                        "w-8 h-8 rounded-full ring-offset-2 transition-all",
-                        c.class,
-                        color === c.value ? "ring-2 ring-white scale-110" : "hover:scale-105"
-                      )}
-                      onClick={() => setColor(c.value)}
-                      title={c.label}
-                    />
-                  ))}
-                </div>
-              </ScrollArea>
+              <div className="flex gap-2">
+                {colors.map(c => (
+                  <button
+                    key={c.value}
+                    type="button"
+                    className={cn(
+                      "w-6 h-6 rounded-full ring-offset-2",
+                      c.class,
+                      color === c.value && "ring-2 ring-white"
+                    )}
+                    onClick={() => setColor(c.value)}
+                    title={c.label}
+                  />
+                ))}
+              </div>
             </div>
           </div>
           <DialogFooter>

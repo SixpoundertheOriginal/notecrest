@@ -3,10 +3,9 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { LogIn } from 'lucide-react';
 import UserMenu from '@/components/auth/UserMenu';
-import { User } from '@/types/auth';
 
 interface AuthSectionProps {
-  user: User | null;
+  user: any;
   onOpenAuth?: () => void;
 }
 
