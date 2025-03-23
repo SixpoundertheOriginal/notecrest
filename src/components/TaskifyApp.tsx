@@ -11,7 +11,6 @@ import { SidebarInset } from './ui/sidebar';
 import FloatingActionButton from './FloatingActionButton';
 import { LazyTaskCreationSheet } from '@/lib/lazyComponents';
 
-// Lazy load the AuthModal component as it's not needed for initial render
 const AuthModal = lazy(() => import('./auth/AuthModal'));
 
 const TaskifyApp = () => {

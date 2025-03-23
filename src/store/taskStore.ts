@@ -217,8 +217,14 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       
       // If user is logged in, sync with server
       if (userId && typeof updatedTask.id === 'string') {
-        // Format subtasks for Supabase storage
-        const subtasksJson = updatedTask.subtasks || [];
+        // Format subtasks for Supabase storage - convert to plain objects to match Json type
+        const subtasksForStorage = updatedTask.subtasks 
+          ? updatedTask.subtasks.map(st => ({
+              id: st.id,
+              title: st.title,
+              completed: st.completed
+            }))
+          : [];
         
         // Prepare the data for Supabase
         const taskData = {
@@ -227,7 +233,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
           priority: updatedTask.priority,
           status: updatedTask.status,
           completed: updatedTask.completed,
-          subtasks: subtasksJson
+          subtasks: subtasksForStorage
         };
         
         const { error } = await supabase

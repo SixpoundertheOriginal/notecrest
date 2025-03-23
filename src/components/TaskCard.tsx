@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Calendar, CheckCircle, ChevronDown, Square } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -16,22 +15,23 @@ interface TaskCardProps {
   onDrop: (e: React.DragEvent, id: number | string) => void;
   onToggleCompletion: (id: number | string) => void;
   onToggleExpansion: (id: number | string) => void;
+  onUpdateTask?: (updatedTask: TaskData) => Promise<boolean>;
 }
 
 const TaskCard = ({
   task,
-  darkMode,
+  darkMode = false,
   draggedTaskId,
   onDragStart,
   onDragOver,
   onDrop,
   onToggleCompletion,
   onToggleExpansion,
+  onUpdateTask
 }: TaskCardProps) => {
   const priorityColors = getPriorityColor(task.priority);
   const { isMobile } = useIsMobile();
   
-  // Memoize relative time calculation which can be expensive
   const relativeTime = useMemo(() => {
     const now = new Date();
     const taskDate = new Date(task.createdAt || now);
@@ -51,7 +51,6 @@ const TaskCard = ({
     return `${diffInMonths}mo ago`;
   }, [task.createdAt]);
 
-  // Use memoization for task card style classes to prevent recalculation
   const taskCardClasses = useMemo(() => {
     return cn(
       "task-card relative rounded-md p-3 shadow-sm cursor-pointer transition-all duration-300 backdrop-blur-sm border-l-2 overflow-hidden",
@@ -65,7 +64,6 @@ const TaskCard = ({
     );
   }, [darkMode, draggedTaskId, task.id, task.completed, priorityColors.dot]);
 
-  // Handlers
   const handleCompletionToggle = (e: React.MouseEvent) => {
     e.stopPropagation();
     onToggleCompletion(task.id);
@@ -84,24 +82,19 @@ const TaskCard = ({
       onClick={handleExpansionToggle}
       className={taskCardClasses}
     >
-      {/* Cosmic decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Gradient glow based on priority */}
         <div className={`absolute -right-6 -top-6 w-12 h-12 rounded-full bg-gradient-to-br ${
           task.priority === 'High' ? 'from-[#D946EF]/20 to-[#F97316]/10' : 
           task.priority === 'Medium' ? 'from-[#8B5CF6]/20 to-[#6366F1]/10' : 
           'from-[#0EA5E9]/20 to-[#38BDF8]/10'
         } blur-xl opacity-60`}></div>
         
-        {/* Subtle cosmic dust */}
         <div className="absolute top-1/4 left-1/4 w-0.5 h-0.5 bg-white/60 rounded-full"></div>
         <div className="absolute bottom-1/3 right-1/5 w-0.5 h-0.5 bg-white/70 rounded-full"></div>
         <div className="absolute top-2/3 right-1/3 w-0.5 h-0.5 bg-white/50 rounded-full"></div>
         
-        {/* Border glow */}
         <div className="absolute inset-0 border border-white/5 rounded-md"></div>
         
-        {/* Left border cosmic glow effect */}
         <div className={`absolute left-0 top-0 h-full w-0.5 bg-gradient-to-b ${
           task.priority === 'High' ? 'from-[#D946EF]/0 via-[#D946EF]/30 to-[#D946EF]/0' : 
           task.priority === 'Medium' ? 'from-[#8B5CF6]/0 via-[#8B5CF6]/30 to-[#8B5CF6]/0' : 
@@ -179,7 +172,12 @@ const TaskCard = ({
       </div>
       
       {task.expanded && (
-        <TaskDetails task={task} darkMode={darkMode} />
+        <TaskDetails
+          task={task}
+          darkMode={darkMode}
+          onTaskUpdate={onUpdateTask}
+          onClose={() => onToggleExpansion(task.id)}
+        />
       )}
     </div>
   );

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TaskData } from '@/types/task';
 import TaskCard from './TaskCard';
@@ -17,6 +16,7 @@ interface CompletedTasksViewProps {
   onDrop: (e: React.DragEvent, id: number | string) => void;
   onToggleCompletion: (id: number | string) => void;
   onToggleExpansion: (id: number | string) => void;
+  onUpdateTask: (task: TaskData) => Promise<boolean>;
   onClearCompletedTasks?: () => void;
 }
 
@@ -30,6 +30,7 @@ const CompletedTasksView = ({
   onDrop,
   onToggleCompletion,
   onToggleExpansion,
+  onUpdateTask,
   onClearCompletedTasks,
 }: CompletedTasksViewProps) => {
   const isMobile = useIsMobile();

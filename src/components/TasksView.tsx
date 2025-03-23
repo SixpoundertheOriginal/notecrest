@@ -23,6 +23,7 @@ interface TasksViewProps {
     priority: string;
     dueDate: Date | null;
   }) => void;
+  onUpdateTask: (task: TaskData) => Promise<boolean>;
   isLoggedIn?: boolean;
   sortOption?: string;
   onSortChange?: (value: string) => void;
@@ -39,6 +40,7 @@ const TasksView = ({
   onToggleCompletion,
   onToggleExpansion,
   onAddTask,
+  onUpdateTask,
   isLoggedIn = false,
   sortOption = "date-desc",
   onSortChange
