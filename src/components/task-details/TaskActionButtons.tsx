@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 interface TaskActionButtonsProps {
   darkMode: boolean;
@@ -11,6 +12,7 @@ interface TaskActionButtonsProps {
   onCancel: () => void;
   isDirty: boolean;
   isValid: boolean;
+  isSaving?: boolean;
 }
 
 const TaskActionButtons = ({ 
@@ -18,7 +20,8 @@ const TaskActionButtons = ({
   onSave, 
   onCancel, 
   isDirty, 
-  isValid 
+  isValid,
+  isSaving = false
 }: TaskActionButtonsProps) => {
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
@@ -41,6 +44,7 @@ const TaskActionButtons = ({
         <Button
           variant="outline"
           onClick={handleCancel}
+          disabled={isSaving}
           className={cn(
             "text-xs min-h-[44px] min-w-[44px]",
             darkMode
@@ -52,15 +56,22 @@ const TaskActionButtons = ({
         </Button>
         <Button
           onClick={onSave}
-          disabled={!isDirty || !isValid}
+          disabled={!isDirty || !isValid || isSaving}
           className={cn(
             "text-xs min-h-[44px] min-w-[44px] text-white",
-            !isDirty || !isValid 
+            (!isDirty || !isValid || isSaving)
               ? "opacity-60 cursor-not-allowed"
               : "hover:shadow-md"
           )}
         >
-          Save Changes
+          {isSaving ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            "Save Changes"
+          )}
         </Button>
       </div>
 

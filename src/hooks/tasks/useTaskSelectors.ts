@@ -8,11 +8,13 @@ export const useTaskSelectors = () => {
   const tasks = useTaskStore(state => state.tasks);
   const isLoadingTasks = useTaskStore(state => state.isLoadingTasks);
   const draggedTaskId = useTaskStore(state => state.draggedTaskId);
+  const isSaving = useTaskStore(state => state.isSaving);
   
   return {
     // Server-derived state
     tasks,
     isLoadingTasks,
+    isSaving,
     
     // Client-only state
     draggedTaskId,
@@ -37,6 +39,7 @@ export const useTaskActions = () => {
     
     // Server sync actions (modifies both client & server state)
     addTask: useTaskStore(state => state.addTask),
+    updateTask: useTaskStore(state => state.updateTask),
     toggleTaskCompletion: useTaskStore(state => state.toggleTaskCompletion),
     clearCompletedTasks: useTaskStore(state => state.clearCompletedTasks),
     handleDrop: useTaskStore(state => state.handleDrop)

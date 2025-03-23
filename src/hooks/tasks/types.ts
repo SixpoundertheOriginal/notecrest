@@ -14,6 +14,7 @@ export interface UseTasksReturn {
     dueDate: Date | null;
     projectId?: string;
   }) => Promise<void>;
+  updateTask: (updatedTask: TaskData) => Promise<boolean>;
   handleDragStart: (e: React.DragEvent, id: number | string) => void;
   handleDragOver: (e: React.DragEvent) => void;
   handleDrop: (e: React.DragEvent, targetId: number | string) => Promise<void>;

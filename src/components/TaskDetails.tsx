@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { TaskData, SubTask } from '@/types/task';
@@ -12,7 +13,7 @@ import { toast } from 'sonner';
 interface TaskDetailsProps {
   task: TaskData;
   darkMode: boolean;
-  onTaskUpdate?: (updatedTask: TaskData) => void;
+  onTaskUpdate?: (updatedTask: TaskData) => Promise<boolean>;
   onClose?: () => void;
 }
 
@@ -24,6 +25,7 @@ const TaskDetails = ({ task, darkMode, onTaskUpdate, onClose }: TaskDetailsProps
   const [dueDate, setDueDate] = useState<string>('2025-03-08');
   const [subtasks, setSubtasks] = useState<SubTask[]>(task.subtasks || []);
   const [isDirty, setIsDirty] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({});
 
   useEffect(() => {
@@ -34,6 +36,7 @@ const TaskDetails = ({ task, darkMode, onTaskUpdate, onClose }: TaskDetailsProps
     setSubtasks(task.subtasks || []);
     setIsDirty(false);
     setValidationErrors({});
+    setIsSaving(false);
   }, [task]);
 
   const validateForm = () => {
@@ -88,11 +91,13 @@ const TaskDetails = ({ task, darkMode, onTaskUpdate, onClose }: TaskDetailsProps
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!validateForm()) {
       toast.error("Please fix the errors before saving");
       return;
     }
+    
+    setIsSaving(true);
     
     const updatedTask: TaskData = {
       ...task,
@@ -104,12 +109,21 @@ const TaskDetails = ({ task, darkMode, onTaskUpdate, onClose }: TaskDetailsProps
     };
     
     if (onTaskUpdate) {
-      onTaskUpdate(updatedTask);
-      toast.success("Task updated successfully");
-      setIsDirty(false);
+      try {
+        const success = await onTaskUpdate(updatedTask);
+        if (success) {
+          setIsDirty(false);
+        }
+      } catch (error) {
+        console.error("Error updating task:", error);
+        toast.error("Failed to save changes. Please try again.");
+      } finally {
+        setIsSaving(false);
+      }
     } else {
       console.warn("No onTaskUpdate handler provided to TaskDetails");
       toast.error("Could not save changes");
+      setIsSaving(false);
     }
   };
 
@@ -197,6 +211,7 @@ const TaskDetails = ({ task, darkMode, onTaskUpdate, onClose }: TaskDetailsProps
             onCancel={handleCancel}
             isDirty={isDirty}
             isValid={isFormValid}
+            isSaving={isSaving}
           />
         </div>
       </div>

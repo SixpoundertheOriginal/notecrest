@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { TaskData } from '@/types/task';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,6 +6,7 @@ interface TaskState {
   tasks: TaskData[];
   isLoadingTasks: boolean;
   draggedTaskId: number | string | null;
+  isSaving: boolean;
   
   // Actions
   setTasks: (tasks: TaskData[]) => void;
@@ -18,6 +18,7 @@ interface TaskState {
     dueDate: Date | null;
     projectId?: string;
   }, userId: string | undefined) => Promise<void>;
+  updateTask: (updatedTask: TaskData, userId: string | undefined) => Promise<void>;
   toggleTaskCompletion: (id: number | string, userId: string | undefined) => Promise<void>;
   toggleTaskExpansion: (id: number | string) => void;
   clearCompletedTasks: (userId: string | undefined) => Promise<void>;
@@ -33,6 +34,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   tasks: [],
   isLoadingTasks: false,
   draggedTaskId: null,
+  isSaving: false,
 
   setTasks: (tasks) => set({ tasks }),
   
@@ -198,6 +200,54 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       };
       
       set(state => ({ tasks: [newTask, ...state.tasks] }));
+    }
+  },
+  
+  updateTask: async (updatedTask, userId) => {
+    set({ isSaving: true });
+    const tasks = get().tasks;
+    
+    try {
+      // Update local state first
+      const updatedTasks = tasks.map(task => 
+        task.id === updatedTask.id ? { ...updatedTask } : task
+      );
+      
+      set({ tasks: updatedTasks });
+      
+      // If user is logged in, sync with server
+      if (userId && typeof updatedTask.id === 'string') {
+        // Format subtasks for Supabase storage
+        const subtasksJson = updatedTask.subtasks || [];
+        
+        // Prepare the data for Supabase
+        const taskData = {
+          title: updatedTask.title,
+          description: updatedTask.description || '',
+          priority: updatedTask.priority,
+          status: updatedTask.status,
+          completed: updatedTask.completed,
+          subtasks: subtasksJson
+        };
+        
+        const { error } = await supabase
+          .from('tasks')
+          .update(taskData)
+          .eq('id', updatedTask.id);
+
+        if (error) {
+          throw error;
+        }
+      }
+      
+      return Promise.resolve();
+    } catch (error: any) {
+      console.error("Error updating task:", error.message);
+      // Revert to original tasks on error
+      set({ tasks });
+      return Promise.reject(error);
+    } finally {
+      set({ isSaving: false });
     }
   },
   

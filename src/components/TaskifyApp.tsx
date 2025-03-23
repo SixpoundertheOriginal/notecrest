@@ -28,6 +28,7 @@ const TaskifyApp = () => {
     toggleTaskCompletion,
     toggleTaskExpansion,
     addTask,
+    updateTask,
     handleDragStart,
     handleDragOver,
     handleDrop,
@@ -136,6 +137,7 @@ const TaskifyApp = () => {
                 onToggleCompletion={toggleTaskCompletion}
                 onToggleExpansion={toggleTaskExpansion}
                 onAddTask={addTask}
+                onUpdateTask={updateTask}
                 onClearCompletedTasks={clearCompletedTasks}
               />
             </div>

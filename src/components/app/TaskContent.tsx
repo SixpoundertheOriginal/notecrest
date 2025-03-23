@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import TasksView from '@/components/TasksView';
 import CompletedTasksView from '@/components/CompletedTasksView';
 import NotesView from '@/components/NotesView';
+import { TaskData } from '@/types/task';
 
 interface TaskContentProps {
   activeTab: string;
@@ -22,6 +23,7 @@ interface TaskContentProps {
     priority: string;
     dueDate: Date | null;
   }) => void;
+  onUpdateTask: (task: TaskData) => Promise<boolean>;
   onClearCompletedTasks: () => void;
 }
 
@@ -38,6 +40,7 @@ const TaskContent = ({
   onToggleCompletion,
   onToggleExpansion,
   onAddTask,
+  onUpdateTask,
   onClearCompletedTasks
 }: TaskContentProps) => {
   const [sortOption, setSortOption] = useState<string>("date-desc");
@@ -89,6 +92,7 @@ const TaskContent = ({
           onToggleCompletion={onToggleCompletion}
           onToggleExpansion={onToggleExpansion}
           onAddTask={onAddTask}
+          onUpdateTask={onUpdateTask}
           isLoggedIn={isLoggedIn}
           sortOption={sortOption}
           onSortChange={setSortOption}
@@ -108,6 +112,7 @@ const TaskContent = ({
           onDrop={onDrop}
           onToggleCompletion={onToggleCompletion}
           onToggleExpansion={onToggleExpansion}
+          onUpdateTask={onUpdateTask}
           onClearCompletedTasks={onClearCompletedTasks}
         />
       );
@@ -129,6 +134,7 @@ const TaskContent = ({
     onToggleCompletion, 
     onToggleExpansion, 
     onAddTask, 
+    onUpdateTask,
     onClearCompletedTasks,
     sortOption
   ]);

@@ -4,6 +4,7 @@ import { useTaskStore } from '@/store/taskStore';
 import { useToast } from '@/components/ui/use-toast';
 import { UseTasksReturn } from './types';
 import { useTaskSelectors, useTaskActions } from './useTaskSelectors';
+import { TaskData } from '@/types/task';
 
 export const useTasksWithStore = (user: any): UseTasksReturn => {
   const { toast } = useToast();
@@ -18,6 +19,7 @@ export const useTasksWithStore = (user: any): UseTasksReturn => {
     toggleTaskCompletion: storeToggleTaskCompletion,
     clearCompletedTasks: storeClearCompletedTasks,
     addTask: storeAddTask,
+    updateTask: storeUpdateTask,
     handleDrop: storeHandleDrop,
     
     // Client-only actions
@@ -47,6 +49,29 @@ export const useTasksWithStore = (user: any): UseTasksReturn => {
       title: user ? "Task created" : "Task created (Demo Mode)",
       description: user ? "Your task has been added to the list." : "Sign in to save your tasks permanently.",
     });
+  };
+
+  const updateTask = async (updatedTask: TaskData) => {
+    try {
+      await storeUpdateTask(updatedTask, userId);
+      
+      toast({
+        title: user ? "Task updated" : "Task updated (Demo Mode)",
+        description: user ? "Your task has been updated." : "Sign in to save your changes permanently.",
+      });
+      
+      return true;
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      
+      toast({
+        title: "Update failed",
+        description: "There was a problem updating your task.",
+        variant: "destructive"
+      });
+      
+      return false;
+    }
   };
 
   const toggleTaskCompletion = async (id: number | string) => {
@@ -82,6 +107,7 @@ export const useTasksWithStore = (user: any): UseTasksReturn => {
     // Server sync actions (with UI feedback)
     toggleTaskCompletion,
     addTask,
+    updateTask,
     handleDrop,
     clearCompletedTasks
   };
