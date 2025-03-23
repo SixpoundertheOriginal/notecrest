@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
 import { useAuth } from '@/hooks/useAuth';
@@ -47,7 +47,8 @@ const TaskifyApp = () => {
   const username = user?.email ? user.email.split('@')[0] : undefined;
   const isLoggedIn = !!user;
 
-  const getPageTitle = () => {
+  // Memoize page title to prevent recalculation on every render
+  const pageTitle = useMemo(() => {
     if (activeProjectId) {
       const project = projects.find(p => p.id === activeProjectId);
       return project ? project.name : 'Project';
@@ -59,11 +60,15 @@ const TaskifyApp = () => {
       case 'notes': return 'Upcoming';
       default: return 'Taskify';
     }
-  };
+  }, [activeTab, activeProjectId, projects]);
 
-  const filteredTasks = activeProjectId
-    ? tasks.filter(task => task.project_id === activeProjectId)
-    : tasks;
+  // Memoize filtered tasks to prevent recalculation on every render
+  const filteredTasks = useMemo(() => 
+    activeProjectId
+      ? tasks.filter(task => task.project_id === activeProjectId)
+      : tasks,
+    [tasks, activeProjectId]
+  );
     
   const handleOpenTaskSheet = () => {
     console.log("Opening task creation sheet from FAB");
@@ -104,7 +109,7 @@ const TaskifyApp = () => {
             <TaskAppHeader 
               darkMode={darkMode} 
               toggleTheme={toggleTheme} 
-              pageTitle={getPageTitle()}
+              pageTitle={pageTitle}
               isLoggedIn={isLoggedIn}
               onOpenAuth={() => setIsAuthModalOpen(true)}
               onAddTask={addTask}

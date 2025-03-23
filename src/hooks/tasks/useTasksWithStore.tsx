@@ -3,24 +3,28 @@ import { useEffect } from 'react';
 import { useTaskStore } from '@/store/taskStore';
 import { useToast } from '@/components/ui/use-toast';
 import { UseTasksReturn } from './types';
+import { useTaskSelectors, useTaskActions } from './useTaskSelectors';
 
 export const useTasksWithStore = (user: any): UseTasksReturn => {
   const { toast } = useToast();
   const userId = user?.id;
   
+  // Get task state with selectors
+  const { tasks, isLoadingTasks, draggedTaskId } = useTaskSelectors();
+  
+  // Get task actions
   const {
-    tasks,
-    isLoadingTasks,
-    draggedTaskId,
-    fetchTasks,
-    addTask: storeAddTask,
     toggleTaskCompletion: storeToggleTaskCompletion,
     toggleTaskExpansion,
     handleDragStart,
     handleDragOver,
     handleDrop: storeHandleDrop,
-    clearCompletedTasks: storeClearCompletedTasks
-  } = useTaskStore();
+    clearCompletedTasks: storeClearCompletedTasks,
+    addTask: storeAddTask
+  } = useTaskActions();
+  
+  // Fetch tasks is a special case as it's only used in useEffect
+  const fetchTasks = useTaskStore(state => state.fetchTasks);
 
   useEffect(() => {
     fetchTasks(userId);

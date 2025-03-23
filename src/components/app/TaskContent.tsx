@@ -42,6 +42,7 @@ const TaskContent = ({
 }: TaskContentProps) => {
   const [sortOption, setSortOption] = useState<string>("date-desc");
 
+  // Memoize sorted tasks to prevent recalculation on every render
   const sortedTasks = useMemo(() => {
     if (!tasks) return [];
     
@@ -64,11 +65,17 @@ const TaskContent = ({
     }
   }, [tasks, sortOption]);
 
+  // Memoize filtered incomplete tasks to prevent recalculation on every render
+  const incompleteTasks = useMemo(() => 
+    sortedTasks.filter(task => !task.completed), 
+    [sortedTasks]
+  );
+
   if (activeTab === 'tasks') {
     return (
       <TasksView 
         darkMode={darkMode}
-        tasks={sortedTasks.filter(task => !task.completed)}
+        tasks={incompleteTasks}
         isLoading={isLoadingTasks}
         draggedTaskId={draggedTaskId}
         onDragStart={onDragStart}
@@ -105,4 +112,4 @@ const TaskContent = ({
   return <NotesView darkMode={darkMode} />;
 };
 
-export default TaskContent;
+export default React.memo(TaskContent);

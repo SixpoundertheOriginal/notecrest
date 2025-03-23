@@ -3,20 +3,24 @@ import { useEffect } from 'react';
 import { useProjectStore } from '@/store/projectStore';
 import { useToast } from '@/components/ui/use-toast';
 import { Project } from '@/store/projectStore';
+import { useProjectSelectors, useProjectActions } from './useProjectSelectors';
 
 export const useProjectsWithStore = (user: any) => {
   const { toast } = useToast();
   const userId = user?.id;
   
+  // Get project state with selectors
+  const { projects, isLoadingProjects, activeProjectId } = useProjectSelectors();
+  
+  // Get project actions with selectors
   const {
-    projects,
-    isLoadingProjects,
-    activeProjectId,
     setActiveProjectId,
-    fetchProjects,
     createProject: storeCreateProject,
     deleteProject: storeDeleteProject
-  } = useProjectStore();
+  } = useProjectActions();
+  
+  // Fetch projects is a special case as it's only used in useEffect
+  const fetchProjects = useProjectStore(state => state.fetchProjects);
 
   useEffect(() => {
     fetchProjects(userId);
