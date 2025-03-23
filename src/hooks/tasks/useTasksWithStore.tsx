@@ -5,7 +5,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { UseTasksReturn } from './types';
 
 export const useTasksWithStore = (user: any): UseTasksReturn => {
-  const toast = useToast();
+  const { toast } = useToast();
   const userId = user?.id;
   
   const {

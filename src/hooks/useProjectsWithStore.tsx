@@ -5,7 +5,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Project } from '@/store/projectStore';
 
 export const useProjectsWithStore = (user: any) => {
-  const toast = useToast();
+  const { toast } = useToast();
   const userId = user?.id;
   
   const {
