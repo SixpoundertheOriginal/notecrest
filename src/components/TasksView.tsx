@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
 import TaskFilters from './TaskFilters';
@@ -45,6 +45,65 @@ const TasksView = ({
 }: TasksViewProps) => {
   const { isMobile } = useIsMobile();
   
+  // Memoize task items to prevent unnecessary re-renders
+  const taskItems = useMemo(() => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center h-32">
+          <Loader2 className="h-5 w-5 animate-spin text-[#ea384c]" />
+        </div>
+      );
+    }
+
+    if (tasks.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center h-32 text-center">
+          <div className="w-20 h-20 mb-4 rounded-full bg-gradient-to-br from-[#ea384c] to-[#ff7e54] opacity-20 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-[#1A1F2C]/90 flex items-center justify-center">
+              <div className="w-1 h-1 bg-white/70 rounded-full"></div>
+            </div>
+          </div>
+          <p className="text-muted-foreground text-sm">No active tasks</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Use the + button to create a task
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        {tasks.map((task, index) => (
+          <React.Fragment key={task.id}>
+            <TaskCard
+              task={task}
+              darkMode={darkMode}
+              draggedTaskId={draggedTaskId}
+              onDragStart={onDragStart}
+              onDragOver={onDragOver}
+              onDrop={onDrop}
+              onToggleCompletion={onToggleCompletion}
+              onToggleExpansion={onToggleExpansion}
+            />
+            {index < tasks.length - 1 && (
+              <div className="h-px w-full bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+            )}
+          </React.Fragment>
+        ))}
+      </>
+    );
+  }, [
+    isLoading, 
+    tasks, 
+    darkMode, 
+    draggedTaskId, 
+    onDragStart, 
+    onDragOver, 
+    onDrop, 
+    onToggleCompletion, 
+    onToggleExpansion
+  ]);
+  
   return (
     <div className="space-themed-glass relative overflow-hidden shadow-lg rounded-2xl border border-white/10 bg-[#1A1F2C]/80 backdrop-blur-xl cosmic-background">
       <div className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 z-0" 
@@ -81,43 +140,7 @@ const TasksView = ({
           "grid grid-cols-1 gap-4 p-4 min-h-[180px] overflow-y-auto",
           isMobile ? "max-h-[calc(100vh-280px)]" : "max-h-[60vh]"
         )}>
-          {isLoading ? (
-            <div className="flex items-center justify-center h-32">
-              <Loader2 className="h-5 w-5 animate-spin text-[#ea384c]" />
-            </div>
-          ) : tasks.length > 0 ? (
-            tasks.map((task, index) => (
-              <React.Fragment key={task.id}>
-                <TaskCard
-                  task={task}
-                  darkMode={darkMode}
-                  draggedTaskId={draggedTaskId}
-                  onDragStart={onDragStart}
-                  onDragOver={onDragOver}
-                  onDrop={onDrop}
-                  onToggleCompletion={onToggleCompletion}
-                  onToggleExpansion={onToggleExpansion}
-                />
-                {index < tasks.length - 1 && (
-                  <div className={cn(
-                    "h-px w-full bg-gradient-to-r from-transparent via-white/5 to-transparent"
-                  )} />
-                )}
-              </React.Fragment>
-            ))
-          ) : (
-            <div className="flex flex-col items-center justify-center h-32 text-center">
-              <div className="w-20 h-20 mb-4 rounded-full bg-gradient-to-br from-[#ea384c] to-[#ff7e54] opacity-20 flex items-center justify-center">
-                <div className="w-12 h-12 rounded-full bg-[#1A1F2C]/90 flex items-center justify-center">
-                  <div className="w-1 h-1 bg-white/70 rounded-full"></div>
-                </div>
-              </div>
-              <p className="text-muted-foreground text-sm">No active tasks</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Use the + button to create a task
-              </p>
-            </div>
-          )}
+          {taskItems}
         </div>
       </div>
       
@@ -126,4 +149,4 @@ const TasksView = ({
   );
 };
 
-export default TasksView;
+export default React.memo(TasksView);

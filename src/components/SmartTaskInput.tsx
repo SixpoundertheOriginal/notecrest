@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { useIsMobileValue } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
@@ -40,8 +40,15 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
     return () => clearInterval(interval);
   }, [isMobile]);
 
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  // Memoize current placeholder to prevent recalculation
+  const currentPlaceholder = useMemo(() => {
+    return isMobile 
+      ? "Quick add with NLP..." 
+      : PLACEHOLDER_EXAMPLES[placeholderIndex];
+  }, [isMobile, placeholderIndex]);
+
+  // Memoize form submission handler
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     
     if (!inputValue.trim()) {
@@ -62,17 +69,14 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
       // Clear input after creating task
       setInputValue('');
     });
-  };
+  }, [inputValue, onCreateTask]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  // Memoize keydown handler
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSubmit(e as unknown as React.FormEvent);
     }
-  };
-
-  const currentPlaceholder = isMobile 
-    ? "Quick add with NLP..." 
-    : PLACEHOLDER_EXAMPLES[placeholderIndex];
+  }, [handleSubmit]);
 
   return (
     <div className="w-full mb-2">
@@ -108,4 +112,4 @@ const SmartTaskInput: React.FC<SmartTaskInputProps> = ({ onCreateTask, darkMode 
   );
 };
 
-export default SmartTaskInput;
+export default React.memo(SmartTaskInput);

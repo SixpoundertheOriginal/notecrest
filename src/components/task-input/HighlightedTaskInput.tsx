@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Calendar, Clock, Flag, Folder } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { parseTaskText, formatDate, formatTime } from '@/lib/nlp-parser';
@@ -140,25 +140,53 @@ const HighlightedTaskInput: React.FC<HighlightedTaskInputProps> = ({
     }, 300); // 300ms debounce
   }, [value]);
 
-  // Render highlighted input
-  const renderHighlightedInput = () => {
-    // If there are no tokens or the input is empty, just return the plain input
+  // Memoize entity summary elements
+  const entitySummary = useMemo(() => {
+    if (!value.trim() || (!parsedInfo.dueDate && !parsedInfo.reminderTime && !parsedInfo.priority)) {
+      return null;
+    }
+
+    return (
+      <div className={cn(
+        "flex flex-wrap items-center gap-2 mt-2 text-xs transition-opacity duration-200",
+        darkMode ? "text-gray-400" : "text-gray-600"
+      )}>
+        {parsedInfo.dueDate && (
+          <span className="inline-flex items-center bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">
+            <Calendar size={12} className="mr-1" />
+            {formatDate(parsedInfo.dueDate)}
+          </span>
+        )}
+        
+        {parsedInfo.reminderTime && (
+          <span className="inline-flex items-center bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded">
+            <Clock size={12} className="mr-1" />
+            {formatTime(parsedInfo.reminderTime)}
+          </span>
+        )}
+        
+        {parsedInfo.priority && (
+          <span className={cn(
+            "inline-flex items-center px-1.5 py-0.5 rounded",
+            parsedInfo.priority === "High" 
+              ? "bg-[#D946EF]/10 text-[#D946EF]" 
+              : parsedInfo.priority === "Medium" 
+                ? "bg-[#8B5CF6]/10 text-[#8B5CF6]" 
+                : "bg-[#0EA5E9]/10 text-[#0EA5E9]"
+          )}>
+            <Flag size={12} className="mr-1" />
+            {parsedInfo.priority}
+          </span>
+        )}
+      </div>
+    );
+  }, [value, parsedInfo.dueDate, parsedInfo.reminderTime, parsedInfo.priority, darkMode]);
+
+  // Memoize highlighted elements for rendering
+  const highlightedElements = useMemo(() => {
+    // If there are no tokens or the input is empty, return null
     if (tokens.length === 0 || !value.trim()) {
-      return (
-        <input
-          ref={inputRef}
-          type="text"
-          className={cn(
-            "w-full py-5 px-3 text-sm rounded-lg shadow-sm bg-background/50 border-input/50",
-            className
-          )}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyDown={onKeyDown}
-          placeholder={placeholder}
-          autoComplete="off"
-        />
-      );
+      return null;
     }
 
     // Create highlighted elements
@@ -208,80 +236,55 @@ const HighlightedTaskInput: React.FC<HighlightedTaskInputProps> = ({
       );
     }
 
-    // Create a styled div that looks like an input but contains highlighted content
-    return (
-      <div className="relative">
-        <div
-          className={cn(
-            "w-full py-5 px-3 text-sm rounded-lg shadow-sm bg-background/50 border border-input/50 min-h-[52px]",
-            "focus-within:ring-1 focus-within:ring-ring",
-            className
-          )}
-        >
-          <div className="flex flex-wrap gap-1">{elements}</div>
-        </div>
-        <input
-          ref={inputRef}
-          type="text"
-          className="opacity-0 absolute top-0 left-0 w-full h-full cursor-text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyDown={onKeyDown}
-          placeholder={placeholder}
-          autoComplete="off"
-        />
-      </div>
-    );
-  };
+    return elements;
+  }, [tokens, value]);
 
-  // Render entity summary
-  const renderEntitySummary = () => {
-    if (!value.trim() || (!parsedInfo.dueDate && !parsedInfo.reminderTime && !parsedInfo.priority)) {
-      return null;
-    }
+  // Memoize input field for plain rendering
+  const plainInput = useMemo(() => (
+    <input
+      ref={inputRef}
+      type="text"
+      className={cn(
+        "w-full py-5 px-3 text-sm rounded-lg shadow-sm bg-background/50 border-input/50",
+        className
+      )}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      onKeyDown={onKeyDown}
+      placeholder={placeholder}
+      autoComplete="off"
+    />
+  ), [value, onChange, onKeyDown, placeholder, className]);
 
-    return (
-      <div className={cn(
-        "flex flex-wrap items-center gap-2 mt-2 text-xs transition-opacity duration-200",
-        darkMode ? "text-gray-400" : "text-gray-600"
-      )}>
-        {parsedInfo.dueDate && (
-          <span className="inline-flex items-center bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded">
-            <Calendar size={12} className="mr-1" />
-            {formatDate(parsedInfo.dueDate)}
-          </span>
-        )}
-        
-        {parsedInfo.reminderTime && (
-          <span className="inline-flex items-center bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded">
-            <Clock size={12} className="mr-1" />
-            {formatTime(parsedInfo.reminderTime)}
-          </span>
-        )}
-        
-        {parsedInfo.priority && (
-          <span className={cn(
-            "inline-flex items-center px-1.5 py-0.5 rounded",
-            parsedInfo.priority === "High" 
-              ? "bg-[#D946EF]/10 text-[#D946EF]" 
-              : parsedInfo.priority === "Medium" 
-                ? "bg-[#8B5CF6]/10 text-[#8B5CF6]" 
-                : "bg-[#0EA5E9]/10 text-[#0EA5E9]"
-          )}>
-            <Flag size={12} className="mr-1" />
-            {parsedInfo.priority}
-          </span>
-        )}
-      </div>
-    );
-  };
-
+  // Render the appropriate input based on whether we have tokens
   return (
     <div className="w-full">
-      {renderHighlightedInput()}
-      {renderEntitySummary()}
+      {!highlightedElements ? plainInput : (
+        <div className="relative">
+          <div
+            className={cn(
+              "w-full py-5 px-3 text-sm rounded-lg shadow-sm bg-background/50 border border-input/50 min-h-[52px]",
+              "focus-within:ring-1 focus-within:ring-ring",
+              className
+            )}
+          >
+            <div className="flex flex-wrap gap-1">{highlightedElements}</div>
+          </div>
+          <input
+            ref={inputRef}
+            type="text"
+            className="opacity-0 absolute top-0 left-0 w-full h-full cursor-text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            onKeyDown={onKeyDown}
+            placeholder={placeholder}
+            autoComplete="off"
+          />
+        </div>
+      )}
+      {entitySummary}
     </div>
   );
 };
 
-export default HighlightedTaskInput;
+export default React.memo(HighlightedTaskInput);

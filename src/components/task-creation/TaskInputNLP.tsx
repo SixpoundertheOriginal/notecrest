@@ -1,5 +1,5 @@
 
-import { useRef } from 'react';
+import { useRef, useCallback } from 'react';
 
 export interface NLPResult {
   title: string;
@@ -14,8 +14,10 @@ export const useTaskInputNLP = (
 ) => {
   const nlpTimeout = useRef<NodeJS.Timeout>();
 
-  // NLP parsing function to extract date, time and priority
-  const parseNaturalLanguage = (input: string): NLPResult => {
+  // Memoize the NLP parsing function to avoid recreation on each render
+  const parseNaturalLanguage = useCallback((input: string): NLPResult => {
+    console.log('Running NLP parsing on:', input);
+    
     let result = {
       title: input,
       date: null as Date | null,
@@ -63,10 +65,10 @@ export const useTaskInputNLP = (
     result.title = result.title.replace(/[,.;:]+$/, '').trim();
     
     return result;
-  };
+  }, []);
 
-  // Handle title input with NLP processing
-  const handleTitleInput = (value: string) => {
+  // Memoize title input handler to prevent recreation on each render
+  const handleTitleInput = useCallback((value: string) => {
     setTitle(value);
     
     // Run NLP parsing after user stops typing
@@ -77,7 +79,7 @@ export const useTaskInputNLP = (
       if (parsedInput.priority) setPriority(parsedInput.priority);
       if (parsedInput.title !== value) setTitle(parsedInput.title);
     }, 800);
-  };
+  }, [setTitle, setDueDate, setPriority, parseNaturalLanguage]);
 
   return {
     handleTitleInput

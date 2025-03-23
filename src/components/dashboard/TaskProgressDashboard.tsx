@@ -12,7 +12,10 @@ interface TaskProgressDashboardProps {
 }
 
 const TaskProgressDashboard = ({ tasks, username, isLoggedIn }: TaskProgressDashboardProps) => {
+  // Memoize task-related metrics calculation
   const metrics = useMemo(() => {
+    console.log('Recalculating dashboard metrics');
+    
     // Only consider visible tasks (not completed tasks)
     const visibleTasks = tasks.filter(task => !task.completed);
     const totalTasks = visibleTasks.length;
@@ -34,17 +37,6 @@ const TaskProgressDashboard = ({ tasks, username, isLoggedIn }: TaskProgressDash
     const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
     const highPriorityTasks = visibleTasks.filter(task => task.priority === 'High').length;
     
-    console.log('Task metrics (visible tasks only):', {
-      totalVisibleTasks: totalTasks,
-      completedTasks,
-      todayTasks,
-      completionRate,
-      highPriorityTasks,
-      today,
-      allTasksCount: tasks.length,
-      completedTasksCount: tasks.filter(task => task.completed).length
-    });
-    
     return {
       totalTasks,
       completedTasks,
@@ -54,7 +46,7 @@ const TaskProgressDashboard = ({ tasks, username, isLoggedIn }: TaskProgressDash
     };
   }, [tasks]);
 
-  // Generate a motivational message based on task count
+  // Memoize motivational message calculation
   const motivationalMessage = useMemo(() => {
     if (metrics.totalTasks === 0) {
       return "Ready to add some tasks for today? 🌠";
@@ -137,4 +129,4 @@ const TaskProgressDashboard = ({ tasks, username, isLoggedIn }: TaskProgressDash
   );
 };
 
-export default TaskProgressDashboard;
+export default React.memo(TaskProgressDashboard);

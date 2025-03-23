@@ -45,6 +45,7 @@ const TaskContent = ({
   // Memoize sorted tasks to prevent recalculation on every render
   const sortedTasks = useMemo(() => {
     if (!tasks) return [];
+    console.log('Computing sorted tasks');
     
     // Create a copy to avoid mutating the original array
     const tasksCopy = [...tasks];
@@ -66,50 +67,73 @@ const TaskContent = ({
   }, [tasks, sortOption]);
 
   // Memoize filtered incomplete tasks to prevent recalculation on every render
-  const incompleteTasks = useMemo(() => 
-    sortedTasks.filter(task => !task.completed), 
-    [sortedTasks]
-  );
+  const incompleteTasks = useMemo(() => {
+    console.log('Computing incomplete tasks');
+    return sortedTasks.filter(task => !task.completed);
+  }, [sortedTasks]);
 
-  if (activeTab === 'tasks') {
-    return (
-      <TasksView 
-        darkMode={darkMode}
-        tasks={incompleteTasks}
-        isLoading={isLoadingTasks}
-        draggedTaskId={draggedTaskId}
-        onDragStart={onDragStart}
-        onDragOver={onDragOver}
-        onDrop={onDrop}
-        onToggleCompletion={onToggleCompletion}
-        onToggleExpansion={onToggleExpansion}
-        onAddTask={onAddTask}
-        isLoggedIn={isLoggedIn}
-        sortOption={sortOption}
-        onSortChange={setSortOption}
-      />
-    );
-  }
-  
-  if (activeTab === 'completed') {
-    return (
-      <CompletedTasksView 
-        darkMode={darkMode}
-        tasks={tasks}
-        isLoading={isLoadingTasks}
-        draggedTaskId={draggedTaskId}
-        onDragStart={onDragStart}
-        onDragOver={onDragOver}
-        onDrop={onDrop}
-        onToggleCompletion={onToggleCompletion}
-        onToggleExpansion={onToggleExpansion}
-        onClearCompletedTasks={onClearCompletedTasks}
-      />
-    );
-  }
-  
-  // Default to notes view
-  return <NotesView darkMode={darkMode} />;
+  // Memoize the rendered view based on activeTab
+  const renderedView = useMemo(() => {
+    console.log('Computing rendered view for tab:', activeTab);
+    
+    if (activeTab === 'tasks') {
+      return (
+        <TasksView 
+          darkMode={darkMode}
+          tasks={incompleteTasks}
+          isLoading={isLoadingTasks}
+          draggedTaskId={draggedTaskId}
+          onDragStart={onDragStart}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
+          onToggleCompletion={onToggleCompletion}
+          onToggleExpansion={onToggleExpansion}
+          onAddTask={onAddTask}
+          isLoggedIn={isLoggedIn}
+          sortOption={sortOption}
+          onSortChange={setSortOption}
+        />
+      );
+    }
+    
+    if (activeTab === 'completed') {
+      return (
+        <CompletedTasksView 
+          darkMode={darkMode}
+          tasks={tasks}
+          isLoading={isLoadingTasks}
+          draggedTaskId={draggedTaskId}
+          onDragStart={onDragStart}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
+          onToggleCompletion={onToggleCompletion}
+          onToggleExpansion={onToggleExpansion}
+          onClearCompletedTasks={onClearCompletedTasks}
+        />
+      );
+    }
+    
+    // Default to notes view
+    return <NotesView darkMode={darkMode} />;
+  }, [
+    activeTab, 
+    darkMode, 
+    incompleteTasks, 
+    tasks,
+    isLoadingTasks, 
+    draggedTaskId, 
+    isLoggedIn,
+    onDragStart, 
+    onDragOver, 
+    onDrop, 
+    onToggleCompletion, 
+    onToggleExpansion, 
+    onAddTask, 
+    onClearCompletedTasks,
+    sortOption
+  ]);
+
+  return renderedView;
 };
 
 export default React.memo(TaskContent);

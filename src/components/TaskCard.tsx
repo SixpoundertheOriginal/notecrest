@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Calendar, CheckCircle, ChevronDown, Square } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
@@ -31,8 +31,8 @@ const TaskCard = ({
   const priorityColors = getPriorityColor(task.priority);
   const { isMobile } = useIsMobile();
   
-  // Calculate relative time
-  const getRelativeTime = () => {
+  // Memoize relative time calculation which can be expensive
+  const relativeTime = useMemo(() => {
     const now = new Date();
     const taskDate = new Date(task.createdAt || now);
     
@@ -49,6 +49,30 @@ const TaskCard = ({
     
     const diffInMonths = Math.floor(diffInDays / 30);
     return `${diffInMonths}mo ago`;
+  }, [task.createdAt]);
+
+  // Use memoization for task card style classes to prevent recalculation
+  const taskCardClasses = useMemo(() => {
+    return cn(
+      "task-card relative rounded-md p-3 shadow-sm cursor-pointer transition-all duration-300 backdrop-blur-sm border-l-2 overflow-hidden",
+      darkMode 
+        ? 'hover:bg-gray-800/40 bg-[#1A1F2C]/60' 
+        : 'hover:bg-white/80 bg-white/30',
+      draggedTaskId === task.id ? 'opacity-50 scale-95' : 'opacity-100',
+      task.completed 
+        ? 'border-l-green-500/50' 
+        : `border-l-${priorityColors.dot.replace('bg-', '')}`
+    );
+  }, [darkMode, draggedTaskId, task.id, task.completed, priorityColors.dot]);
+
+  // Handlers
+  const handleCompletionToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleCompletion(task.id);
+  };
+
+  const handleExpansionToggle = () => {
+    onToggleExpansion(task.id);
   };
 
   return (
@@ -57,17 +81,8 @@ const TaskCard = ({
       onDragStart={(e) => onDragStart(e, task.id)}
       onDragOver={onDragOver}
       onDrop={(e) => onDrop(e, task.id)}
-      onClick={() => onToggleExpansion(task.id)}
-      className={cn(
-        "task-card relative rounded-md p-3 shadow-sm cursor-pointer transition-all duration-300 backdrop-blur-sm border-l-2 overflow-hidden",
-        darkMode 
-          ? 'hover:bg-gray-800/40 bg-[#1A1F2C]/60' 
-          : 'hover:bg-white/80 bg-white/30',
-        draggedTaskId === task.id ? 'opacity-50 scale-95' : 'opacity-100',
-        task.completed 
-          ? 'border-l-green-500/50' 
-          : `border-l-${priorityColors.dot.replace('bg-', '')}`
-      )}
+      onClick={handleExpansionToggle}
+      className={taskCardClasses}
     >
       {/* Cosmic decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -97,10 +112,7 @@ const TaskCard = ({
       <div className="flex justify-between items-start gap-2 relative z-10">
         <div className="flex items-start gap-2">
           <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleCompletion(task.id);
-            }}
+            onClick={handleCompletionToggle}
             className="mt-0.5 flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center -ml-2 -my-2"
             aria-label={task.completed ? "Mark as incomplete" : "Mark as complete"}
           >
@@ -147,7 +159,7 @@ const TaskCard = ({
         
         <div className="flex items-center gap-1">
           <span className="text-[10px] text-muted-foreground hidden sm:inline-block">
-            {getRelativeTime()}
+            {relativeTime}
           </span>
           <div className="min-h-[44px] min-w-[44px] flex items-center justify-center -mr-2 -my-2">
             <div className="relative">
@@ -173,4 +185,4 @@ const TaskCard = ({
   );
 };
 
-export default TaskCard;
+export default React.memo(TaskCard);
