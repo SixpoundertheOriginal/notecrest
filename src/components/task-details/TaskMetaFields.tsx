@@ -3,14 +3,20 @@ import React from 'react';
 import { Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TaskData } from '@/types/task';
-import { getStatusIcon } from '@/lib/taskUtils';
 
 interface TaskMetaFieldsProps {
   task: TaskData;
   darkMode: boolean;
+  onPriorityChange: (value: string) => void;
+  onDueDateChange: (value: string) => void;
 }
 
-const TaskMetaFields = ({ task, darkMode }: TaskMetaFieldsProps) => {
+const TaskMetaFields = ({ 
+  task, 
+  darkMode, 
+  onPriorityChange,
+  onDueDateChange
+}: TaskMetaFieldsProps) => {
   // Function to get priority-specific styling for the select element
   const getPriorityStyle = () => {
     switch (task.priority) {
@@ -37,6 +43,7 @@ const TaskMetaFields = ({ task, darkMode }: TaskMetaFieldsProps) => {
           <input 
             type="date" 
             defaultValue="2025-03-08"
+            onChange={(e) => onDueDateChange(e.target.value)}
             className="bg-transparent focus:outline-none w-full"
           />
         </div>
@@ -47,7 +54,8 @@ const TaskMetaFields = ({ task, darkMode }: TaskMetaFieldsProps) => {
           Priority
         </label>
         <select
-          defaultValue={task.priority}
+          value={task.priority}
+          onChange={(e) => onPriorityChange(e.target.value)}
           className={cn(
             "w-full px-3 py-2 rounded-lg text-sm appearance-none transition-all duration-200 min-h-[44px]",
             darkMode 

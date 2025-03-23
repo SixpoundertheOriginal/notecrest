@@ -7,9 +7,10 @@ import { getStatusIcon } from '@/lib/taskUtils';
 interface TaskStatusFieldProps {
   task: TaskData;
   darkMode: boolean;
+  onStatusChange: (value: string) => void;
 }
 
-const TaskStatusField = ({ task, darkMode }: TaskStatusFieldProps) => {
+const TaskStatusField = ({ task, darkMode, onStatusChange }: TaskStatusFieldProps) => {
   return (
     <div>
       <label className={cn("block text-xs mb-1", darkMode ? 'text-gray-300' : 'text-gray-600')}>
@@ -24,7 +25,8 @@ const TaskStatusField = ({ task, darkMode }: TaskStatusFieldProps) => {
         ))}
       </div>
       <select
-        defaultValue={task.status}
+        value={task.status}
+        onChange={(e) => onStatusChange(e.target.value)}
         className={cn(
           "w-full px-3 py-2 rounded-lg text-sm appearance-none transition-all duration-200 min-h-[44px]",
           darkMode 
