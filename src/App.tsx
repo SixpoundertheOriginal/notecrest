@@ -6,11 +6,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { useTaskStore } from "./store/taskStore";
 import { useProjectStore } from "./store/projectStore";
+
+// Lazy load pages
+const Index = lazy(() => import("./pages/Index"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
@@ -28,6 +30,13 @@ const InitializeStores = () => {
   return null;
 };
 
+// Loading fallback component
+const PageLoader = () => (
+  <div className="flex items-center justify-center w-full h-screen">
+    <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+  </div>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -38,11 +47,13 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <div className="flex min-h-svh w-full">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
             </div>
           </BrowserRouter>
         </SidebarProvider>

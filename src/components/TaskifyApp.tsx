@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,9 +9,11 @@ import { useTasks } from '@/hooks/useTasks';
 import { useProjects } from '@/hooks/useProjects';
 import TaskifySidebar from './TaskifySidebar';
 import { SidebarInset } from './ui/sidebar';
-import AuthModal from './auth/AuthModal';
 import FloatingActionButton from './FloatingActionButton';
-import TaskCreationSheet from './TaskCreationSheet';
+import { LazyTaskCreationSheet } from '@/lib/lazyComponents';
+
+// Lazy load the AuthModal component as it's not needed for initial render
+const AuthModal = lazy(() => import('./auth/AuthModal'));
 
 const TaskifyApp = () => {
   const [activeTab, setActiveTab] = useState('tasks');
@@ -147,12 +149,16 @@ const TaskifyApp = () => {
         </div>
       </SidebarInset>
       
-      <AuthModal 
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-      />
+      {isAuthModalOpen && (
+        <Suspense fallback={<div>Loading...</div>}>
+          <AuthModal 
+            isOpen={isAuthModalOpen}
+            onClose={() => setIsAuthModalOpen(false)}
+          />
+        </Suspense>
+      )}
       
-      <TaskCreationSheet 
+      <LazyTaskCreationSheet 
         isOpen={isTaskSheetOpen}
         onClose={handleSheetOpenChange}
         onSubmit={handleTaskSubmit}
