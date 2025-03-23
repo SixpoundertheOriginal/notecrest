@@ -9,21 +9,24 @@ export const useTasksWithStore = (user: any): UseTasksReturn => {
   const { toast } = useToast();
   const userId = user?.id;
   
-  // Get task state with selectors
+  // Get task state with selectors - separated by server/client concerns
   const { tasks, isLoadingTasks, draggedTaskId } = useTaskSelectors();
   
-  // Get task actions
+  // Get task actions - separated by whether they modify server state
   const {
+    // Server sync actions
     toggleTaskCompletion: storeToggleTaskCompletion,
+    clearCompletedTasks: storeClearCompletedTasks,
+    addTask: storeAddTask,
+    handleDrop: storeHandleDrop,
+    
+    // Client-only actions
     toggleTaskExpansion,
     handleDragStart,
-    handleDragOver,
-    handleDrop: storeHandleDrop,
-    clearCompletedTasks: storeClearCompletedTasks,
-    addTask: storeAddTask
+    handleDragOver
   } = useTaskActions();
   
-  // Fetch tasks is a special case as it's only used in useEffect
+  // Server state initialization
   const fetchTasks = useTaskStore(state => state.fetchTasks);
 
   useEffect(() => {
@@ -64,14 +67,21 @@ export const useTasksWithStore = (user: any): UseTasksReturn => {
   };
 
   return {
+    // Server-derived state
     tasks,
     isLoadingTasks,
+    
+    // Client-only state
     draggedTaskId,
-    toggleTaskCompletion,
+    
+    // Client-only actions
     toggleTaskExpansion,
-    addTask,
     handleDragStart,
     handleDragOver,
+    
+    // Server sync actions (with UI feedback)
+    toggleTaskCompletion,
+    addTask,
     handleDrop,
     clearCompletedTasks
   };

@@ -10,10 +10,14 @@ export const useTaskSelectors = () => {
   const draggedTaskId = useTaskStore(state => state.draggedTaskId);
   
   return {
+    // Server-derived state
     tasks,
     isLoadingTasks,
+    
+    // Client-only state
     draggedTaskId,
-    // Computed selectors
+    
+    // Computed selectors (derived state)
     completedTasks: tasks.filter(task => task.completed),
     incompleteTasks: tasks.filter(task => !task.completed),
     getTasksByProject: (projectId: string | null) => 
@@ -26,12 +30,15 @@ export const useTaskSelectors = () => {
 // Action selectors for tasks
 export const useTaskActions = () => {
   return {
-    addTask: useTaskStore(state => state.addTask),
-    toggleTaskCompletion: useTaskStore(state => state.toggleTaskCompletion),
+    // UI actions (client state)
     toggleTaskExpansion: useTaskStore(state => state.toggleTaskExpansion),
-    clearCompletedTasks: useTaskStore(state => state.clearCompletedTasks),
     handleDragStart: useTaskStore(state => state.handleDragStart),
     handleDragOver: useTaskStore(state => state.handleDragOver),
+    
+    // Server sync actions (modifies both client & server state)
+    addTask: useTaskStore(state => state.addTask),
+    toggleTaskCompletion: useTaskStore(state => state.toggleTaskCompletion),
+    clearCompletedTasks: useTaskStore(state => state.clearCompletedTasks),
     handleDrop: useTaskStore(state => state.handleDrop)
   };
 };

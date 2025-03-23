@@ -22,6 +22,7 @@ export const useProjectsWithStore = (user: any) => {
   // Fetch projects is a special case as it's only used in useEffect
   const fetchProjects = useProjectStore(state => state.fetchProjects);
 
+  // Server state initialization
   useEffect(() => {
     fetchProjects(userId);
   }, [fetchProjects, userId]);
@@ -48,10 +49,15 @@ export const useProjectsWithStore = (user: any) => {
   };
 
   return {
+    // Server-derived state
     projects,
     isLoadingProjects,
+    
+    // Client-only state
     activeProjectId,
     setActiveProjectId,
+    
+    // Server sync actions (with UI feedback)
     createProject,
     deleteProject
   };
