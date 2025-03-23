@@ -50,20 +50,17 @@ const TaskAppHeader = ({
           )}
         </Button>
 
-        {/* Only show the login button in the header if showLoginButton is true */}
-        {showLoginButton && onOpenAuth && !isLoggedIn && (
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={onOpenAuth}
-            className="flex items-center gap-2"
-          >
-            <LogIn size={16} />
-            Login
-          </Button>
+        {/* Always show auth status using AuthSection */}
+        {loading ? (
+          <div className="h-8 w-8 flex items-center justify-center">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+          </div>
+        ) : (
+          <AuthSection 
+            user={user} 
+            onOpenAuth={onOpenAuth}
+          />
         )}
-
-        {loading ? null : <AuthSection user={user} />}
       </div>
     </header>
   );

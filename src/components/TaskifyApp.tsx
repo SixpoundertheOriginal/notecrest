@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, lazy, Suspense } from 'react';
 import { cn } from '@/lib/utils';
 import TaskAppHeader from './TaskAppHeader';
@@ -49,7 +48,6 @@ const TaskifyApp = () => {
   const username = user?.email ? user.email.split('@')[0] : undefined;
   const isLoggedIn = !!user;
 
-  // Memoize page title to prevent recalculation on every render
   const pageTitle = useMemo(() => {
     if (activeProjectId) {
       const project = projects.find(p => p.id === activeProjectId);
@@ -64,7 +62,6 @@ const TaskifyApp = () => {
     }
   }, [activeTab, activeProjectId, projects]);
 
-  // Memoize filtered tasks to prevent recalculation on every render
   const filteredTasks = useMemo(() => 
     activeProjectId
       ? tasks.filter(task => task.project_id === activeProjectId)
@@ -115,7 +112,6 @@ const TaskifyApp = () => {
               isLoggedIn={isLoggedIn}
               onOpenAuth={() => setIsAuthModalOpen(true)}
               onAddTask={addTask}
-              showLoginButton={false}
             />
           </div>
 
@@ -125,7 +121,7 @@ const TaskifyApp = () => {
                 username={username} 
                 isLoggedIn={isLoggedIn} 
                 onOpenAuth={() => setIsAuthModalOpen(true)}
-                tasks={tasks} // Pass all tasks, not just filtered tasks
+                tasks={tasks}
               />
               <TaskContent
                 activeTab={activeTab}
